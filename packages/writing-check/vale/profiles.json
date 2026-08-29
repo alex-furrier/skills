@@ -1,0 +1,13 @@
+{
+  "schema": 3,
+  "profiles": {
+    "commit": {"readability": "disabled", "policy": "commit"},
+    "pr-description": {"readability": "long-form", "policy": "review-copy"},
+    "readme": {"readability": "long-form", "policy": "documentation"},
+    "technical-doc": {"readability": "long-form", "policy": "documentation"},
+    "technical-doc-explanatory": {"readability": "long-form", "policy": "documentation"},
+    "technical-doc-reference": {"readability": "long-form", "policy": "documentation"},
+    "user-facing-response": {"readability": "long-form", "policy": "conversation"}
+  },
+  "policy": "All findings are advisory. Portable Vale styles are independently authored; Vale is optional and never fetched."
+}

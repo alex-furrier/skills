@@ -1,0 +1,34 @@
+{
+  "schema": 2,
+  "source_revision": "safurrier/dots@f5cd33133b27b9b5c3c27a4f85fcd7783b990dcf",
+  "decision": "Public contracts are same-author adaptations of private Dots workflows. They retain portable behavior but remove personal owners, paths, account routing, private corpora, and organization overlays. Public fixtures and portable Vale rules are independently authored.",
+  "entries": [
+    {"path_prefix":"skills/context/", "origin":"same-author private-source adaptation with portable redaction", "license":"MIT"},
+    {"path_prefix":"skills/writing/", "origin":"same-author private-source adaptation with portable redaction; bundled Portable Vale style is independently authored", "license":"MIT"},
+    {"path_prefix":"packages/context-engineering/", "origin":"same-author private-source adaptation with portable redaction", "license":"MIT"},
+    {"path_prefix":"packages/writing-check/", "origin":"same-author private-source adaptation and independently authored portable Vale style", "license":"MIT"},
+    {"path_prefix":"tests/", "origin":"independently authored public fixtures and behavioral tests", "license":"MIT"},
+    {"path_prefix":"scripts/", "origin":"independently authored release validation", "license":"MIT"},
+    {"path_prefix":"docs/", "origin":"independently authored public documentation", "license":"MIT"},
+    {"path_prefix":".github/", "origin":"independently authored CI configuration", "license":"MIT"},
+    {"path":"README.md", "origin":"independently authored public documentation", "license":"MIT"},
+    {"path":"AGENTS.md", "origin":"independently authored guidance", "license":"MIT"},
+    {"path":"CLAUDE.md", "origin":"independently authored compatibility pointer", "license":"MIT"},
+    {"path":"CONTRIBUTING.md", "origin":"independently authored documentation", "license":"MIT"},
+    {"path":"CHANGELOG.md", "origin":"independently authored documentation", "license":"MIT"},
+    {"path":"THIRD_PARTY_NOTICES.md", "origin":"independently authored notice", "license":"MIT"},
+    {"path":"LICENSE", "origin":"standard MIT text", "license":"MIT"},
+    {"path":".gitignore", "origin":"independently authored configuration", "license":"MIT"},
+    {"path":"mkdocs.yml", "origin":"independently authored configuration", "license":"MIT"},
+    {"path":".claude-plugin.json", "origin":"independently authored metadata", "license":"MIT"},
+    {"path_prefix":".claude-plugin/", "origin":"independently authored metadata", "license":"MIT"},
+    {"path":"provenance.json", "origin":"independently authored provenance inventory", "license":"MIT"}
+  ],
+  "excluded": [
+    "private evaluation corpora, reports, and session transcripts",
+    "personal voice and organization-specific overlays",
+    "account, credential, home-directory, external knowledge destination, tracker, and hosted-service routing",
+    "third-party Google Vale rules and their upstream lock material",
+    "unlicensed third-party files copied verbatim"
+  ]
+}
