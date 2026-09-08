@@ -18,11 +18,6 @@ The Context CLI is a catalog-level optional dependency: run `PYTHONPATH=<catalog
 
 # Module Name
 
-**When a user corrects you or provides you with tribal knowledge/gotchas —
-something you could not have known from reading the code or your prompt — you
-MUST document it in an AGENTS.md file before continuing.** Write the correction
-in the AGENTS.md closest to where the issue occurred.
-
 One-to-two sentence orientation. Entry point: `ClassOrFunc` in `path/file.py`.
 Key config: `OTHER_THING` (`other/file.py`).
 
@@ -58,8 +53,8 @@ bullet when the gotcha is specifically about a non-obvious use of that command.
 
 ## Core Rules
 
-* **Default shape**: self-doc requirement + orientation + optional How-to-Work-Here (tier-gated) + Commands + Gotchas + Related Context. Both auto and interactive mode emit the same sections; interactive adds a human review step before write.
-* **Self-documentation requirement**: always include the "When a user corrects you..." paragraph. This is a principle, not noise — it makes the file self-sustaining.
+* **Default shape**: orientation + optional How-to-Work-Here (tier-gated) + Commands + Gotchas + Related Context. Both auto and interactive mode emit the same sections; interactive adds a human review step before write.
+* **Correction capture**: do not insert a compulsory mid-task capture paragraph. A correction is evidence to consider, not authority to write durable context or interrupt the current assignment. Use `session-capture` for later user-approved capture; if unavailable, propose the narrow update without writing it. Explicitly authorized context maintenance remains in scope.
 * **Gotchas include code traps**: a gotcha doesn't require session history. If an agent would almost-get-it-right but subtly wrong based on code patterns (e.g., patching at the wrong module path, using the wrong base class), that's a valid DO/NOT/BECAUSE bullet.
 * **Related Context section**: include when cross-cutting dependencies exist (sibling modules, shared constants, config dirs). These pointers save agents from missing non-obvious connections. Keep it to a compact table.
 * **Commands section**: single-path commands always included; multi-path commands scaled by contributor tier (see Step 3c). Commands are reference lookup, not workflow opinion.
@@ -194,8 +189,7 @@ Rough filtering guidance:
   systems that call the target, any module an existing gotcha references.
 - **Cut**: parent directories (trivial), generic infra buckets that everyone
   touches (e.g., `shared`, `documentation`, `misc`) unless the coupling
-  is specifically meaningful, buckets where you can't articulate *what* the
-  shared contract is.
+  is specifically meaningful, buckets without an articulable shared contract.
 - **Author-overlap signals** are useful for understanding team ownership but
   usually don't belong in the Related Context table — drop them by default.
 
@@ -244,8 +238,6 @@ allows opinion. Drop entirely at 21+; candidates go to `SKIPPED_FOR_REVIEW.md`.
 
 ```markdown
 # <Module Name>
-
-<self-doc requirement paragraph>
 
 <1-2 sentence orientation. Entry point and key config.>
 

@@ -76,7 +76,7 @@ Use these explicit destination classes:
 | `repo context` | Repo docs, ADRs, root or nested AGENTS.md | Repository workflow; read [`references/repo-context.md`](references/repo-context.md) |
 | `skill` | A reusable behavior contract or an existing skill gap | the configured skill authoring workflow |
 | `task` | Follow-up work rather than settled knowledge | Owning task file or tracker |
-| `mixed` | One canonical owner needs a lightweight discoverability pointer | Canonical owner first; pointer only if separately approved |
+| `mixed` | One canonical owner needs a lightweight discoverability pointer | Canonical owner first; bundle a required pointer or number an optional pointer separately |
 
 Global agent behavior is not a separate destination class. In this managed
 setup, global Claude, Codex, and Pi guidance comes from
@@ -84,57 +84,43 @@ setup, global Claude, Codex, and Pi guidance comes from
 `skill` with that canonical source rather than editing generated runtime files.
 
 The proposal must name the destination, primary target artifact, and every
-required companion write such as an index or pointer. Give the primary target
-the proposal's number and each companion a selectable suffix such as `1i`
-(index) or `1p` (pointer). The user's approval, not an implicit router,
-authorizes only the exact selected identifiers.
+required companion write such as an index or pointer. Group the primary target
+and all required companion writes under one proposal number so one decision
+authorizes the complete viable change. Give an optional companion its own
+number only when it is useful and safe to select independently.
 
 ## 3. Propose Captures
 
-Present a numbered list that previews enough content and routing for a real
-decision. Use the relevant fields from
-[`references/capture-forms.md`](references/capture-forms.md) so the user can
-judge completeness before approval.
+Present one continuous numbered list, strongest proposal first. Avoid decorative
+proposal subheadings such as `Core proposals` and `Possible extras`. Preview
+enough content and routing for a real decision, using the relevant fields from
+[`references/capture-forms.md`](references/capture-forms.md).
 
 ```text
 Session: <repo or domain> — <task> (<date or today>)
 
-Session produced N capturable items (M filtered out):
-
-Core proposals:
-
 1. [Update][repo context][Workflow] <title>
-   Primary target [1]: <existing path>
-   Companion target [1i, index]: <required index path, when applicable>
-   Companion target [1p, pointer]: <optional pointer path, when applicable>
+   Targets: <primary path>; <required companion paths>
    Evidence: <what the session demonstrated>
    Preview: <steps, gotcha, or decision fields>
-
-Possible extras:
 
 2. [New][external][Decision] <title>
    Target: <proposed note or staging>
    Preview: <options, choice, rationale, reconsideration condition>
 
-Filtered out:
-- <candidate> — <already documented owner, transient detail, or other reason>
+Filtered: <candidate and reason>; <candidate and reason>; or none.
 
-Capture all primary targets? Or pick exact identifiers, change a destination,
-or make no changes.
+Choose by number; `all` and `none` also work.
 ```
 
-`Capture 1` authorizes only primary target `1`; it does not authorize `1i` or
-`1p`. `Capture 1 and 1i` authorizes those two exact writes. If the user names a
-parent or range that does not map unambiguously to visible identifiers, ask
-before writing. `Capture all` is defined shorthand for the exact set of visible
-primary numeric identifiers; enumerate that resolved set before applying it.
-Companion suffixes still require explicit identifiers.
+Treat each number as one complete decision bundle: approval authorizes its
+listed primary target and required companion writes. If an optional companion
+needs an independent choice, present it as another numbered proposal. Ask only
+when a selection is genuinely ambiguous.
 
-Rank at most four high-signal items under **Core proposals**. Keep other
-independently durable candidates under **Possible extras** with continuous
-numbering. Normally target 3–7 proposals; consolidate closely related items
-when there are more than seven. Do not invent automation, skills, or index
-artifacts to pad recall.
+Normally target 3–7 proposals, with at most four high-signal items at the top.
+Consolidate closely related items when there are more than seven. Do not invent
+automation, skills, or index artifacts to pad recall.
 
 Core signals include a named artifact with a specific gap, a reproducible
 workflow with a trap, directly evidenced reusable agent behavior, and
@@ -151,8 +137,9 @@ Every invocation is proposal-first:
 - Durable edits, notes, tasks, issues, branches, and PRs are forbidden before
   approval.
 - Stop after proposals and wait for a subsequent user turn.
-- Require an explicit action such as “capture all” (primary targets only), “do
-  1 and 3,” or “write 1 and 1i.”
+- Accept terse selections such as `1`, `1, 3`, `all`, or `none`.
+- Do not script the user's response, quote a confirmation phrase, restate that
+  no files changed, or end with ceremonial approval language.
 - A request to run the skill, enthusiasm, session completion, or silence is
   not approval.
 - “Propose only,” “no edits,” or equivalent wording is a hard stop.
@@ -161,7 +148,7 @@ Every invocation is proposal-first:
 
 ## 4. Apply Approved Captures
 
-Apply only the approved exact identifiers, wording, and destinations:
+Apply only the approved numbered bundles, wording, and destinations:
 
 - **external knowledge destination:** load a configured knowledge adapter. If unavailable, resolve the absolute
   configured configured external knowledge destination and use its `staging/` path; never write a relative
@@ -173,15 +160,15 @@ Apply only the approved exact identifiers, wording, and destinations:
   installed or generated copy.
 - **Task:** use the explicitly owning task system. Do not turn unfinished work
   into a knowledge note.
-- **Mixed:** write the canonical owner, then only the separately approved
-  pointer. Do not duplicate the full content.
+- **Mixed:** write the canonical owner, then any pointer included in the
+  approved bundle. Do not duplicate the full content.
 
 If the user approves content but the destination remains materially ambiguous,
 ask before writing.
 
 If implementation discovers a required target that was not visible in the
-approved proposal, stop and show a revised proposal. Do not treat approval of
-the primary artifact as approval of a newly discovered index or pointer.
+approved proposal, stop and show a revised proposal. Keep that revision terse
+and preserve the original proposal number.
 
 Preserve source context and approximate date. Do not copy credentials, secrets,
 or sensitive internal links into a broader destination.

@@ -36,6 +36,24 @@ def test_catalog_contracts_have_distinctive_workflow_guards():
     for name, phrase in expected.items(): assert phrase.lower() in skills[name].lower()
 
 
+def test_capture_and_context_contracts_preserve_portable_current_behavior():
+    capture = (ROOT / "skills/context/session-capture/SKILL.md").read_text()
+    repo_context = (ROOT / "skills/context/session-capture/references/repo-context.md").read_text()
+    agents = (ROOT / "skills/context/context-agents-md/SKILL.md").read_text()
+    generated_spec = (ROOT / "skills/context/context-agents-md/resources/generated-doc-spec.md").read_text()
+    docs = (ROOT / "skills/context/context-docs/SKILL.md").read_text()
+
+    assert "Treat each number as one complete decision bundle" in capture
+    assert "Targets: <primary path>; <required companion paths>" in capture
+    assert "selectable suffix" not in capture
+    assert "include it in the same numbered decision bundle" in repo_context
+    assert "compulsory mid-task capture paragraph" in agents
+    assert "<self-doc requirement paragraph>" not in agents
+    assert "### 2. Capture authority" in generated_spec
+    assert "Self-Documentation Requirement" not in generated_spec
+    assert "Portable catalog release: `safurrier-skills`" in docs
+
+
 def test_metadata_provenance_privacy_and_copied_artifact_validate():
     assert run(sys.executable, "scripts/validate.py").returncode == 0
 

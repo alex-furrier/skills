@@ -1,7 +1,7 @@
 {
   "schema": 2,
-  "source_revision": "safurrier/dots@f5cd33133b27b9b5c3c27a4f85fcd7783b990dcf",
-  "decision": "Public contracts are same-author adaptations of private Dots workflows. They retain portable behavior but remove personal owners, paths, account routing, private corpora, and organization overlays. Public fixtures and portable Vale rules are independently authored.",
+  "source_revision": "safurrier/dots@e8dd297c82db68e1fe6fcdc51d2c661e5081aa76",
+  "decision": "Public contracts are same-author adaptations of private Dots workflows, reconciled through efa69e113 and f100a3b28. They retain portable behavior but remove personal owners, paths, account routing, private corpora, and organization overlays. Public fixtures and portable Vale rules are independently authored.",
   "entries": [
     {"path_prefix":"skills/context/", "origin":"same-author private-source adaptation with portable redaction", "license":"MIT"},
     {"path_prefix":"skills/writing/", "origin":"same-author private-source adaptation with portable redaction; bundled Portable Vale style is independently authored", "license":"MIT"},

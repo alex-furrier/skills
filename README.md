@@ -10,7 +10,15 @@ With the Skills CLI:
 npx skills add safurrier/skills
 ```
 
-For Claude Code, install this repository as a plugin; its manifest exposes the complete catalog. Other compatible agents can copy a chosen skill directory and its referenced files. `writing-check` bundles its checker; Context skills that request deterministic evidence require the catalog-level `packages/context-engineering` directory on `PYTHONPATH` (without it they must report unavailable evidence and continue with inspection). This source checkout uses Python 3.11+; Vale is optional.
+For Claude Code, install this repository as a plugin; its manifest exposes the complete catalog. Other compatible agents can copy a chosen skill directory and its referenced files. `writing-check` bundles its checker. When copying a Context skill that requests deterministic evidence, preserve this relative layout:
+
+```text
+<catalog-root>/
+├── <agent-dir>/skills/context-docs/
+└── packages/context-engineering/
+```
+
+Add `<catalog-root>/packages/context-engineering` to `PYTHONPATH`. Without that package, the skill must report unavailable evidence and continue with inspection. This source checkout uses Python 3.11+; Vale is optional.
 
 ## Catalog
 
