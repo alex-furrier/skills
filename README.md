@@ -1,24 +1,20 @@
 # skills
 
-An opinionated, portable collection of engineering skills for agents and their operators. It pairs durable-context workflows with precise writing workflows. Skills remain the product; two small, dependency-free tools collect deterministic evidence where prose alone is not enough.
+An opinionated, portable collection of engineering skills for agents and their operators. It pairs durable-context workflows with precise writing workflows. Skills remain the product; the catalog includes deterministic Context analysis and source-bound Writing Check evidence where prose alone is not enough.
 
 ## Install
 
-With the Skills CLI:
+Install the complete catalog checkout or source archive; do not use a skill-only
+installer for Context skills or Writing Check because it omits sibling required
+packages and policy assets. See [installation](docs/installation.md) for the
+required layout, installer boundary, and prerequisite verification.
 
-```bash
-npx skills add safurrier/skills
-```
+### Required dependencies
 
-For Claude Code, install this repository as a plugin; its manifest exposes the complete catalog. Other compatible agents can copy a chosen skill directory and its referenced files. `writing-check` bundles its checker. When copying a Context skill that requests deterministic evidence, preserve this relative layout:
+- **Context skills:** install `uv` and retain `packages/context-engineering` at the catalog root. Run deterministic analysis with `uv run --project <catalog-root>/packages/context-engineering context-engineering <subcommand> ...`. A missing `uv` executable or Context package is a fail-fast error for workflows that require deterministic analysis; it is not a read-only fallback.
+- **Writing Check:** install Vale and retain the bundled `vale/` directory. Writing Check uses vendored Google Vale v0.7.1 rules plus readability evidence; findings remain advisory, never an automatic gate.
 
-```text
-<catalog-root>/
-├── <agent-dir>/skills/context-docs/
-└── packages/context-engineering/
-```
-
-Add `<catalog-root>/packages/context-engineering` to `PYTHONPATH`. Without that package, the skill must report unavailable evidence and continue with inspection. This source checkout uses Python 3.11+; Vale is optional.
+This source checkout uses Python 3.11+.
 
 ## Catalog
 
@@ -34,12 +30,12 @@ Add `<catalog-root>/packages/context-engineering` to `PYTHONPATH`. Without that 
 
 ```bash
 ./scripts/fast-check.sh
-PYTHONPATH=packages/context-engineering python3 -m context_engineering references . --json
-python3 packages/writing-check/scripts/writing_check.py --profile technical-doc README.md
+uv run --project packages/context-engineering context-engineering references . --json
+uv run --python 3.11 python packages/writing-check/scripts/writing_check.py --profile technical-doc README.md
 ```
 
 The last command returns advisory observations. It is exact-input-bound: its digest identifies the checked bytes but does not prove factuality, quality, or readiness.
 
 ## Boundaries
 
-No default skill assumes a particular account, credential, home directory, task tracker, external knowledge destination, or hosted service. Optional integrations must say what happens when unavailable. See [contributing](CONTRIBUTING.md) and [provenance](provenance.json).
+No default skill assumes a particular account, credential, home directory, task tracker, external knowledge destination, or hosted service. Required catalog dependencies fail clearly when missing; optional integrations must say what happens when unavailable. See [contributing](CONTRIBUTING.md), [provenance](provenance.json), and [third-party notices](THIRD_PARTY_NOTICES.md).

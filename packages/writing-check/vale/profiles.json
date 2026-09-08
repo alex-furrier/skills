@@ -1,13 +1,20 @@
 {
-  "schema": 3,
-  "profiles": {
-    "commit": {"readability": "disabled", "policy": "commit"},
-    "pr-description": {"readability": "long-form", "policy": "review-copy"},
-    "readme": {"readability": "long-form", "policy": "documentation"},
-    "technical-doc": {"readability": "long-form", "policy": "documentation"},
-    "technical-doc-explanatory": {"readability": "long-form", "policy": "documentation"},
-    "technical-doc-reference": {"readability": "long-form", "policy": "documentation"},
-    "user-facing-response": {"readability": "long-form", "policy": "conversation"}
+  "schema": 2,
+  "upstream": {
+    "repository": "https://github.com/vale-cli/Google",
+    "tag": "v0.7.1",
+    "commit": "56b01fed2532273121abcee1e7359483c879628f",
+    "license": "MIT",
+    "license_file": "vendor/Google-LICENSE"
   },
-  "policy": "All findings are advisory. Portable Vale styles are independently authored; Vale is optional and never fetched."
+  "profiles": {
+    "commit": {"readability": "disabled", "policy": "google-docs-v0.7.1"},
+    "pr-description": {"readability": "long-form", "policy": "google-docs-v0.7.1"},
+    "readme": {"readability": "long-form", "policy": "google-docs-v0.7.1"},
+    "technical-doc": {"readability": "long-form", "policy": "google-docs-v0.7.1"},
+    "technical-doc-explanatory": {"readability": "long-form", "policy": "google-docs-v0.7.1"},
+    "technical-doc-reference": {"readability": "long-form", "policy": "google-docs-v0.7.1"},
+    "user-facing-response": {"readability": "long-form", "policy": "google-docs-v0.7.1"}
+  },
+  "policy": "All findings are advisory. Vendored Google Vale v0.7.1 rules are normalized to suggestions and never fetched during checks."
 }

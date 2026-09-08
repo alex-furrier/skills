@@ -1,20 +1,41 @@
 # Reproducible validation
 
-The release check is deliberately evidence-oriented and read-only for source content.
-Run it from a clean checkout:
+The release check is deliberately evidence-oriented and read-only for source
+content. Run it from a complete catalog checkout after verifying `uv --version`
+and `vale --version`:
 
 ```bash
 ./scripts/fast-check.sh
 ```
 
-It runs behavioral tests, validates a copied release artifact and provenance coverage, builds MkDocs with `--strict`, runs the Context reference check, runs the exact-input Writing Check against `README.md`, and finishes with `git diff --check`.
+It runs behavioral tests, validates a copied release artifact and provenance
+coverage, builds MkDocs with `--strict`, runs the installed Context reference
+check, runs the exact-input Writing Check against `README.md`, and finishes with
+`git diff --check`.
 
-The expected Writing Check state is either `no_findings` when Vale is installed or `unavailable` when it is not. Both records retain the exact source identity; neither is a factual or publication verdict. The command does not install Vale or download styles.
+Writing Check findings are advisory evidence, so the release check accepts its
+`findings` exit. Vale itself is required for that check: `unavailable` means the
+catalog prerequisites are incomplete and fails the release check. The command
+does not install Vale or download styles. CI downloads the official Vale v3.17.1
+Linux archive, verifies SHA-256
+`db947f89f2292e6a0381a61de155f6a5f5cb4cb460ca178ea412ef605559cefd`, and
+proves `vale --version` before running the release check; the binary is not
+shipped in this catalog.
 
-For an isolated context check, use:
+For an isolated Context check, use the installed catalog package:
 
 ```bash
-PYTHONPATH=packages/context-engineering uv run --python 3.11 python -m context_engineering check . --json
+uv run --project packages/context-engineering context-engineering check . --json
 ```
 
-For an isolated selected-skill check, copy `skills/writing/writing-check` and run its bundled checker script. The test suite verifies that missing Vale produces the explicit `unavailable` state rather than a clean result.
+For an isolated Writing Check, run the complete catalog's bundled checker:
+
+```bash
+uv run --python 3.11 python \
+  packages/writing-check/scripts/writing_check.py \
+  --profile technical-doc --json README.md
+```
+
+Do not validate a Context skill or Writing Check from a selected-skill copy:
+that artifact omits required package or policy assets. See
+[installation](installation.md) for the required layout.

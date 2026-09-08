@@ -5,7 +5,7 @@ root="$(cd "$(dirname "$0")/.." && pwd)"; cd "$root"
 uv run --python 3.11 --with pytest --with mkdocs pytest -q
 uv run --python 3.11 --with mkdocs mkdocs build --strict
 uv run --python 3.11 python scripts/validate.py
-PYTHONPATH=packages/context-engineering uv run --python 3.11 python -m context_engineering references . --json
-# Vale is optional: unavailable evidence is expected when it is not installed.
-uv run --python 3.11 python packages/writing-check/scripts/writing_check.py --profile technical-doc --json README.md || test $? -eq 3
+uv run --project packages/context-engineering context-engineering references . --json
+# Writing Check findings are advisory, so a findings exit is valid release evidence.
+uv run --python 3.11 python packages/writing-check/scripts/writing_check.py --profile technical-doc --json README.md || test $? -eq 1
 git diff --check

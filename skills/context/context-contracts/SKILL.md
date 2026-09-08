@@ -5,7 +5,7 @@ description: "This skill analyzes, validates, bootstraps, migrates, and updates 
 
 ## Portable deterministic evidence
 
-The Context CLI is a catalog-level optional dependency: run `PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering ...` when the package is installed with this catalog. A copied skill without that package must state `context_cli: unavailable`, preserve raw repository evidence, and continue only with read-only inspection; it must not claim the deterministic check ran or infer a replacement.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Contracts
 
@@ -18,7 +18,7 @@ Keep current repository contracts small, factual, and portable.
 
    ```bash
    SKILL_DIR="<absolute path to this skill>"
-   PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering contracts <target> --json
+   uv run --project <catalog-root>/packages/context-engineering context-engineering contracts <target> --json
    ```
 
    Add `--require-spec` or `--require-adrs` only when repository policy or the
@@ -69,11 +69,7 @@ frontmatter convention receives plain Markdown.
 
 ## Dependencies
 
-Require Git for repository inspection. Prefer `uv` from Astral to run the
-dependency-free bundled CLI; fall back to an installed
-`python -m context_engineering` package. If neither is available, perform the
-read-only discovery manually and report that deterministic validation was not
-run.
+Require Git, `uv`, and the complete catalog's `packages/context-engineering` package. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace deterministic validation with manual discovery.
 
 ## Report
 

@@ -17,7 +17,7 @@ Collect deterministic evidence only. Preserve the exact UTF-8 source bytes, norm
 - Report Vale line and span values as Vale coordinates, not byte offsets.
 - Let destination owners preserve commands, identifiers, links, marker blocks, warnings, billing/authentication facts, and safety or authority language.
 
-Vale is a managed development dependency. If it is absent, keep the source identity and return `unavailable`; never substitute another linter or report a clean result. The reviewed portable, independently authored rules are bundled under `vale/styles/Portable/`. Every emitted severity is normalized to `suggestion`. `vale/profiles.json` is the authoritative profile inventory.
+Vale is a required Writing Check dependency. If it is absent, keep the source identity and return `unavailable`; never substitute another linter or report a clean result. The reviewed Google Vale v0.7.1 rules are bundled under `vale/styles/GoogleDocs/` with their MIT license and upstream lock. Every emitted severity is normalized to `suggestion`. `vale/profiles.json` is the authoritative profile inventory.
 
 ## Run
 
@@ -37,11 +37,11 @@ Profiles:
 | Profile | Vale observations | Readability |
 | --- | --- | --- |
 | `commit` | Subject/body mechanics, placeholder markers, small local inflation list | Disabled |
-| `pr-description` | Placeholder markers, local inflation list, broad reviewed portable policy rules, portable terminology | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
-| `readme` | Broad reviewed portable policy rules, portable terminology | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
-| `technical-doc-explanatory` | Broad reviewed portable policy rules, portable terminology | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10 |
-| `technical-doc-reference` | Broad reviewed portable policy rules, portable terminology | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
-| `user-facing-response` | Broad reviewed portable policy rules, portable terminology | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
+| `pr-description` | Reviewed Google Vale v0.7.1 rules | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
+| `readme` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
+| `technical-doc-explanatory` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10 |
+| `technical-doc-reference` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
+| `user-facing-response` | Reviewed Google Vale v0.7.1 rules | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
 
 Apply the same FRE 55 minimum and FK 10 maximum to every normal-sample long-form profile while preserving each profile's sample-size and composition rules. Reserve `user-facing-response` for an explicit plain-English rewrite owned by the `user-facing-response` skill; normal conversational drafting does not invoke Vale by default. If that owner is unavailable, keep this checker read-only and return evidence only rather than drafting replacement prose.
 

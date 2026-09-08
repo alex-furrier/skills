@@ -5,7 +5,7 @@ import json, pathlib, re, shutil, subprocess, sys, tempfile
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PRIVATE=(r"/Users/", r"/home/[^/]+/", r"\.pi-personal", r"AI_RUNTIME_PROFILE", r"DISCORD", r"HPPM", r"obsidian", r"\bvault\b", r"\balex\b", r"alex-", r"github-open-pr", r"writing-voice-check", r"commit-message", r"writing-editor", r"plugins/")
 TEXT={".md", ".py", ".json", ".yml", ".yaml", ".toml", ".ini", ".sh"}
-IGNORED={".git","__pycache__",".pytest_cache","site"}
+IGNORED={".git",".venv","__pycache__",".pytest_cache","site"}
 def shipped():
  for p in ROOT.rglob("*"):
   if any(x in IGNORED for x in p.parts): continue

@@ -58,6 +58,33 @@ def test_metadata_provenance_privacy_and_copied_artifact_validate():
     assert run(sys.executable, "scripts/validate.py").returncode == 0
 
 
+def test_installation_and_validation_docs_require_complete_catalog():
+    installation = (ROOT / "docs/installation.md").read_text()
+    validation = (ROOT / "docs/validation.md").read_text()
+    readme = (ROOT / "README.md").read_text()
+    combined = "\n".join((installation, validation, readme))
+
+    assert "skill-only\ninstaller" in readme
+    assert "installSkillForAgent" in installation
+    assert "PYTHONPATH=packages/context-engineering" not in combined
+    assert "uv run --project <catalog-root>/packages/context-engineering" in installation
+    assert "uv run --project packages/context-engineering context-engineering check" in validation
+    assert "Vale itself is required" in validation
+    assert "packages/writing-check/vale/styles/GoogleDocs" in installation
+
+
+def test_ci_installs_checksum_pinned_vale_before_fast_check():
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+    install_index = workflow.index("- name: Install Vale 3.17.1")
+    verify_index = workflow.index("- name: Verify Vale")
+    fast_check_index = workflow.index("- run: ./scripts/fast-check.sh")
+    assert "https://github.com/vale-cli/vale/releases/download/v3.17.1/vale_3.17.1_Linux_64-bit.tar.gz" in workflow
+    assert "db947f89f2292e6a0381a61de155f6a5f5cb4cb460ca178ea412ef605559cefd" in workflow
+    assert "sha256sum --check --strict" in workflow and "sudo install -m 0755" in workflow
+    assert 'test "$(vale --version)" = "vale version 3.17.1"' in workflow
+    assert install_index < verify_index < fast_check_index
+
+
 def test_shipped_skills_have_no_experimental_maturity_label():
     for skill in ROOT.glob("skills/*/*/SKILL.md"):
         assert "experimental" not in skill.read_text().lower(), skill
@@ -75,7 +102,7 @@ def test_context_docs_verifier_available_unavailable_and_readonly(tmp_path):
     copied = tmp_path / "context-docs"; shutil.copytree(ROOT / "skills/context/context-docs", copied)
     unavailable = run(sys.executable, str(copied / "scripts/docs_verify.py"), str(target))
     data = json.loads(unavailable.stdout)
-    assert unavailable.returncode == 0 and data["context_cli"] == "unavailable" and data["findings"] == []
+    assert unavailable.returncode == 3 and data["context_cli"] == "unavailable" and data["findings"] == []
     assert {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file() and ".git" not in p.parts} == before
 
 
@@ -107,14 +134,15 @@ def test_context_commands_run_readonly_on_meaningful_fixture(tmp_path):
     assert (repo / "note.md").read_text() == "# change\n"
 
 
-def test_context_markdown_commands_are_portable_and_resolve_in_copy(tmp_path):
-    artifact = tmp_path / "artifact"; shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", "__pycache__", ".pytest_cache", "site"))
-    text = "\n".join(p.read_text() for p in artifact.rglob("*.md"))
-    assert "uv run --project" not in text
-    commands = set(re.findall(r"python3 -m context_engineering ([a-z-]+)", text))
+def test_context_markdown_requires_catalog_uv_cli_and_installs_from_copy(tmp_path):
+    artifact = tmp_path / "artifact"; shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", "__pycache__", ".pytest_cache", "site", ".venv"))
+    text = "\n".join(p.read_text() for p in (artifact / "skills/context").rglob("*.md"))
+    assert "catalog-level optional dependency" not in text
+    assert "PYTHONPATH=<catalog-root>/packages/context-engineering" not in text
+    commands = set(re.findall(r"uv run --project <catalog-root>/packages/context-engineering context-engineering ([a-z-]+)", text))
     assert commands <= CONTEXT_COMMANDS and commands
     for command in commands:
-        assert subprocess.run([sys.executable, "-m", "context_engineering", command, "--help"], env={**os.environ, "PYTHONPATH": str(artifact / "packages/context-engineering")}, text=True, capture_output=True).returncode == 0
+        assert subprocess.run(["uv", "run", "--project", str(artifact / "packages/context-engineering"), "context-engineering", command, "--help"], text=True, capture_output=True).returncode == 0
 
 
 def test_writing_profiles_policy_identity_and_unavailable_vale(tmp_path):
@@ -130,11 +158,16 @@ def test_writing_profiles_policy_identity_and_unavailable_vale(tmp_path):
     broken = tmp_path / "bad.md"; broken.write_bytes(b"\xff"); assert writing("--profile", "readme", "--json", str(broken)).returncode == 2
 
 
-def test_writing_vale_normalization_and_composition_limit(tmp_path):
+def test_writing_check_vendors_google_rules_and_preserves_advisory_evidence(tmp_path):
     sample = tmp_path / "candidate.md"; sample.write_text("A short candidate.")
-    fake = tmp_path / "bin"; fake.mkdir(); vale = fake / "vale"; vale.write_text("#!/bin/sh\nprintf '{\"candidate.md\":[{\"Check\":\"Portable.Specificity\",\"Message\":\"Be specific\",\"Line\":2,\"Span\":[1,4]}]}'\n"); vale.chmod(0o755)
+    lock = json.loads((ROOT / "packages/writing-check/vale/upstream-lock.json").read_text())
+    assert lock["upstream"]["repository"] == "https://github.com/vale-cli/Google"
+    assert lock["upstream"]["tag"] == "v0.7.1" and lock["upstream"]["license"] == "MIT"
+    assert (ROOT / "packages/writing-check/vale/vendor/Google-LICENSE").is_file()
+    assert (ROOT / "packages/writing-check/vale/styles/GoogleDocs/AMPM.yml").is_file()
+    fake = tmp_path / "bin"; fake.mkdir(); vale = fake / "vale"; vale.write_text("#!/bin/sh\nprintf '{\"candidate.md\":[{\"Check\":\"GoogleDocs.AMPM\",\"Message\":\"Use a.m.\",\"Line\":2,\"Span\":[1,4]}]}'\n"); vale.chmod(0o755)
     result = writing("--profile", "pr-description", "--json", str(sample), env={"PATH": str(fake) + os.pathsep + os.environ["PATH"]}); data = json.loads(result.stdout)
-    assert result.returncode == 1 and data["alerts"][0]["severity"] == "suggestion" and data["vale"]["status"] == "ran"
+    assert result.returncode == 1 and data["alerts"][0]["rule"] == "GoogleDocs.AMPM" and data["alerts"][0]["severity"] == "suggestion" and data["vale"]["status"] == "ran"
     table = tmp_path / "table.md"; table.write_text("| Item | Detail |\n| --- | --- |\n" + "\n".join("| alpha beta gamma delta epsilon | zeta eta theta iota kappa |" for _ in range(20)))
     result = writing("--profile", "readme", "--json", str(table), env={"PATH": "/nonexistent"}); assert json.loads(result.stdout)["readability"]["status"] == "composition_limited"
 

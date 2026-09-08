@@ -5,7 +5,7 @@ description: "Extract durable knowledge from the current or a past agent session
 
 ## Portable deterministic evidence
 
-The Context CLI is a catalog-level optional dependency: run `PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering ...` when the package is installed with this catalog. A copied skill without that package must state `context_cli: unavailable`, preserve raw repository evidence, and continue only with read-only inspection; it must not claim the deterministic check ran or infer a replacement.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Session Capture
 
