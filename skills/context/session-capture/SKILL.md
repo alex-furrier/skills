@@ -150,8 +150,8 @@ Every invocation is proposal-first:
 
 Apply only the approved numbered bundles, wording, and destinations:
 
-- **external knowledge destination:** load a configured knowledge adapter. If unavailable, resolve the absolute
-  configured configured external knowledge destination and use its `staging/` path; never write a relative
+- **External knowledge destination:** load a configured knowledge adapter. If unavailable, resolve the absolute
+  configured external knowledge destination and use its `staging/` path; never write a relative
   `staging/`.
 - **Repo context:** read
   [`references/repo-context.md`](references/repo-context.md), then follow the
