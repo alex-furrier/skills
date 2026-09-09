@@ -79,9 +79,9 @@ Keep the root pointer concise because `docs/AGENTS.md` owns detailed routing:
 Run the shared validators from the target module:
 
 ```bash
-uv run --project <catalog-root>/packages/context-engineering context-engineering references .
-uv run --project <catalog-root>/packages/context-engineering context-engineering frontmatter .
+uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering references .
+uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering frontmatter .
 ```
 
-For PR or full-tree proof, use `uv run --project <catalog-root>/packages/context-engineering context-engineering check` so nested context
+For PR or full-tree proof, use `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering check` so nested context
 roots are validated against exact Git trees.

@@ -8,19 +8,21 @@ and `vale --version`:
 python scripts/fast_check.py
 ```
 
-It runs static type checking with pinned Mypy, behavioral tests, validates a
-copied release artifact and provenance coverage, builds MkDocs with `--strict`,
-runs the installed Context reference check, runs the exact-input Writing Check
-against `README.md`, and finishes with `git diff --check`.
+It verifies the Context lock without network access, runs static type checking
+with pinned Mypy and behavioral tests, validates a copied release artifact and
+provenance coverage, builds MkDocs with `--strict`, runs the installed Context
+reference check, runs the exact-input Writing Check against `README.md`, and
+finishes with `git diff --check`. Context commands use `--no-config --locked` so
+machine-level resolver policy cannot rewrite or invalidate the shipped lock.
 
 Run the type checker directly with:
 
 ```bash
-uv run --project packages/context-engineering mypy --config-file mypy.ini \
+uv run --no-config --locked --project packages/context-engineering mypy --config-file mypy.ini \
   packages/context-engineering/context_engineering packages/writing-check/scripts \
   scripts skills/context/context-docs/scripts \
   skills/writing/pr-description/scripts tests
-uv run --project packages/context-engineering mypy --config-file mypy.ini \
+uv run --no-config --locked --project packages/context-engineering mypy --config-file mypy.ini \
   skills/writing/writing-check/scripts/writing_check.py
 ```
 
@@ -36,7 +38,7 @@ shipped in this catalog.
 For an isolated Context check, use the installed catalog package:
 
 ```bash
-uv run --project packages/context-engineering context-engineering check . --json
+uv run --no-config --locked --project packages/context-engineering context-engineering check . --json
 ```
 
 For an isolated Writing Check, run the complete catalog's bundled checker:
@@ -47,6 +49,7 @@ uv run --python 3.11 python \
   --profile technical-doc --json README.md
 ```
 
-Do not validate a Context skill or Writing Check from a selected-skill copy:
-that artifact omits required package or policy assets. See
-[installation](installation.md) for the required layout.
+Do not validate a Context skill from a selected-skill copy because that artifact
+omits its required package. A copied Writing Check skill is self-contained; invoke
+its included checker script and policy tree. See [installation](installation.md) for
+both layouts.

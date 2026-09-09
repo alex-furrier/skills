@@ -1,6 +1,6 @@
 # Skills
 
-Portable engineering skills are the product. Keep skills self-contained, read-only unless their contract names an explicit apply step, and free of account, machine, credential, and private-corpus assumptions.
+The portable engineering catalog is the product. Keep the complete catalog self-contained, and declare any catalog-level package dependency directly in each affected skill. Keep skills read-only unless their contract names an explicit apply step and free of account, machine, credential, and private-corpus assumptions.
 
 ## Fast check
 

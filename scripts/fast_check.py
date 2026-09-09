@@ -23,10 +23,21 @@ def run(*command: str, allowed_returncodes: tuple[int, ...] = (0,)) -> None:
 
 def main() -> None:
     # This is the full local release check, not a smoke test. It intentionally
-    # builds docs strictly.
+    # builds docs strictly and ignores machine-level uv resolver policy.
+    run(
+        "uv",
+        "lock",
+        "--no-config",
+        "--project",
+        "packages/context-engineering",
+        "--check",
+        "--offline",
+    )
     run(
         "uv",
         "run",
+        "--no-config",
+        "--locked",
         "--project",
         "packages/context-engineering",
         "mypy",
@@ -44,6 +55,8 @@ def main() -> None:
     run(
         "uv",
         "run",
+        "--no-config",
+        "--locked",
         "--project",
         "packages/context-engineering",
         "mypy",
@@ -57,6 +70,8 @@ def main() -> None:
     run(
         "uv",
         "run",
+        "--no-config",
+        "--locked",
         "--project",
         "packages/context-engineering",
         "context-engineering",

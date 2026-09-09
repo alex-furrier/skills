@@ -5,7 +5,7 @@ description: "This skill reviews a branch or pull request diff for missing durab
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Review
 
@@ -21,7 +21,7 @@ Git diff as the source evidence shown to the reviewer.
 
    ```bash
    SKILL_DIR="<absolute path to this skill>"
-   uv run --project <catalog-root>/packages/context-engineering context-engineering check <target> \
+   uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering check <target> \
      --base <base-sha> --head <head-sha> --json
    ```
 
@@ -31,7 +31,7 @@ Git diff as the source evidence shown to the reviewer.
 
    ```bash
    SKILL_DIR="<absolute path to this skill>"
-   uv run --project <catalog-root>/packages/context-engineering context-engineering review <target> \
+   uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering review <target> \
      --base <base-sha> --head <head-sha> --json
    ```
 
@@ -71,7 +71,7 @@ Git diff as the source evidence shown to the reviewer.
 
 ## Dependencies
 
-Require Git, `uv`, and the complete catalog's `packages/context-engineering` package. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace the deterministic analyzer with manual diff inspection. Harness Kit and GitHub access remain optional.
+Require Git, `uv`, and the complete catalog's `packages/context-engineering` package. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace the deterministic analyzer with manual diff inspection. Harness Kit and GitHub access remain optional.
 
 ## Report
 

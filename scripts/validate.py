@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate release metadata, portable skill metadata, links, and private leakage."""
 from __future__ import annotations
-import json, pathlib, re, shutil, subprocess, sys, tempfile
+import hashlib, json, pathlib, re, shutil, subprocess, sys, tempfile
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PRIVATE=(r"/Users/", r"/home/[^/]+/", r"\.pi-personal", r"AI_RUNTIME_PROFILE", r"DISCORD", r"HPPM", r"obsidian", r"\bvault\b", r"\balex\b", r"alex-", r"github-open-pr", r"writing-voice-check", r"commit-message", r"writing-editor", r"plugins/")
 TEXT={".md", ".py", ".json", ".yml", ".yaml", ".toml", ".ini", ".sh"}
@@ -12,6 +12,25 @@ def shipped():
   if p.is_file() or p.is_symlink(): yield p
 def covered(rel, entries):
  return any(rel==e.get("path") or rel.startswith(e.get("path_prefix", "\0")) for e in entries)
+def validate_writing_policy(errors):
+ roots=[ROOT/'packages/writing-check/vale',ROOT/'skills/writing/writing-check/vale']
+ try: manifests=[json.loads((root/'profiles.json').read_text()) for root in roots]
+ except (OSError,json.JSONDecodeError) as exc: errors.append(f'invalid Writing Check manifest: {exc}'); return
+ if manifests[0] != manifests[1]: errors.append('Writing Check manifests differ between package and skill copies'); return
+ rules=manifests[0].get('rules')
+ if not isinstance(rules,dict) or not rules: errors.append('Writing Check manifest has no rule digests'); return
+ declared=set()
+ for name,metadata in rules.items():
+  if not isinstance(metadata,dict) or not isinstance(metadata.get('path'),str) or not isinstance(metadata.get('sha256'),str): errors.append(f'invalid Writing Check rule metadata: {name}'); continue
+  rel=metadata['path']; declared.add(rel)
+  for root in roots:
+   path=root/rel
+   if not path.is_file(): errors.append(f'missing Writing Check rule: {path.relative_to(ROOT)}'); continue
+   digest=hashlib.sha256(path.read_bytes()).hexdigest()
+   if digest != metadata['sha256']: errors.append(f'Writing Check rule digest mismatch: {path.relative_to(ROOT)}')
+ for root in roots:
+  actual={p.relative_to(root).as_posix() for p in (root/'styles/GoogleDocs').glob('*.yml')}
+  if actual != declared: errors.append(f'Writing Check rule inventory mismatch: {root.relative_to(ROOT)}')
 def main():
  errors=[]
  try: inventory=json.loads((ROOT/'provenance.json').read_text())
@@ -40,6 +59,7 @@ def main():
   if any(x in IGNORED for x in p.parts): continue
   for link in re.findall(r'\[[^]]+\]\(([^)#]+)(?:#[^)]+)?\)',p.read_text()):
    if '://' not in link and not (p.parent/link).exists(): errors.append(f'{p.relative_to(ROOT)}: missing {link}')
+ validate_writing_policy(errors)
  if '--copied' not in sys.argv:
   with tempfile.TemporaryDirectory() as td:
    out=pathlib.Path(td)/'artifact'; shutil.copytree(ROOT,out,ignore=shutil.ignore_patterns('.git','__pycache__','.mypy_cache','.pytest_cache','site'))

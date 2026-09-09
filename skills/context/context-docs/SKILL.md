@@ -18,7 +18,7 @@ Portable catalog release: `safurrier-skills`; the Context CLI is an optional pac
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Documentation Workflow
 
@@ -80,9 +80,9 @@ claim against the named cutoff or current source before applying it.
 All modes end with deterministic verification through the required catalog CLI:
 
 ```bash
-uv run --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target-repo-root>
-uv run --project <catalog-root>/packages/context-engineering context-engineering references <target-repo-root>
-uv run --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target-repo-root>
+uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target-repo-root>
+uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering references <target-repo-root>
+uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target-repo-root>
 ```
 
 `context-engineering antipatterns` checks content quality (P4 volatile content,
@@ -333,7 +333,7 @@ If the user approves a proposal, follow
    the approved trigger, procedure, boundaries, and validation steps. Use an
    installed skill-authoring workflow when available; otherwise follow the
    portable requirements in the linked convention.
-3. Validate with `uv run --project <catalog-root>/packages/context-engineering context-engineering skills <skill-dir>`. If the required CLI cannot run, stop and report the missing dependency; do not replace catalog validation with direct local checks.
+3. Validate with `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering skills <skill-dir>`. If the required CLI cannot run, stop and report the missing dependency; do not replace catalog validation with direct local checks.
 
 ---
 

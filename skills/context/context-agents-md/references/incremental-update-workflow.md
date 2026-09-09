@@ -7,7 +7,7 @@ reconstruction. This significantly reduces update time for typical repos.
 
 ### Step 1: Assess Staleness
 
-Run `uv run --project <catalog-root>/packages/context-engineering context-engineering staleness <path-to-AGENTS.md> --json` to get a JSON report with:
+Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering staleness <path-to-AGENTS.md> --json` to get a JSON report with:
 - Last update commit and date
 - Number of commits since
 - Every changed path, its impact label (HIGH / MEDIUM / LOW), and the rule that produced that label
@@ -43,7 +43,7 @@ For each section of the existing AGENTS.md, check what changed:
 | Invariants | CI workflows, security configs, or build constraints changed |
 | Gotchas | Common failure patterns changed (hard to detect — review if HIGH impact files changed) |
 | Progressive disclosure | New AGENTS.md files created/removed, new docs/ files added |
-| Frontmatter | Validate with `uv run --project <catalog-root>/packages/context-engineering context-engineering frontmatter` — update if headings changed |
+| Frontmatter | Validate with `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering frontmatter` — update if headings changed |
 
 ### Step 4: Diff-Based Editing
 
@@ -56,8 +56,8 @@ For each section that needs updating:
 ### Step 5: Validate
 
 After updates:
-1. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target>` — check all frontmatter is valid
-2. Run `uv run --project <catalog-root>/packages/context-engineering context-engineering references <target>` — check all referenced paths exist
+1. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target>` — check all frontmatter is valid
+2. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering references <target>` — check all referenced paths exist
 
 ## Signals That Force Full Rebuild
 

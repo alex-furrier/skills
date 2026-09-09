@@ -4,15 +4,15 @@ An opinionated, portable collection of engineering skills for agents and their o
 
 ## Install
 
-Install the complete catalog checkout or source archive; do not use a skill-only
-installer for Context skills or Writing Check because it omits sibling required
-packages and policy assets. See [installation](docs/installation.md) for the
-required layout, installer boundary, and prerequisite verification.
+Install the complete catalog checkout or source archive for Context skills because
+skill-only installers omit their required sibling package. Writing Check can install
+on its own because its skill directory contains the checker and policy assets. See
+[installation](docs/installation.md) for the required layouts and prerequisites.
 
 ### Required dependencies
 
-- **Context skills:** install `uv` and retain `packages/context-engineering` at the catalog root. Run deterministic analysis with `uv run --project <catalog-root>/packages/context-engineering context-engineering <subcommand> ...`. A missing `uv` executable or Context package is a fail-fast error for workflows that require deterministic analysis; it is not a read-only fallback.
-- **Writing Check:** install Vale and retain the bundled `vale/` directory. Writing Check uses vendored Google Vale v0.7.1 rules plus readability evidence; findings remain advisory, never an automatic gate.
+- **Context skills:** install `uv` and retain `packages/context-engineering` at the catalog root. Run deterministic analysis with `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering <subcommand> ...`. A missing `uv` executable or Context package is a fail-fast error for workflows that require deterministic analysis; it is not a read-only fallback.
+- **Writing Check:** install Vale and retain the `vale/` directory bundled with either the complete catalog or the standalone skill. Writing Check uses vendored Google Vale v0.7.1 rules plus readability evidence; findings remain advisory, never an automatic gate.
 
 This source checkout uses Python 3.11+.
 
@@ -30,7 +30,7 @@ This source checkout uses Python 3.11+.
 
 ```bash
 python scripts/fast_check.py
-uv run --project packages/context-engineering context-engineering references . --json
+uv run --no-config --locked --project packages/context-engineering context-engineering references . --json
 uv run --python 3.11 python packages/writing-check/scripts/writing_check.py --profile technical-doc README.md
 ```
 

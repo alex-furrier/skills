@@ -1,9 +1,8 @@
 # Installation
 
-Install this catalog as one complete checkout or source archive. Do not use a
-skill-only installer or copy a chosen skill directory for Context skills or
-Writing Check: those paths omit required catalog packages or vendored policy
-assets.
+Install Context skills from one complete catalog checkout or source archive because
+they require the sibling Context package. Writing Check can install as one copied
+skill directory because that directory includes its checker and vendored policy.
 
 ## Complete catalog checkout
 
@@ -19,18 +18,26 @@ test -d <catalog-root>/skills/writing
 ```
 
 Configure the compatible agent to discover skills from
-`<catalog-root>/skills`. A plugin manager is suitable only when its installed
-artifact preserves that complete layout; verify the four paths above in the
-installed location before relying on Context skills or Writing Check.
+`<catalog-root>/skills`. A plugin manager is suitable for Context skills only when
+its installed artifact preserves that complete layout; verify the Context paths
+above before relying on their deterministic workflows.
 
 ## Skill-only installer boundary
 
-Do not use `npx skills add safurrier/skills` for this catalog. The locally
-inspected Skills CLI v1.5.18 copies each discovered skill directory into an
-agent target, not sibling catalog packages. Its `installSkillForAgent` source
-calls `copyDirectory(skill.path, ...)`, so it cannot preserve the required
-`packages/` layout. This conclusion is recorded from local source inspection;
-no network installation was run.
+Do not use `npx skills add safurrier/skills` to install Context skills. The locally
+inspected Skills CLI v1.5.18 copies each discovered skill directory into an agent
+target, not sibling catalog packages. Its `installSkillForAgent` source calls
+`copyDirectory(skill.path, ...)`, so it cannot preserve the required `packages/`
+layout. This conclusion is recorded from local source inspection; no network
+installation was run.
+
+A copied `writing-check` skill is supported. Verify that its installed directory
+contains these self-contained assets:
+
+```bash
+test -f <writing-check-skill>/scripts/writing_check.py
+test -d <writing-check-skill>/vale/styles/GoogleDocs
+```
 
 ## Prerequisites
 
@@ -48,7 +55,7 @@ Context workflows require `uv`, Python 3.11+, and
 `packages/context-engineering`. Run deterministic analysis with:
 
 ```bash
-uv run --project <catalog-root>/packages/context-engineering \
+uv run --no-config --locked --project <catalog-root>/packages/context-engineering \
   context-engineering <subcommand> ...
 ```
 

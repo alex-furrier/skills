@@ -36,7 +36,7 @@ Profiles:
 
 | Profile | Vale observations | Readability |
 | --- | --- | --- |
-| `commit` | Subject/body mechanics, placeholder markers, small local inflation list | Disabled |
+| `commit` | Reviewed Google Vale v0.7.1 rules | Disabled |
 | `pr-description` | Reviewed Google Vale v0.7.1 rules | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
 | `readme` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
 | `technical-doc-explanatory` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10 |
