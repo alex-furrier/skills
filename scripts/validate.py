@@ -14,6 +14,18 @@ def covered(rel, entries):
  return any(rel==e.get("path") or rel.startswith(e.get("path_prefix", "\0")) for e in entries)
 def validate_writing_policy(errors):
  roots=[ROOT/'packages/writing-check/vale',ROOT/'skills/writing/writing-check/vale']
+ try: locks=[json.loads((root/'upstream-lock.json').read_text()) for root in roots]
+ except (OSError,json.JSONDecodeError) as exc: errors.append(f'invalid Writing Check lock: {exc}'); return
+ if locks[0] != locks[1]: errors.append('Writing Check locks differ between package and skill copies')
+ upstream=locks[0].get('upstream')
+ if not isinstance(upstream,dict) or not isinstance(upstream.get('license_file'),str) or not isinstance(upstream.get('license_sha256'),str):
+  errors.append('invalid Writing Check license metadata')
+ else:
+  for root in roots:
+   path=root/upstream['license_file']
+   if not path.is_file(): errors.append(f'missing Writing Check license: {path.relative_to(ROOT)}'); continue
+   if hashlib.sha256(path.read_bytes()).hexdigest() != upstream['license_sha256']:
+    errors.append(f'Writing Check license digest mismatch: {path.relative_to(ROOT)}')
  try: manifests=[json.loads((root/'profiles.json').read_text()) for root in roots]
  except (OSError,json.JSONDecodeError) as exc: errors.append(f'invalid Writing Check manifest: {exc}'); return
  if manifests[0] != manifests[1]: errors.append('Writing Check manifests differ between package and skill copies'); return

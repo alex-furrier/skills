@@ -38,7 +38,7 @@ shipped in this catalog.
 For an isolated Context check, use the installed catalog package:
 
 ```bash
-uv run --no-config --locked --project packages/context-engineering context-engineering check . --json
+uv run --no-config --locked --no-dev --project packages/context-engineering context-engineering check . --json
 ```
 
 For an isolated Writing Check, run the complete catalog's bundled checker:

@@ -4,7 +4,7 @@ description: "Generate lean AGENTS.md files with a short orientation and DO/NOT/
 ---
 
 **Watermark**: All generated AGENTS.md files include a `generated-by` watermark.
-Portable catalog release: `safurrier-skills`; the Context CLI is an optional package-level dependency.
+Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and catalog-level `packages/context-engineering` package are required dependencies.
 
 ## Output Shape (North Star)
 
@@ -14,7 +14,7 @@ the target for every generated AGENTS.md:
 ```markdown
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Module Name
 
@@ -111,7 +111,7 @@ If `$ARGUMENTS` contains `--help` or is exactly `help`, print usage and exit.
 
 **quick-start**: Create from scratch. Output is orientation + gotchas.
 
-**update**: Incremental. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering staleness <path-to-AGENTS.md> --json` to assess what changed. Inspect every reported path and classification reason before choosing scope; the recommendation is advisory.
+**update**: Incremental. Run `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering staleness <path-to-AGENTS.md> --json` to assess what changed. Inspect every reported path and classification reason before choosing scope; the recommendation is advisory.
 Only update affected sections. Use a full scan only after independently verifying one
 of the force conditions in `references/incremental-update-workflow.md`.
 
@@ -176,7 +176,7 @@ knowing about. Use multiple sources — the script is one signal, not the only o
    reading alone misses:
 
    ```bash
-   uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering cross-cutting <target> --discover --lookback-days 180 --top 12 --json
+   uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering cross-cutting <target> --discover --lookback-days 180 --top 12 --json
    ```
 
 Combine all four sources, then filter to 3-6 entries using the decision rule:
@@ -202,7 +202,7 @@ nothing meaningful is coupled.
 Classify the module's tier via the shared CLI:
 
 ```bash
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering tier <target> --json
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering tier <target> --json
 ```
 
 Returns `tier` ∈ `{1, 2-5, 6-20, 21+}` plus plain-language guidance for
@@ -328,10 +328,10 @@ If there's nothing to relocate/review/drop, don't create the file.
 Run validation via the shared CLI (paths are relative to this skill's directory):
 
 ```bash
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target>           # only if docs/ exist
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering references <target>            # path reference checks
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target>          # volatile content, line limits, density, splitting-candidate
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering depth <target>/AGENTS.md       # depth-appropriate content
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target>           # only if docs/ exist
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering references <target>            # path reference checks
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target>          # volatile content, line limits, density, splitting-candidate
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering depth <target>/AGENTS.md       # depth-appropriate content
 ```
 
 The `antipatterns splitting-candidate` warning fires when 3+ gotcha
@@ -364,7 +364,7 @@ Do NOT paste full file contents unless asked.
 Deterministic validation tools in `scripts/`:
 
 Invoke via the shared CLI (from this skill's directory):
-`uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering <subcommand>`
+`uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering <subcommand>`
 
 | Subcommand | When to run | What it does |
 |------------|-------------|-------------|

@@ -11,7 +11,7 @@ on its own because its skill directory contains the checker and policy assets. S
 
 ### Required dependencies
 
-- **Context skills:** install `uv` and retain `packages/context-engineering` at the catalog root. Run deterministic analysis with `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering <subcommand> ...`. A missing `uv` executable or Context package is a fail-fast error for workflows that require deterministic analysis; it is not a read-only fallback.
+- **Context skills:** install `uv` and retain `packages/context-engineering` at the catalog root. Run deterministic analysis with `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering <subcommand> ...`. A missing `uv` executable or Context package is a fail-fast error for workflows that require deterministic analysis; it is not a read-only fallback.
 - **Writing Check:** install Vale and retain the `vale/` directory bundled with either the complete catalog or the standalone skill. Writing Check uses vendored Google Vale v0.7.1 rules plus readability evidence; findings remain advisory, never an automatic gate.
 
 This source checkout uses Python 3.11+.
@@ -30,7 +30,7 @@ This source checkout uses Python 3.11+.
 
 ```bash
 python scripts/fast_check.py
-uv run --no-config --locked --project packages/context-engineering context-engineering references . --json
+uv run --no-config --locked --no-dev --project packages/context-engineering context-engineering references . --json
 uv run --python 3.11 python packages/writing-check/scripts/writing_check.py --profile technical-doc README.md
 ```
 

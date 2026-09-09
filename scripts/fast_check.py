@@ -72,6 +72,7 @@ def main() -> None:
         "run",
         "--no-config",
         "--locked",
+        "--no-dev",
         "--project",
         "packages/context-engineering",
         "context-engineering",

@@ -10,7 +10,7 @@ description: >
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Improve
 
@@ -45,7 +45,7 @@ Use the shared CLI's `sessions` subcommand with the current directory to
 find sessions that mention this repo:
 
 ```bash
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering sessions "$(pwd)" --max ${MAX_SESSIONS:-20} --json
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering sessions "$(pwd)" --max ${MAX_SESSIONS:-20} --json
 ```
 
 This returns sessions ranked by relevance to the current directory. Skim the top
@@ -71,7 +71,7 @@ Wait for user selection. Then run targeted mode on the selected path.
 `git -C <repo-path> rev-parse --show-toplevel`. Compute depth:
 
 ```bash
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering depth <target-path> --json
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering depth <target-path> --json
 ```
 
 The subcommand accepts either an AGENTS.md file (runs full stringency checks) or a
@@ -106,7 +106,7 @@ Existing context: <what was found>
 Discover sessions relevant to the target path:
 
 ```bash
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering sessions <target-path> --max ${MAX_SESSIONS:-20} --json
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering sessions <target-path> --max ${MAX_SESSIONS:-20} --json
 ```
 
 Load the a separate multi-session workflow skill (sibling skill in this plugin). Pass it:
@@ -158,16 +158,16 @@ Run validation scripts against the target:
 
 ```bash
 # Frontmatter checks (only relevant if --docs was used)
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target>
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target>
 
 # Path reference checks
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering references <target>
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering references <target>
 
 # Antipattern + depth-tiered line limits
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target>
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target>
 
 # Depth stringency
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering context-engineering depth <target>/AGENTS.md
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering depth <target>/AGENTS.md
 ```
 
 Fix blocking failures (broken refs). Review non-blocking warnings.

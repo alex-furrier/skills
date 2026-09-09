@@ -55,7 +55,7 @@ Context workflows require `uv`, Python 3.11+, and
 `packages/context-engineering`. Run deterministic analysis with:
 
 ```bash
-uv run --no-config --locked --project <catalog-root>/packages/context-engineering \
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering \
   context-engineering <subcommand> ...
 ```
 
