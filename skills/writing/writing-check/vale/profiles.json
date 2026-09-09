@@ -1,13 +1,485 @@
 {
-  "schema": 3,
-  "profiles": {
-    "commit": {"readability": "disabled", "policy": "commit"},
-    "pr-description": {"readability": "long-form", "policy": "review-copy"},
-    "readme": {"readability": "long-form", "policy": "documentation"},
-    "technical-doc": {"readability": "long-form", "policy": "documentation"},
-    "technical-doc-explanatory": {"readability": "long-form", "policy": "documentation"},
-    "technical-doc-reference": {"readability": "long-form", "policy": "documentation"},
-    "user-facing-response": {"readability": "long-form", "policy": "conversation"}
+  "schema": 2,
+  "upstream": {
+    "repository": "https://github.com/vale-cli/Google",
+    "tag": "v0.7.1",
+    "commit": "56b01fed2532273121abcee1e7359483c879628f",
+    "license": "MIT",
+    "license_file": "vendor/Google-LICENSE"
   },
-  "policy": "All findings are advisory. Portable Vale styles are independently authored; Vale is optional and never fetched."
+  "profiles": {
+    "commit": {
+      "readability": "disabled",
+      "policy": "google-docs-v0.7.1"
+    },
+    "pr-description": {
+      "readability": "long-form",
+      "policy": "google-docs-v0.7.1"
+    },
+    "readme": {
+      "readability": "long-form",
+      "policy": "google-docs-v0.7.1"
+    },
+    "technical-doc": {
+      "readability": "long-form",
+      "policy": "google-docs-v0.7.1"
+    },
+    "technical-doc-explanatory": {
+      "readability": "long-form",
+      "policy": "google-docs-v0.7.1"
+    },
+    "technical-doc-reference": {
+      "readability": "long-form",
+      "policy": "google-docs-v0.7.1"
+    },
+    "user-facing-response": {
+      "readability": "long-form",
+      "policy": "google-docs-v0.7.1"
+    }
+  },
+  "policy": "All findings are advisory. Vendored Google Vale v0.7.1 rules are normalized to suggestions and never fetched during checks.",
+  "rules": {
+    "GoogleDocs.AMPM": {
+      "path": "styles/GoogleDocs/AMPM.yml",
+      "sha256": "92c6c9a9818303de13988d9ef6551a64adec85ee87802a345904e4d991d98a09",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Acronyms": {
+      "path": "styles/GoogleDocs/Acronyms.yml",
+      "sha256": "b3739267c5fcc01cafb60580c20127c2fbb1299694e443753a72cea0567a314c",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Anthropomorphism": {
+      "path": "styles/GoogleDocs/Anthropomorphism.yml",
+      "sha256": "6468468f486bc663d8f9672b28dfd1d57ec2d3eeafcd013ebffed25fa2fcc38e",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Colons": {
+      "path": "styles/GoogleDocs/Colons.yml",
+      "sha256": "0e25a8e6b259a7ff3676e18347ef9db5d0de5664bc780ad49603930c52b7b1ca",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Contractions": {
+      "path": "styles/GoogleDocs/Contractions.yml",
+      "sha256": "c4cf2b68da3a64bea9acf29654fb4e9f5fec16d75f5c78662620a242ef460c57",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.DateFormat": {
+      "path": "styles/GoogleDocs/DateFormat.yml",
+      "sha256": "4510af72cb4e9ebd1a42c1ccd0db28f6369e00de239a8893eb53cfd972498758",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Ellipses": {
+      "path": "styles/GoogleDocs/Ellipses.yml",
+      "sha256": "2e292065812bef746252bd312c2069caca55dca7e73ed99529d3ff0433ad5808",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.EmDash": {
+      "path": "styles/GoogleDocs/EmDash.yml",
+      "sha256": "0025bfd8570346998d7cd9fb9d9c2f0ca77769f31ad7b99d2de4bfde1bad71ef",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.ExcessiveClaims": {
+      "path": "styles/GoogleDocs/ExcessiveClaims.yml",
+      "sha256": "9587449c33f9f00f1508e935094c4c817050e886ff18b70422db42278c3f7388",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Exclamation": {
+      "path": "styles/GoogleDocs/Exclamation.yml",
+      "sha256": "3603f999cabfa17b6be579dc076ce88cce886520924f00c08899d612272b73b4",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.FirstPerson": {
+      "path": "styles/GoogleDocs/FirstPerson.yml",
+      "sha256": "0eb35ed89fb0b4abbbcd362d2822f29cb5a1e5bdd566a47b2ea78849f2e5f49c",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Gender": {
+      "path": "styles/GoogleDocs/Gender.yml",
+      "sha256": "b8ebe7945cc80b71e9600823187b3ab2298987c7c6138ac2056366d07c669ef2",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.GenderBias": {
+      "path": "styles/GoogleDocs/GenderBias.yml",
+      "sha256": "a8b6a86a1912ea1d20d08122b3d52e7dde23eb8b518663fbf6d05535e9649084",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.HeadingPunctuation": {
+      "path": "styles/GoogleDocs/HeadingPunctuation.yml",
+      "sha256": "9bcd0a7efb6ac4435e8a37eab723f80455a635a4426b58b56b1f0feaba98666d",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Headings": {
+      "path": "styles/GoogleDocs/Headings.yml",
+      "sha256": "26650f98c3dbfa2b72ec018c52a14d7f497b950172c35550d5dd22ebf8e8dfa3",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Jargon": {
+      "path": "styles/GoogleDocs/Jargon.yml",
+      "sha256": "0c64ad760a2f8071a1ed6b847169e47a9c35857c605e329a5309758e56f00b30",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Latin": {
+      "path": "styles/GoogleDocs/Latin.yml",
+      "sha256": "4801b00c47da29d83e5264823e1559cc170865b1f8f362312a8e29ede5213a60",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.LyHyphens": {
+      "path": "styles/GoogleDocs/LyHyphens.yml",
+      "sha256": "bfd32bda796e8c3faa2c0d2a057fba9adff959c869a52e47e3a7a8603f86e70e",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.OptionalPlurals": {
+      "path": "styles/GoogleDocs/OptionalPlurals.yml",
+      "sha256": "03f11e6fd54c07daeb9ac3fc88b2b39a1c9b67d7374326793fc31c72cfd31b86",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Ordinal": {
+      "path": "styles/GoogleDocs/Ordinal.yml",
+      "sha256": "c350628577fafd932d3d4b7d329e32224f5a984ebff83f12a2edad9a1ef5f1b4",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.OxfordComma": {
+      "path": "styles/GoogleDocs/OxfordComma.yml",
+      "sha256": "3335506f50f94f89bcb7a3e9f076d65565210b65f849fb3b1c1a03d009576481",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Parens": {
+      "path": "styles/GoogleDocs/Parens.yml",
+      "sha256": "1e9f49b1f700017dd6402de2fe618ef9b8a68871faff0abe891dfcec175cfbe5",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Passive": {
+      "path": "styles/GoogleDocs/Passive.yml",
+      "sha256": "5e615ff26b365b0e3ee3c3ddc6ac80c6aac08f9dc93a4644adc3b3aba86b1445",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Periods": {
+      "path": "styles/GoogleDocs/Periods.yml",
+      "sha256": "3f838c2f2e969c21aaaf9094cef1f70d502edd25bf7e53fcb47172fc63a84ae7",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Quotes": {
+      "path": "styles/GoogleDocs/Quotes.yml",
+      "sha256": "8387cbcae75ed246a89b0711414f8ee2574beaa484f83625109688bb67e6fc65",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Ranges": {
+      "path": "styles/GoogleDocs/Ranges.yml",
+      "sha256": "f6e25b9a2ab04bcad667700c1682f1724f2c27c5ef08da9fa1f30ca2a0db1874",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Semicolons": {
+      "path": "styles/GoogleDocs/Semicolons.yml",
+      "sha256": "653256cf99e118226bb7f7f3fa5e4ee0a9b9ac191dfe4b9d81adb8862a9ff10e",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Slang": {
+      "path": "styles/GoogleDocs/Slang.yml",
+      "sha256": "045d409e851599201c1e138bbf863d1f22e2f1d1d9e5bed9dfb8813d53553695",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Spacing": {
+      "path": "styles/GoogleDocs/Spacing.yml",
+      "sha256": "65707858272838980470c6e220c6ed5e2a7c538241961547361e10c631101600",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Spelling": {
+      "path": "styles/GoogleDocs/Spelling.yml",
+      "sha256": "660daf3d7bb93b63aa936804eecb8a25754c83bc29e7c9065f81eb156a74977d",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Timeless": {
+      "path": "styles/GoogleDocs/Timeless.yml",
+      "sha256": "7a9fec5735192fba4e7fdd59c374fb3bdd9ed6164169ab59f3f4c25f76f85861",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Units": {
+      "path": "styles/GoogleDocs/Units.yml",
+      "sha256": "c63e9ad1f7f9310b76c19cfa77c8652ffbe739ca8c89f9e09ac116430fe9e17b",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.We": {
+      "path": "styles/GoogleDocs/We.yml",
+      "sha256": "b8c871cc2f7bdb8bd9c0597158e45d2b6600f40ed71aa3c7d5cd61177a6dceac",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    },
+    "GoogleDocs.Will": {
+      "path": "styles/GoogleDocs/Will.yml",
+      "sha256": "45d6e5a54fa671c2dd31fd55b840dc4ef6d14036231514e46f118e8e93e50a8b",
+      "profiles": [
+        "commit",
+        "pr-description",
+        "readme",
+        "technical-doc",
+        "technical-doc-explanatory",
+        "technical-doc-reference",
+        "user-facing-response"
+      ]
+    }
+  }
 }

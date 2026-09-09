@@ -129,9 +129,9 @@ them merely to satisfy a rule or readability band.
 Run `writing-check --profile readme` on the exact candidate. If the checker or
 Vale is unavailable, continue only with the authorized README judgment, report
 the unavailable state, and do not claim clean evidence or substitute another
-linter. Treat its broad reviewed portable policy, narrow mechanical host
-terminology, and readability sample as advisory evidence. The policy excludes the
-upstream Google word lists and does not make contextual product substitutions:
+linter. Treat its reviewed Google Vale v0.7.1 rules and readability sample as
+advisory evidence. The policy excludes the upstream Google word lists and does
+not make contextual product substitutions:
 
 - under 100 included prose words or 5 sentences is `insufficient_sample`;
 - 100–299 words is normally `small_sample`;

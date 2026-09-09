@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run portable deterministic documentation checks when the catalog CLI is present."""
+"""Run catalog deterministic documentation checks; fail when the catalog is incomplete."""
 
 from __future__ import annotations
 
@@ -23,10 +23,10 @@ def main() -> int:
                 "schema": 1,
                 "target": str(root),
                 "context_cli": "unavailable",
-                "reason": "The catalog-level context-engineering package is not bundled with this copied skill.",
+                "reason": "Install the complete catalog with packages/context-engineering; a copied Context skill cannot provide deterministic verification.",
                 "findings": [],
             },
-            0,
+            3,
         )
 
     sys.path.insert(0, str(package_root))

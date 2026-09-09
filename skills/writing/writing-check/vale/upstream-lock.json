@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "upstream": {
+    "repository": "https://github.com/vale-cli/Google",
+    "tag": "v0.7.1",
+    "commit": "56b01fed2532273121abcee1e7359483c879628f",
+    "archive_url": "https://api.github.com/repos/vale-cli/Google/tarball/v0.7.1",
+    "archive_sha256": "9d1df0cff56cebe192cf29024069e0751d163baaaa5e5314ecbd97dc2aeb6bd3",
+    "license": "MIT",
+    "license_file": "vendor/Google-LICENSE",
+    "license_sha256": "f661986be23c000812a439e03dfed8d16ff23117e8d1219fc2beb7cd01393640"
+  },
+  "inventory": "profiles.json is the authoritative active, excluded, profile-selector, provenance, digest, normalization, limitation, and overlay inventory.",
+  "normalization": "Vendored Google rules preserve v0.7.1 behavior except that every level is normalized to suggestion and the namespace is GoogleDocs. Upstream WordList.yml and WordListCase.yml are excluded.",
+  "upgrade": "Fetch a named release into a temporary directory, verify the archive digest, compare every reviewed rule, update profiles.json source and vendored digests plus attribution, normalize levels to suggestion, and rerun calibration and dogfood. Normal checks never fetch or run vale sync."
+}

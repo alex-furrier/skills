@@ -121,7 +121,7 @@ Treat machine-managed marker blocks separately. Never rewrite inside them. The m
 
 After semantic drafting and after every revision, always run `writing-check --profile pr-description` on the exact final candidate. Run it for every candidate, including `insufficient_sample` and `small_sample` results; sample size controls only readability applicability. Confirm its retained text and `source.sha256` match the bytes handed to the mutation owner.
 
-- The profile uses the broad reviewed portable policy plus narrow mechanical host terminology; it excludes upstream Google word-list substitutions.
+- The profile uses reviewed Google Vale v0.7.1 rules, normalized to advisory suggestions; it excludes upstream Google word-list substitutions.
 - Findings are a review queue, not a quality failure. In Draft or Improve mode, fix or explicitly disposition every finding against this exact `source.sha256`.
 - Readability is private and advisory: insufficient below 100 prose words or 5 sentences, small below 200 words or 8 sentences, normal at 200 words and 8 sentences with FRE 55 / FK 10 observations.
 - Never print readability in the public body by default.

@@ -1,6 +1,0 @@
-extends: existence
-message: "Consider a more specific phrase."
-level: suggestion
-ignorecase: true
-tokens:
-  - '\b(seamless|game-changing|leverage)\b'

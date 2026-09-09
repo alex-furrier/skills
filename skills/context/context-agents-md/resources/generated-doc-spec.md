@@ -4,7 +4,7 @@ Exact structure and content guidelines for generated AGENTS.md files. All genera
 files follow this template.
 
 ## Contents
-- Required structure (frontmatter, self-documentation requirement, WHY/HOW, commands, invariants, gotchas, pointers)
+- Required structure (watermark, capture authority, WHY/HOW, commands, invariants, gotchas, pointers)
 - CLAUDE.md strategy (symlink + consolidation workflow)
 - Nested AGENTS.md guidelines
 - Command validation rules
@@ -23,13 +23,13 @@ Instead, add an HTML comment watermark at the end of the file:
 
 This watermark is invisible to readers but greppable for tracking adoption and staleness.
 
-### 2. Self-Documentation Requirement
+### 2. Capture authority
 
-Every generated AGENTS.md **must** include this block immediately after the project overview heading (before any other content sections):
-
-> **When a user corrects you or provides you with tribal knowledge/gotchas — something you could not have known from reading the code or your prompt — you MUST document it in an AGENTS.md file before continuing.** Write the correction in the AGENTS.md closest to where the issue occurred.
-
-This makes generated context files self-sustaining — they grow organically from corrections during normal coding sessions.
+Start generated context with the project orientation. Do not add compulsory
+mid-task correction capture. Preserve useful corrections as evidence for an
+explicitly authorized context update, not as automatic write authority. The
+owning `context-agents-md` skill routes later capture to `session-capture` when
+available and otherwise proposes the update without writing it.
 
 ### 3. Project Overview (WHY)
 

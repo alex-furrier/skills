@@ -14,11 +14,11 @@ description: "Opt-in workflow for structured docs directories, including archite
 **Watermark**: When the target uses YAML indexing frontmatter, generated docs
 include `generated-by` and `last-updated` there. Otherwise omit both rather than
 introducing a metadata convention.
-Portable catalog release: `safurrier-skills`; the Context CLI is an optional package-level dependency.
+Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and catalog-level `packages/context-engineering` package are required dependencies.
 
 ## Portable deterministic evidence
 
-The Context CLI is a catalog-level optional dependency: run `PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering ...` when the package is installed with this catalog. A copied skill without that package must state `context_cli: unavailable`, preserve raw repository evidence, and continue only with read-only inspection; it must not claim the deterministic check ran or infer a replacement.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Documentation Workflow
 
@@ -77,26 +77,20 @@ claim against the named cutoff or current source before applying it.
 
 ## Verification
 
-All modes end with deterministic verification. The verification script is bundled with this skill at `scripts/docs_verify.py` (relative to the skill directory, NOT the target repo). Run it by reading the script content and executing it against the target repo root:
+All modes end with deterministic verification through the required catalog CLI:
 
 ```bash
-uv run --python '>=3.11' python <skill-dir>/scripts/docs_verify.py <target-repo-root>
-PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering antipatterns <target-repo-root>
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target-repo-root>
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering references <target-repo-root>
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target-repo-root>
 ```
 
-`docs_verify.py` is a thin renderer over the shared CLI frontmatter, layout,
-and reference checks, so standalone skill verification and PR-time `check`
-apply the same policy. `context-engineering antipatterns` checks content quality
-(P4 volatile content, P11 line limits) — its warnings are non-blocking but
-should be reviewed.
-
-If the scripts are not directly executable, replicate their checks manually:
-- Internal links resolve to existing files
-- Frontmatter is consistent when governed docs establish that convention
-- `docs/AGENTS.md` index is complete (references all docs/ files)
-- `docs/README.md` links are valid
-- No volatile counts (2+ digit file/module/table counts) in headers or prose
-- AGENTS.md line limits are depth-tiered (P11): 80/120 at depth 0, 150/200 at depth 1, 250/300 at depth 2+. Docs files under 300 lines (hard stop 500).
+`context-engineering antipatterns` checks content quality (P4 volatile content,
+P11 line limits); its findings are advisory and should be reviewed. The bundled
+`scripts/docs_verify.py` is a compatibility renderer for the same frontmatter
+and reference checks and exits nonzero when copied without the full catalog.
+Do not replace an unavailable CLI with manual inspection; install the required
+dependency and rerun the command.
 
 This implements `references/principles.md` P14 (Deterministic Verification Over Subjective Quality).
 
@@ -339,10 +333,7 @@ If the user approves a proposal, follow
    the approved trigger, procedure, boundaries, and validation steps. Use an
    installed skill-authoring workflow when available; otherwise follow the
    portable requirements in the linked convention.
-3. When the catalog Context CLI is available, validate with
-   `PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering skills <skill-dir>`.
-   When it is unavailable, report that evidence gap and validate the frontmatter
-   and referenced local files directly.
+3. Validate with `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering skills <skill-dir>`. If the required CLI cannot run, stop and report the missing dependency; do not replace catalog validation with direct local checks.
 
 ---
 

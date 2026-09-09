@@ -4,6 +4,16 @@ When a repo already has documentation — in any directory — treat it as a **m
 source**, not a cleanup target. This workflow governs how to read, classify, migrate,
 and report on pre-existing content before touching any files.
 
+## Contents
+- When This Applies
+- Step 1: Discovery
+- Step 2: Classify Each File
+- Step 3: Verify Accuracy
+- Step 4: Build Migration Manifest
+- Step 5: Execute Migration
+- Step 6: Report
+- Content Merging Rules
+
 ## When This Applies
 
 - Any non-standard doc directory: `ai_agent_docs/`, `agent-docs/`, `context/`, `llm-docs/`, etc.

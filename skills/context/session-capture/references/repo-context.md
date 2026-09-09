@@ -43,10 +43,11 @@ code or authoritative repo documentation.
 
 - Follow the repository's edit, test, review, and publication workflow.
 - Name every required documentation index in the proposal before approval and
-  give it a selectable companion identifier distinct from the primary write.
-  Creating a document does not implicitly authorize its index update. If an
-  index requirement is discovered only while applying an approved capture,
-  stop and issue a revised proposal that names the companion target.
+  include it in the same numbered decision bundle as the primary write. Give an
+  optional index or pointer its own number only when it is useful and safe to
+  select independently. If a requirement is discovered only while applying an
+  approved capture, stop and issue a terse revised proposal under the same
+  number.
 - Preserve the approved scope; do not expand one capture into a general docs
   rewrite.
 - Report line-count/capacity impact for AGENTS changes.

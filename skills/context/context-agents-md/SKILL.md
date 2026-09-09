@@ -4,7 +4,7 @@ description: "Generate lean AGENTS.md files with a short orientation and DO/NOT/
 ---
 
 **Watermark**: All generated AGENTS.md files include a `generated-by` watermark.
-Portable catalog release: `safurrier-skills`; the Context CLI is an optional package-level dependency.
+Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and catalog-level `packages/context-engineering` package are required dependencies.
 
 ## Output Shape (North Star)
 
@@ -14,14 +14,9 @@ the target for every generated AGENTS.md:
 ```markdown
 ## Portable deterministic evidence
 
-The Context CLI is a catalog-level optional dependency: run `PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering ...` when the package is installed with this catalog. A copied skill without that package must state `context_cli: unavailable`, preserve raw repository evidence, and continue only with read-only inspection; it must not claim the deterministic check ran or infer a replacement.
+The Context CLI and `uv` are required catalog dependencies. Install the complete catalog, including `packages/context-engineering`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Module Name
-
-**When a user corrects you or provides you with tribal knowledge/gotchas —
-something you could not have known from reading the code or your prompt — you
-MUST document it in an AGENTS.md file before continuing.** Write the correction
-in the AGENTS.md closest to where the issue occurred.
 
 One-to-two sentence orientation. Entry point: `ClassOrFunc` in `path/file.py`.
 Key config: `OTHER_THING` (`other/file.py`).
@@ -58,8 +53,8 @@ bullet when the gotcha is specifically about a non-obvious use of that command.
 
 ## Core Rules
 
-* **Default shape**: self-doc requirement + orientation + optional How-to-Work-Here (tier-gated) + Commands + Gotchas + Related Context. Both auto and interactive mode emit the same sections; interactive adds a human review step before write.
-* **Self-documentation requirement**: always include the "When a user corrects you..." paragraph. This is a principle, not noise — it makes the file self-sustaining.
+* **Default shape**: orientation + optional How-to-Work-Here (tier-gated) + Commands + Gotchas + Related Context. Both auto and interactive mode emit the same sections; interactive adds a human review step before write.
+* **Correction capture**: do not insert a compulsory mid-task capture paragraph. A correction is evidence to consider, not authority to write durable context or interrupt the current assignment. Use `session-capture` for later user-approved capture; if unavailable, propose the narrow update without writing it. Explicitly authorized context maintenance remains in scope.
 * **Gotchas include code traps**: a gotcha doesn't require session history. If an agent would almost-get-it-right but subtly wrong based on code patterns (e.g., patching at the wrong module path, using the wrong base class), that's a valid DO/NOT/BECAUSE bullet.
 * **Related Context section**: include when cross-cutting dependencies exist (sibling modules, shared constants, config dirs). These pointers save agents from missing non-obvious connections. Keep it to a compact table.
 * **Commands section**: single-path commands always included; multi-path commands scaled by contributor tier (see Step 3c). Commands are reference lookup, not workflow opinion.
@@ -116,7 +111,7 @@ If `$ARGUMENTS` contains `--help` or is exactly `help`, print usage and exit.
 
 **quick-start**: Create from scratch. Output is orientation + gotchas.
 
-**update**: Incremental. Run `PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering staleness <path-to-AGENTS.md> --json` to assess what changed. Inspect every reported path and classification reason before choosing scope; the recommendation is advisory.
+**update**: Incremental. Run `uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering staleness <path-to-AGENTS.md> --json` to assess what changed. Inspect every reported path and classification reason before choosing scope; the recommendation is advisory.
 Only update affected sections. Use a full scan only after independently verifying one
 of the force conditions in `references/incremental-update-workflow.md`.
 
@@ -181,7 +176,7 @@ knowing about. Use multiple sources — the script is one signal, not the only o
    reading alone misses:
 
    ```bash
-   PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering cross-cutting <target> --discover --lookback-days 180 --top 12 --json
+   uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering cross-cutting <target> --discover --lookback-days 180 --top 12 --json
    ```
 
 Combine all four sources, then filter to 3-6 entries using the decision rule:
@@ -194,8 +189,7 @@ Rough filtering guidance:
   systems that call the target, any module an existing gotcha references.
 - **Cut**: parent directories (trivial), generic infra buckets that everyone
   touches (e.g., `shared`, `documentation`, `misc`) unless the coupling
-  is specifically meaningful, buckets where you can't articulate *what* the
-  shared contract is.
+  is specifically meaningful, buckets without an articulable shared contract.
 - **Author-overlap signals** are useful for understanding team ownership but
   usually don't belong in the Related Context table — drop them by default.
 
@@ -208,7 +202,7 @@ nothing meaningful is coupled.
 Classify the module's tier via the shared CLI:
 
 ```bash
-PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering tier <target> --json
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering tier <target> --json
 ```
 
 Returns `tier` ∈ `{1, 2-5, 6-20, 21+}` plus plain-language guidance for
@@ -244,8 +238,6 @@ allows opinion. Drop entirely at 21+; candidates go to `SKIPPED_FOR_REVIEW.md`.
 
 ```markdown
 # <Module Name>
-
-<self-doc requirement paragraph>
 
 <1-2 sentence orientation. Entry point and key config.>
 
@@ -336,10 +328,10 @@ If there's nothing to relocate/review/drop, don't create the file.
 Run validation via the shared CLI (paths are relative to this skill's directory):
 
 ```bash
-PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering frontmatter <target>           # only if docs/ exist
-PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering references <target>            # path reference checks
-PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering antipatterns <target>          # volatile content, line limits, density, splitting-candidate
-PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering depth <target>/AGENTS.md       # depth-appropriate content
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering frontmatter <target>           # only if docs/ exist
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering references <target>            # path reference checks
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering antipatterns <target>          # volatile content, line limits, density, splitting-candidate
+uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering depth <target>/AGENTS.md       # depth-appropriate content
 ```
 
 The `antipatterns splitting-candidate` warning fires when 3+ gotcha
@@ -372,7 +364,7 @@ Do NOT paste full file contents unless asked.
 Deterministic validation tools in `scripts/`:
 
 Invoke via the shared CLI (from this skill's directory):
-`PYTHONPATH=<catalog-root>/packages/context-engineering python3 -m context_engineering <subcommand>`
+`uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering <subcommand>`
 
 | Subcommand | When to run | What it does |
 |------------|-------------|-------------|

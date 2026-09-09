@@ -36,8 +36,83 @@ def test_catalog_contracts_have_distinctive_workflow_guards():
     for name, phrase in expected.items(): assert phrase.lower() in skills[name].lower()
 
 
+def test_capture_and_context_contracts_preserve_portable_current_behavior():
+    capture = (ROOT / "skills/context/session-capture/SKILL.md").read_text()
+    repo_context = (ROOT / "skills/context/session-capture/references/repo-context.md").read_text()
+    agents = (ROOT / "skills/context/context-agents-md/SKILL.md").read_text()
+    generated_spec = (ROOT / "skills/context/context-agents-md/resources/generated-doc-spec.md").read_text()
+    docs = (ROOT / "skills/context/context-docs/SKILL.md").read_text()
+
+    assert "Treat each number as one complete decision bundle" in capture
+    assert "Targets: <primary path>; <required companion paths>" in capture
+    assert "selectable suffix" not in capture
+    assert "include it in the same numbered decision bundle" in repo_context
+    assert "compulsory mid-task capture paragraph" in agents
+    assert "<self-doc requirement paragraph>" not in agents
+    assert "### 2. Capture authority" in generated_spec
+    assert "Self-Documentation Requirement" not in generated_spec
+    assert "Portable catalog release: `safurrier-skills`" in docs
+
+
 def test_metadata_provenance_privacy_and_copied_artifact_validate():
     assert run(sys.executable, "scripts/validate.py").returncode == 0
+
+
+def test_installation_and_validation_docs_require_complete_catalog():
+    installation = (ROOT / "docs/installation.md").read_text()
+    validation = (ROOT / "docs/validation.md").read_text()
+    readme = (ROOT / "README.md").read_text()
+    combined = "\n".join((installation, validation, readme))
+
+    assert "skill-only installers omit their required sibling package" in readme
+    assert "A copied `writing-check` skill is supported" in installation
+    assert "installSkillForAgent" in installation
+    assert "PYTHONPATH=packages/context-engineering" not in combined
+    assert "uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering" in installation
+    assert "uv run --no-config --locked --no-dev --project packages/context-engineering context-engineering check" in validation
+    assert "uv run --no-config --locked --project packages/context-engineering mypy" in validation
+    assert "Vale itself is required" in validation
+    assert "packages/writing-check/vale/styles/GoogleDocs" in installation
+
+
+def test_ci_installs_checksum_pinned_vale_before_python_fast_check():
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+    install_index = workflow.index("- name: Install Vale 3.17.1")
+    verify_index = workflow.index("- name: Verify Vale")
+    fast_check_index = workflow.index("- run: python scripts/fast_check.py")
+    assert "https://github.com/vale-cli/vale/releases/download/v3.17.1/vale_3.17.1_Linux_64-bit.tar.gz" in workflow
+    assert "db947f89f2292e6a0381a61de155f6a5f5cb4cb460ca178ea412ef605559cefd" in workflow
+    assert "sha256sum --check --strict" in workflow and "sudo install -m 0755" in workflow
+    assert 'test "$(vale --version)" = "vale version 3.17.1"' in workflow
+    assert install_index < verify_index < fast_check_index
+
+
+def test_fast_check_uses_pinned_mypy_without_a_shell_entrypoint():
+    fast_check = (ROOT / "scripts/fast_check.py").read_text()
+    pyproject = (ROOT / "packages/context-engineering/pyproject.toml").read_text()
+    mypy_config = (ROOT / "mypy.ini").read_text()
+    assert not (ROOT / "scripts/fast-check.sh").exists()
+    assert '"mypy",' in fast_check and '"--config-file",' in fast_check
+    assert '"--no-config",' in fast_check and '"--locked",' in fast_check
+    assert '"--check",' in fast_check and '"--offline",' in fast_check
+    context_index = fast_check.index('"context-engineering",')
+    runtime = fast_check[fast_check.rfind("run(", 0, context_index):]
+    assert '"--no-dev",' in runtime
+    assert '"mypy==1.18.2"' in pyproject
+    assert "check_untyped_defs = True" in mypy_config
+
+
+def test_fast_check_reports_a_missing_executable_without_a_traceback():
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/fast_check.py")],
+        cwd=ROOT,
+        env={**os.environ, "PATH": ""},
+        text=True,
+        capture_output=True,
+    )
+    assert result.returncode != 0
+    assert "uv could not run:" in result.stderr
+    assert "Traceback" not in result.stderr
 
 
 def test_shipped_skills_have_no_experimental_maturity_label():
@@ -57,7 +132,7 @@ def test_context_docs_verifier_available_unavailable_and_readonly(tmp_path):
     copied = tmp_path / "context-docs"; shutil.copytree(ROOT / "skills/context/context-docs", copied)
     unavailable = run(sys.executable, str(copied / "scripts/docs_verify.py"), str(target))
     data = json.loads(unavailable.stdout)
-    assert unavailable.returncode == 0 and data["context_cli"] == "unavailable" and data["findings"] == []
+    assert unavailable.returncode == 3 and data["context_cli"] == "unavailable" and data["findings"] == []
     assert {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file() and ".git" not in p.parts} == before
 
 
@@ -89,14 +164,15 @@ def test_context_commands_run_readonly_on_meaningful_fixture(tmp_path):
     assert (repo / "note.md").read_text() == "# change\n"
 
 
-def test_context_markdown_commands_are_portable_and_resolve_in_copy(tmp_path):
-    artifact = tmp_path / "artifact"; shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", "__pycache__", ".pytest_cache", "site"))
-    text = "\n".join(p.read_text() for p in artifact.rglob("*.md"))
-    assert "uv run --project" not in text
-    commands = set(re.findall(r"python3 -m context_engineering ([a-z-]+)", text))
+def test_context_markdown_requires_catalog_uv_cli_and_installs_from_copy(tmp_path):
+    artifact = tmp_path / "artifact"; shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", "__pycache__", ".mypy_cache", ".pytest_cache", "site", ".venv"))
+    text = "\n".join(p.read_text() for p in (artifact / "skills/context").rglob("*.md"))
+    assert "catalog-level optional dependency" not in text
+    assert "PYTHONPATH=<catalog-root>/packages/context-engineering" not in text
+    commands = set(re.findall(r"uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering ([a-z-]+)", text))
     assert commands <= CONTEXT_COMMANDS and commands
     for command in commands:
-        assert subprocess.run([sys.executable, "-m", "context_engineering", command, "--help"], env={**os.environ, "PYTHONPATH": str(artifact / "packages/context-engineering")}, text=True, capture_output=True).returncode == 0
+        assert subprocess.run(["uv", "run", "--no-config", "--locked", "--no-dev", "--project", str(artifact / "packages/context-engineering"), "context-engineering", command, "--help"], text=True, capture_output=True).returncode == 0
 
 
 def test_writing_profiles_policy_identity_and_unavailable_vale(tmp_path):
@@ -112,13 +188,47 @@ def test_writing_profiles_policy_identity_and_unavailable_vale(tmp_path):
     broken = tmp_path / "bad.md"; broken.write_bytes(b"\xff"); assert writing("--profile", "readme", "--json", str(broken)).returncode == 2
 
 
-def test_writing_vale_normalization_and_composition_limit(tmp_path):
+def test_writing_check_vendors_google_rules_and_preserves_advisory_evidence(tmp_path):
     sample = tmp_path / "candidate.md"; sample.write_text("A short candidate.")
-    fake = tmp_path / "bin"; fake.mkdir(); vale = fake / "vale"; vale.write_text("#!/bin/sh\nprintf '{\"candidate.md\":[{\"Check\":\"Portable.Specificity\",\"Message\":\"Be specific\",\"Line\":2,\"Span\":[1,4]}]}'\n"); vale.chmod(0o755)
+    package_root = ROOT / "packages/writing-check/vale"
+    skill_root = ROOT / "skills/writing/writing-check/vale"
+    lock = json.loads((package_root / "upstream-lock.json").read_text())
+    assert lock == json.loads((skill_root / "upstream-lock.json").read_text())
+    package_manifest = json.loads((package_root / "profiles.json").read_text())
+    skill_manifest = json.loads((skill_root / "profiles.json").read_text())
+    assert lock["upstream"]["repository"] == "https://github.com/vale-cli/Google"
+    assert lock["upstream"]["tag"] == "v0.7.1" and lock["upstream"]["license"] == "MIT"
+    assert package_manifest == skill_manifest and len(package_manifest["rules"]) == 34
+    for metadata in package_manifest["rules"].values():
+        for root in (package_root, skill_root):
+            path = root / metadata["path"]
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == metadata["sha256"]
+    for root in (package_root, skill_root):
+        license_path = root / lock["upstream"]["license_file"]
+        assert license_path.is_file()
+        assert hashlib.sha256(license_path.read_bytes()).hexdigest() == lock["upstream"]["license_sha256"]
+    assert (package_root / "styles/GoogleDocs/AMPM.yml").is_file()
+    fake = tmp_path / "bin"; fake.mkdir(); vale = fake / "vale"; vale.write_text("#!/bin/sh\nprintf '{\"candidate.md\":[{\"Check\":\"GoogleDocs.AMPM\",\"Message\":\"Use a.m.\",\"Line\":2,\"Span\":[1,4]}]}'\n"); vale.chmod(0o755)
     result = writing("--profile", "pr-description", "--json", str(sample), env={"PATH": str(fake) + os.pathsep + os.environ["PATH"]}); data = json.loads(result.stdout)
-    assert result.returncode == 1 and data["alerts"][0]["severity"] == "suggestion" and data["vale"]["status"] == "ran"
+    assert result.returncode == 1 and data["alerts"][0]["rule"] == "GoogleDocs.AMPM" and data["alerts"][0]["severity"] == "suggestion" and data["vale"]["status"] == "ran"
     table = tmp_path / "table.md"; table.write_text("| Item | Detail |\n| --- | --- |\n" + "\n".join("| alpha beta gamma delta epsilon | zeta eta theta iota kappa |" for _ in range(20)))
     result = writing("--profile", "readme", "--json", str(table), env={"PATH": "/nonexistent"}); assert json.loads(result.stdout)["readability"]["status"] == "composition_limited"
+
+    artifact = tmp_path / "artifact"
+    shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", ".venv", ".mypy_cache", ".pytest_cache", "site"))
+    tampered = artifact / "skills/writing/writing-check/vale/styles/GoogleDocs/AMPM.yml"
+    tampered.write_text(tampered.read_text() + "\n# tampered\n")
+    validation = subprocess.run([sys.executable, str(artifact / "scripts/validate.py"), "--copied"], text=True, capture_output=True)
+    assert validation.returncode == 1
+    assert "Writing Check rule digest mismatch" in validation.stdout
+
+    license_artifact = tmp_path / "license-artifact"
+    shutil.copytree(ROOT, license_artifact, ignore=shutil.ignore_patterns(".git", ".venv", ".mypy_cache", ".pytest_cache", "site"))
+    tampered_license = license_artifact / "packages/writing-check/vale/vendor/Google-LICENSE"
+    tampered_license.write_text(tampered_license.read_text() + "\nTampered.\n")
+    validation = subprocess.run([sys.executable, str(license_artifact / "scripts/validate.py"), "--copied"], text=True, capture_output=True)
+    assert validation.returncode == 1
+    assert "Writing Check license digest mismatch" in validation.stdout
 
 
 def test_selected_skill_copy_closure_and_plugin_metadata(tmp_path):

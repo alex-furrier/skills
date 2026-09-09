@@ -4,6 +4,13 @@ For monorepos and multi-module projects, trace dependency chains to help agents
 understand how modules interact. Knowing "if I change X, Y also breaks" prevents
 cascading failures.
 
+## Contents
+- When to Generate
+- Discovery Strategy
+- Output Format
+- Change Impact
+- Guidelines
+
 ## When to Generate
 
 - Repos with 3+ distinct modules/services/packages
