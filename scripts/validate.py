@@ -5,7 +5,7 @@ import json, pathlib, re, shutil, subprocess, sys, tempfile
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PRIVATE=(r"/Users/", r"/home/[^/]+/", r"\.pi-personal", r"AI_RUNTIME_PROFILE", r"DISCORD", r"HPPM", r"obsidian", r"\bvault\b", r"\balex\b", r"alex-", r"github-open-pr", r"writing-voice-check", r"commit-message", r"writing-editor", r"plugins/")
 TEXT={".md", ".py", ".json", ".yml", ".yaml", ".toml", ".ini", ".sh"}
-IGNORED={".git",".venv","__pycache__",".pytest_cache","site"}
+IGNORED={".git",".venv","__pycache__",".mypy_cache",".pytest_cache","site"}
 def shipped():
  for p in ROOT.rglob("*"):
   if any(x in IGNORED for x in p.parts): continue
@@ -42,7 +42,7 @@ def main():
    if '://' not in link and not (p.parent/link).exists(): errors.append(f'{p.relative_to(ROOT)}: missing {link}')
  if '--copied' not in sys.argv:
   with tempfile.TemporaryDirectory() as td:
-   out=pathlib.Path(td)/'artifact'; shutil.copytree(ROOT,out,ignore=shutil.ignore_patterns('.git','__pycache__','.pytest_cache','site'))
+   out=pathlib.Path(td)/'artifact'; shutil.copytree(ROOT,out,ignore=shutil.ignore_patterns('.git','__pycache__','.mypy_cache','.pytest_cache','site'))
    run=subprocess.run([sys.executable,str(out/'scripts/validate.py'),'--copied'],capture_output=True,text=True)
    if run.returncode: errors.append('copied artifact validation failed: '+run.stdout+run.stderr)
  print('\n'.join(errors) if errors else 'validation passed'); return bool(errors)

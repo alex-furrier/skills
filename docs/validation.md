@@ -5,13 +5,24 @@ content. Run it from a complete catalog checkout after verifying `uv --version`
 and `vale --version`:
 
 ```bash
-./scripts/fast-check.sh
+python scripts/fast_check.py
 ```
 
-It runs behavioral tests, validates a copied release artifact and provenance
-coverage, builds MkDocs with `--strict`, runs the installed Context reference
-check, runs the exact-input Writing Check against `README.md`, and finishes with
-`git diff --check`.
+It runs static type checking with pinned Mypy, behavioral tests, validates a
+copied release artifact and provenance coverage, builds MkDocs with `--strict`,
+runs the installed Context reference check, runs the exact-input Writing Check
+against `README.md`, and finishes with `git diff --check`.
+
+Run the type checker directly with:
+
+```bash
+uv run --project packages/context-engineering mypy --config-file mypy.ini \
+  packages/context-engineering/context_engineering packages/writing-check/scripts \
+  scripts skills/context/context-docs/scripts \
+  skills/writing/pr-description/scripts tests
+uv run --project packages/context-engineering mypy --config-file mypy.ini \
+  skills/writing/writing-check/scripts/writing_check.py
+```
 
 Writing Check findings are advisory evidence, so the release check accepts its
 `findings` exit. Vale itself is required for that check: `unavailable` means the

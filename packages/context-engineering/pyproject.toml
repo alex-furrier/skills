@@ -17,6 +17,7 @@ packages = ["context_engineering"]
 
 [dependency-groups]
 dev = [
+    "mypy==1.18.2",
     "pytest>=8.0",
 ]
 

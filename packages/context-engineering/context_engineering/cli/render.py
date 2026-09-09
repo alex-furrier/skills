@@ -6,7 +6,7 @@ import json
 import sys
 from typing import Any
 
-from ..domain.finding import Severity
+from ..domain.finding import Finding, Severity
 from ..domain.result import AnalysisResult, LintResult
 
 
@@ -21,7 +21,11 @@ def render_lint(result: LintResult) -> int:
         print(f"No findings in {result.target}")
         return 0
 
-    by_severity = {Severity.ERROR: [], Severity.WARNING: [], Severity.INFO: []}
+    by_severity: dict[Severity, list[Finding]] = {
+        Severity.ERROR: [],
+        Severity.WARNING: [],
+        Severity.INFO: [],
+    }
     for finding in result.findings:
         by_severity[finding.severity].append(finding)
 

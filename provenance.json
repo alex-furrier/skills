@@ -26,6 +26,7 @@
     {"path":"LICENSE", "origin":"standard MIT text", "license":"MIT"},
     {"path":".gitignore", "origin":"independently authored configuration", "license":"MIT"},
     {"path":"mkdocs.yml", "origin":"independently authored configuration", "license":"MIT"},
+    {"path":"mypy.ini", "origin":"independently authored type-checking configuration", "license":"MIT"},
     {"path":".claude-plugin.json", "origin":"independently authored metadata", "license":"MIT"},
     {"path_prefix":".claude-plugin/", "origin":"independently authored metadata", "license":"MIT"},
     {"path":"provenance.json", "origin":"independently authored provenance inventory", "license":"MIT"}

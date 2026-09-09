@@ -29,7 +29,7 @@ This source checkout uses Python 3.11+.
 ## Validate
 
 ```bash
-./scripts/fast-check.sh
+python scripts/fast_check.py
 uv run --project packages/context-engineering context-engineering references . --json
 uv run --python 3.11 python packages/writing-check/scripts/writing_check.py --profile technical-doc README.md
 ```

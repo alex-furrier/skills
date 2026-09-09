@@ -850,7 +850,7 @@ def analyze(
                     [finding],
                 )
             repository_history.insert(0, genesis_record)
-        history, target_path_lineage, lineage_error = _module_history(
+        complete_history, target_path_lineage, lineage_error = _module_history(
             repo,
             repository_history,
             relative,
@@ -914,9 +914,9 @@ def analyze(
                 },
                 [finding],
             )
-        high_signal = _rank_leads(history)
+        high_signal = _rank_leads(complete_history)
         repository = _remote(repo) or repo.name
-        sensitivity_flags = _sensitivity_flags(history)
+        sensitivity_flags = _sensitivity_flags(complete_history)
         boundary = EvidenceBoundary(
             completeness=EvidenceCompleteness.COMPLETE,
             scope_kind=scope_kind,
@@ -936,7 +936,9 @@ def analyze(
                 "genesis_commits": genesis_commits,
                 "repository_genesis": genesis_commits[0] if genesis_commits else None,
                 "repository_genesis_commits": genesis_commits,
-                "target_first_evidenced_commit": (str(history[0]["commit"]) if history else None),
+                "target_first_evidenced_commit": (
+                    str(complete_history[0]["commit"]) if complete_history else None
+                ),
                 "target_path_at_cutoff": relative,
                 "target_path_lineage": target_path_lineage,
                 "evidence_boundary": boundary.to_dict(),
@@ -955,12 +957,12 @@ def analyze(
                         ),
                     }
                 ],
-                "raw_evidence": [] if publish_safe else history,
+                "raw_evidence": [] if publish_safe else complete_history,
                 "high_signal_commits": (
                     _publish_safe_leads(high_signal) if publish_safe else high_signal
                 ),
                 "historical_design_artifacts": (
-                    [] if publish_safe else _historical_design_artifacts(history)
+                    [] if publish_safe else _historical_design_artifacts(complete_history)
                 ),
                 "publish_safe_omissions": (
                     ["commit subjects", "historical paths", "design-artifact paths"]

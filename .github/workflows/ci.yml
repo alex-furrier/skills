@@ -20,6 +20,6 @@ jobs:
           sudo install -m 0755 /tmp/vale-bin/vale /usr/local/bin/vale
       - name: Verify Vale
         run: test "$(vale --version)" = "vale version 3.17.1"
-      - run: ./scripts/fast-check.sh
+      - run: python scripts/fast_check.py
       - run: uv run --project packages/context-engineering pytest -q
       - run: mkdocs build --strict

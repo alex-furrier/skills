@@ -73,16 +73,39 @@ def test_installation_and_validation_docs_require_complete_catalog():
     assert "packages/writing-check/vale/styles/GoogleDocs" in installation
 
 
-def test_ci_installs_checksum_pinned_vale_before_fast_check():
+def test_ci_installs_checksum_pinned_vale_before_python_fast_check():
     workflow = (ROOT / ".github/workflows/ci.yml").read_text()
     install_index = workflow.index("- name: Install Vale 3.17.1")
     verify_index = workflow.index("- name: Verify Vale")
-    fast_check_index = workflow.index("- run: ./scripts/fast-check.sh")
+    fast_check_index = workflow.index("- run: python scripts/fast_check.py")
     assert "https://github.com/vale-cli/vale/releases/download/v3.17.1/vale_3.17.1_Linux_64-bit.tar.gz" in workflow
     assert "db947f89f2292e6a0381a61de155f6a5f5cb4cb460ca178ea412ef605559cefd" in workflow
     assert "sha256sum --check --strict" in workflow and "sudo install -m 0755" in workflow
     assert 'test "$(vale --version)" = "vale version 3.17.1"' in workflow
     assert install_index < verify_index < fast_check_index
+
+
+def test_fast_check_uses_pinned_mypy_without_a_shell_entrypoint():
+    fast_check = (ROOT / "scripts/fast_check.py").read_text()
+    pyproject = (ROOT / "packages/context-engineering/pyproject.toml").read_text()
+    mypy_config = (ROOT / "mypy.ini").read_text()
+    assert not (ROOT / "scripts/fast-check.sh").exists()
+    assert '"mypy",' in fast_check and '"--config-file",' in fast_check
+    assert '"mypy==1.18.2"' in pyproject
+    assert "check_untyped_defs = True" in mypy_config
+
+
+def test_fast_check_reports_a_missing_executable_without_a_traceback():
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/fast_check.py")],
+        cwd=ROOT,
+        env={**os.environ, "PATH": ""},
+        text=True,
+        capture_output=True,
+    )
+    assert result.returncode != 0
+    assert "uv could not run:" in result.stderr
+    assert "Traceback" not in result.stderr
 
 
 def test_shipped_skills_have_no_experimental_maturity_label():
@@ -135,7 +158,7 @@ def test_context_commands_run_readonly_on_meaningful_fixture(tmp_path):
 
 
 def test_context_markdown_requires_catalog_uv_cli_and_installs_from_copy(tmp_path):
-    artifact = tmp_path / "artifact"; shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", "__pycache__", ".pytest_cache", "site", ".venv"))
+    artifact = tmp_path / "artifact"; shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", "__pycache__", ".mypy_cache", ".pytest_cache", "site", ".venv"))
     text = "\n".join(p.read_text() for p in (artifact / "skills/context").rglob("*.md"))
     assert "catalog-level optional dependency" not in text
     assert "PYTHONPATH=<catalog-root>/packages/context-engineering" not in text
