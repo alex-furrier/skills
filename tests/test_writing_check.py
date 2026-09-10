@@ -7,6 +7,8 @@ import shutil
 import subprocess
 import sys
 
+import pytest
+
 ROOT = pathlib.Path(__file__).parents[1]
 
 
@@ -28,6 +30,8 @@ def fake_vale(tmp_path, lint_stdout="{}", lint_exit=0, version_stdout="vale vers
         "import pathlib, sys\n"
         "capture = pathlib.Path(__file__).with_name('captured-stdin')\n"
         "if sys.argv[1:] == ['--version']:\n"
+        "    count = pathlib.Path(__file__).with_name('version-count')\n"
+        "    count.write_text(str(int(count.read_text()) + 1) if count.exists() else '1')\n"
         f"    sys.stdout.buffer.write({version_stdout_bytes!r})\n"
         f"    sys.stderr.buffer.write({version_stderr_bytes!r})\n"
         f"    raise SystemExit({version_exit})\n"
@@ -48,6 +52,14 @@ def check(skill, profile, input_path, env):
 
 def checker_module():
     spec = importlib.util.spec_from_file_location("writing_check_test_module", ROOT / "skills/writing/writing-check/scripts/writing_check.py")
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def sweep_module():
+    spec = importlib.util.spec_from_file_location("repository_sweep_check_test_module", ROOT / "skills/writing/writing-check/scripts/repository_sweep_check.py")
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -232,6 +244,99 @@ def test_writing_check_retains_timeout_partial_lint_output(tmp_path, monkeypatch
     assert data["vale"]["lint"]["argv"][-1] == "-"
     assert data["vale"]["lint"]["stdout"] == "partial stdout"
     assert data["vale"]["lint"]["stderr"] == "partial stderr"
+
+
+def test_repository_sweep_check_emits_independent_records_and_shares_vale_probe(tmp_path):
+    skill = copied_skill(tmp_path / "skill")
+    bin_dir = fake_vale(tmp_path / "fake")
+    first = tmp_path / "first.md"; first.write_text("First candidate.")
+    second = tmp_path / "second.md"; second.write_text("Second candidate.")
+    candidates = tmp_path / "candidates.json"
+    candidates.write_text(json.dumps([
+        {"source": str(first), "profile": "commit"},
+        {"source": str(second), "profile": "commit"},
+    ]))
+    result = subprocess.run(
+        [sys.executable, str(skill / "scripts/repository_sweep_check.py"), "--candidates", str(candidates), "--jsonl"],
+        text=True, capture_output=True, env={"PATH": str(bin_dir)},
+    )
+    records = [json.loads(line) for line in result.stdout.splitlines()]
+    assert result.returncode == 0
+    assert [record["schema"] for record in records] == [3, 3]
+    assert [record["status"] for record in records] == ["no_findings", "no_findings"]
+    assert [record["source"]["sha256"] for record in records] == [
+        hashlib.sha256(first.read_bytes()).hexdigest(), hashlib.sha256(second.read_bytes()).hexdigest()
+    ]
+    assert (bin_dir / "version-count").read_text() == "1"
+
+
+def test_repository_sweep_check_replays_probe_failures_as_independent_evidence(tmp_path, monkeypatch):
+    checker = checker_module()
+    sweep = sweep_module()
+    first = tmp_path / "first.md"; first.write_text("First candidate.")
+    second = tmp_path / "second.md"; second.write_text("Second candidate.")
+    calls = 0
+
+    def fake_run(argv, **kwargs):
+        nonlocal calls
+        calls += 1
+        raise OSError("Vale could not start")
+
+    monkeypatch.setattr(sweep, "_load_checker", lambda: checker)
+    monkeypatch.setattr(checker.shutil, "which", lambda _: "/fake/vale")
+    monkeypatch.setattr(checker.subprocess, "run", fake_run)
+    records, code = sweep.run([(str(first), "commit"), (str(second), "commit")])
+    assert calls == 1
+    assert code == 4
+    assert [record["status"] for record in records] == ["execution_error", "execution_error"]
+    assert [record["vale"]["error"] for record in records] == ["Vale could not start", "Vale could not start"]
+
+
+@pytest.mark.parametrize("probe_error", [KeyboardInterrupt(), SystemExit()])
+def test_repository_sweep_check_does_not_swallow_process_control_exceptions(tmp_path, monkeypatch, probe_error):
+    checker = checker_module()
+    sweep = sweep_module()
+    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+
+    def fake_run(argv, **kwargs):
+        raise probe_error
+
+    monkeypatch.setattr(sweep, "_load_checker", lambda: checker)
+    monkeypatch.setattr(checker.shutil, "which", lambda _: "/fake/vale")
+    monkeypatch.setattr(checker.subprocess, "run", fake_run)
+    with pytest.raises(type(probe_error)):
+        sweep.run([(str(source), "commit")])
+
+
+def test_repository_sweep_check_preserves_per_candidate_failure_status(tmp_path):
+    skill = copied_skill(tmp_path / "skill")
+    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+    candidates = tmp_path / "candidates.json"
+    candidates.write_text(json.dumps([{"source": str(source), "profile": "not-a-profile"}]))
+    result = subprocess.run(
+        [sys.executable, str(skill / "scripts/repository_sweep_check.py"), "--candidates", str(candidates), "--jsonl"],
+        text=True, capture_output=True, env={"PATH": ""},
+    )
+    record = json.loads(result.stdout)
+    assert result.returncode == 2
+    assert record["schema"] == 3 and record["status"] == "input_error"
+    assert record["error"]["code"] == "unknown_profile"
+
+
+def test_repository_sweep_check_accepts_dash_prefixed_source_name(tmp_path):
+    skill = copied_skill(tmp_path / "skill")
+    bin_dir = fake_vale(tmp_path / "fake")
+    (tmp_path / "--help").write_text("Candidate.")
+    candidates = tmp_path / "candidates.json"
+    candidates.write_text(json.dumps([{"source": "--help", "profile": "commit"}]))
+    result = subprocess.run(
+        [sys.executable, str(skill / "scripts/repository_sweep_check.py"), "--candidates", str(candidates), "--jsonl"],
+        text=True, capture_output=True, cwd=tmp_path, env={"PATH": str(bin_dir)},
+    )
+    records = [json.loads(line) for line in result.stdout.splitlines()]
+    assert result.returncode == 0
+    assert len(records) == 1
+    assert records[0]["schema"] == 3 and records[0]["status"] == "no_findings"
 
 
 def test_writing_check_valid_alerts_are_normalized_as_suggestions(tmp_path):

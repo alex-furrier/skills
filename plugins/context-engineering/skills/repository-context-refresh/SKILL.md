@@ -117,7 +117,7 @@ For every changed source, use one shared budget of up to three rewrite passes af
 - remove actionable findings;
 - meet FRE 55 or higher and FK 10 or lower when readability is `normal`;
 - resolve actionable findings without a readability target for small, insufficient, or composition-limited samples;
-- keep safety, authentication, authority, command, identifier, and other owner-designated text byte-exact unless its real owner independently authorizes a factual change; preserve the meaning of all other factual and contractual prose;
+- keep bytes exact only for a real exact-byte consumer: the candidate supplied to Writing Check and its source digest; policy, config, rule, and license integrity assets; machine-consumed command syntax and identifiers; and text the user or owning contract explicitly marks exact; preserve the meaning, qualifications, and safety, authentication, authority, factual, and contractual constraints of all other prose;
 - prefer coherent compression or section rewrites when historical implementation detail obscures the current decision;
 - rerun the exact source after each pass and discard stale records;
 - disposition only final-source residuals after the bounded loop.

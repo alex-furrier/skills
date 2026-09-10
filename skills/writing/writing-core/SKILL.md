@@ -21,7 +21,7 @@ Review broad terms such as “robust,” “capability,” and “comprehensive�
 
 ## Preserve owner-controlled text
 
-Protected factual, safety, authentication, authority, command, and identifier text must remain byte-exact unless its real owner independently authorizes a factual change. This includes exact commands, identifiers, links, quoted text, warnings, billing and authentication facts, safety language, and authority boundaries. A checker suggestion, readability target, or style rule never authorizes paraphrase.
+Keep bytes exact only for a real exact-byte consumer: the candidate supplied to Writing Check and its source digest; policy, config, rule, and license integrity assets; machine-consumed command syntax and identifiers; and text the user or owning contract explicitly marks exact. Preserve the meaning, qualifications, and safety, authentication, authority, factual, and contractual constraints of all other prose. A checker suggestion, readability target, or style rule never authorizes a factual or constraint-changing edit.
 
 ## Route to the owner
 

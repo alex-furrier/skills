@@ -243,6 +243,7 @@ def analyze(
         data={
             "range": review.data["range"],
             "changed_paths": review.data["changed_paths"],
+            "evidence": review.data["evidence"],
             "affected_context_roots": [path.as_posix() or "." for path in affected],
             "deterministic_findings": [finding.to_dict() for finding in findings],
             "advisory_routes": review.data["advisory_routes"],

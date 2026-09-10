@@ -31,8 +31,8 @@ Use another existing profile when the destination clearly owns it. State ambiguo
 
 ## Check each candidate
 
-1. Inspect the checker help once, then run `writing_check.py` separately for every exact candidate.
-2. Retain each schema-v2 record independently. Preserve its source SHA-256, profile policy digest, findings, readability state, and raw tool evidence.
+1. Inspect the checker help once. After discovery has produced explicit exact source/profile pairs, either run `writing_check.py` per candidate or use the bounded caller-side path: `python3 <skill-dir>/scripts/repository_sweep_check.py --candidates pairs.json --jsonl`, where `pairs.json` is a non-empty JSON array of objects containing exactly `source` and `profile`. It performs no discovery and accepts no stdin candidate.
+2. Retain each schema-v3 JSON Lines record independently. The caller validates the bundled policy for each candidate and shares only the in-process Vale version probe; source bytes, policy digest, findings, readability state, raw tool evidence, and status remain candidate-specific.
 3. Do not combine records into a score, quality verdict, readiness gate, or new aggregate schema.
 4. Treat unavailable or execution-error records as missing evidence, not clean results.
 5. Keep dispositions bound to the exact `source.sha256`; discard them after any edit and rerun the changed candidate.
@@ -43,7 +43,7 @@ Use another existing profile when the destination clearly owns it. State ambiguo
 In repository update mode:
 
 1. Verify findings against repository truth and document purpose before editing.
-2. Preserve factual behavior and protected text. Keep safety, authentication, authority, command, identifier, privacy, security, billing, legal, and other owner-designated text byte-exact unless its real owner independently authorizes a factual change. Historical status alone does not protect other prose from revision.
+2. Preserve factual behavior and constraints. Keep bytes exact only for a real exact-byte consumer: the candidate supplied to Writing Check and its source digest; policy, config, rule, and license integrity assets; machine-consumed command syntax and identifiers; and text the user or owning contract explicitly marks exact. Preserve the meaning, qualifications, and safety, authentication, authority, privacy, security, billing, legal, factual, and contractual constraints of all other prose. Historical status alone does not protect other prose from revision.
 3. Prefer coherent section rewrites over conservative sentence patching when structure or readability is poor. Compress or remove obsolete implementation detail when the destination owner no longer needs it, especially in long retrospective ADRs and superseded plans.
 4. Route specialized documents to their existing owners when material structure or meaning changes: use `readme-improver` for READMEs, `context-agents-md` for AGENTS files, `context-contracts` for specifications and ADRs, and `context-docs` for structured architecture or reference documentation. Use `writing-core` for ordinary technical prose.
 5. If a required destination owner is unavailable, limit edits to clearly semantics-preserving corrections and defer structural or meaning-sensitive findings with a reason.
@@ -56,14 +56,14 @@ For every changed candidate, aim for `no_findings` and, when readability is `nor
 
 1. Fix every finding that repository truth and the destination owner judge actionable. Rewrite paragraphs or sections coherently, and remove obsolete detail, instead of applying a sequence of local substitutions.
 2. For a `normal` sample below either readability target, improve ordering, sentence length, paragraph size, and useful list structure during the same pass.
-3. Preserve technical meaning and exact commands, identifiers, links, warnings, privacy, security, authentication, billing, legal language, contracts, ADR decisions, and authority boundaries on every pass.
+3. Preserve technical meaning, qualifications, commands and identifiers where syntax matters, privacy, security, authentication, billing, legal language, contracts, ADR decisions, and authority boundaries on every pass. Keep bytes exact only where a real exact-byte consumer or explicit user/owner contract requires it.
 4. Rerun writing-check on the exact rewritten candidate after each pass and discard every stale record and disposition. Stop early when no actionable findings remain and every applicable readability target is met.
 5. Never apply a blind punctuation or substitution sweep. Splitting a sentence must produce two grammatical, correctly capitalized sentences; changing dashes, colons, contractions, or passive voice must preserve the surrounding meaning. Do not chase `no_findings` by changing exact terms, required text, quotes, deliberate voice, or known false positives. Do not game either formula or expand familiar technical terms merely to change a score.
 6. After the third pass, separate actionable findings from justified required-text residuals. Disposition each residual against the final source with one concrete category and reason. Do not bulk-disposition a large queue with a generic fidelity claim when coherent compression or rewriting can still remove it. Report unmet normal-sample metrics, attempted improvements, and the specific precision or authority boundary that blocks further rewriting.
 
 Run the finding-resolution portion for `insufficient_sample`, `small_sample`, and `composition_limited` results, but do not assign them a readability target. Do not rewrite for `disabled`, `unavailable`, or `execution_error`; report the unusable checker state instead. The bounded loop is workflow guidance, not a checker gate or a new exit condition.
 
-Do not add repository discovery, batch execution, aggregate output, network access, or auto-fix behavior to `writing_check.py` as part of a sweep.
+Do not add repository discovery, network access, or auto-fix behavior to `writing_check.py`. The separate bounded caller emits only independent JSON Lines records, not an aggregate schema.
 
 ## Report
 

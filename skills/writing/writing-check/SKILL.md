@@ -9,7 +9,7 @@ description: Run source-bound Vale checks and qualified readability sampling for
 
 Collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the source bytes, normalized findings, raw Vale output, and source identity. Results do not establish meaning, factuality, safety, usefulness, writing quality, acceptance, or readiness.
 
-- Keep `writing_check.py` read-only. Do not add repository discovery, batch execution, network access, or an auto-fix path.
+- Keep `writing_check.py` read-only. It remains single-candidate; do not add repository discovery, network access, or an auto-fix path.
 - A single-candidate check or repository audit never edits prose, source files, Git, or GitHub. Enter repository update mode only after an explicit request to update prose; the destination owner applies edits outside the checker.
 - Never run `vale sync`, fetch a package, or use a network service during a normal check. Vale is required: when absent, retain source identity and return `unavailable`, never a substitute linter or clean result.
 - Findings, readability, sample size, and counts are advisory observations, never scores or gates. Vale line and span values are Vale coordinates, not byte offsets.
@@ -53,11 +53,11 @@ The schema-v3 record retains decoded text, raw-byte length and SHA-256, selected
 
 Report `input_error`, `unavailable`, and `execution_error` explicitly; never convert them to `no_findings` or claim that a checker ran when it was unavailable.
 
-Protected factual, safety, authentication, authority, command, and identifier text must remain byte-exact unless its real owner independently authorizes a factual change. This includes commands, identifiers, links, marker blocks, warnings, billing/authentication facts, and safety/authority language. A checker suggestion alone never authorizes paraphrase. In an edit workflow, the destination owner binds each fresh finding to the exact `source.sha256` and finding key as `fix`, `keep_exact_term`, `keep_quote`, `keep_required_text`, `keep_voice`, or `defer`. Discard it after any candidate change. This traceability is not a quality, readiness, or publication gate.
+Keep bytes exact only for a real exact-byte consumer: the candidate supplied to this checker and its `source.sha256`; policy, config, rule, and license integrity assets; machine-consumed command syntax and identifiers; and text the user or owning contract explicitly marks exact. Preserve the meaning, qualifications, and safety, authentication, authority, factual, and contractual constraints of all other prose; a checker suggestion alone never authorizes a factual or constraint-changing edit. In an edit workflow, the destination owner binds each fresh finding to the exact `source.sha256` and finding key as `fix`, `keep_exact_term`, `keep_quote`, `keep_required_text`, `keep_voice`, or `defer`. Discard it after any candidate change. This traceability is not a quality, readiness, or publication gate.
 
 ## Repository requests and policy maintenance
 
-For a repository-wide request, load [repository-sweep.md](references/repository-sweep.md). Default to its read-only audit. Its update mode uses a shared three-pass rewrite budget, still invokes the checker one exact candidate at a time, and routes material edits to the named destination owners; unavailable owners permit only clear semantics-preserving fixes.
+For a repository-wide request, load [repository-sweep.md](references/repository-sweep.md). Default to its read-only audit. A caller may run explicitly selected `{ "source": "…", "profile": "…" }` pairs in one process with `scripts/repository_sweep_check.py --candidates pairs.json --jsonl`; it emits independent unchanged schema-v3 JSON Lines records and never discovers candidates. Its update mode uses a shared three-pass rewrite budget and routes material edits to the named destination owners; unavailable owners permit only clear semantics-preserving fixes.
 
 Normal checks are offline. Upgrade or calibrate vendored rules only in a reviewed change: fetch the named release to a temporary directory, verify the archive digest, show rule-by-rule diffs, update provenance and attribution, normalize severities, rerun `evals/rule-calibration.json`, and run the shared aggregate corpus once with complete expected-check reporting. Give contextual rules focused positive, negative, limitation/exact-term, and natural-prose fixtures, and record each imported rule’s known limitation.
 

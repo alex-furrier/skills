@@ -196,10 +196,20 @@ def test_context_command_inventory_and_mutation_boundaries_are_explicit():
     writing_check = (ROOT / "skills/writing/writing-check/SKILL.md").read_text()
     assert "Keep `writing_check.py` read-only." in writing_check
     assert "only after an explicit request" in writing_check
-    protected = "byte-exact unless its real owner independently authorizes a factual change"
-    assert protected in writing_check
-    assert protected in (ROOT / "skills/writing/writing-check/references/repository-sweep.md").read_text()
-    assert protected in (PLUGIN / "skills/repository-context-refresh/SKILL.md").read_text()
+    exact_consumer = "Keep bytes exact only for a real exact-byte consumer"
+    assert exact_consumer in writing_check
+    assert "candidate supplied to this checker and its `source.sha256`" in writing_check
+    assert exact_consumer in (ROOT / "skills/writing/writing-check/references/repository-sweep.md").read_text()
+    assert exact_consumer.lower() in (PLUGIN / "skills/repository-context-refresh/SKILL.md").read_text()
+    assert "safety, authentication, authority, factual, and contractual constraints" in writing_check
+
+
+def test_context_review_uses_composed_check_evidence_once():
+    review = (PLUGIN / "skills/context-review/SKILL.md").read_text()
+    assert review.count("context-engineering check <target>") == 1
+    assert "context-engineering review <target>" not in review
+    assert "`advisory_routes`" in review
+    assert "raw\n   changed paths, rename pairs, evidence" in review
 
 
 def test_context_improve_delegates_owner_order_and_skipped_candidate_boundary():
