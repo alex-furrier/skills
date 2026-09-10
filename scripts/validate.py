@@ -21,6 +21,9 @@ def covered(rel: str, entries: list[dict[str, str]]) -> bool:
 
 def validate_plugin(plugin: pathlib.Path, errors: list[str]) -> None:
     """Validate a plugin copy without relying on the catalog around it."""
+    if plugin.is_symlink():
+        errors.append("Context plugin root must not be a symlink")
+        return
     inventory_path = plugin / "provenance.json"
     try:
         inventory = json.loads(inventory_path.read_text())
@@ -40,8 +43,14 @@ def validate_plugin(plugin: pathlib.Path, errors: list[str]) -> None:
         errors.append("Context plugin LICENSE is not MIT license material")
     ignored = {".venv", "__pycache__", ".mypy_cache", ".pytest_cache"}
     for path in plugin.rglob("*"):
-        if any(part in ignored for part in path.parts) or not path.is_file(): continue
-        rel = path.relative_to(plugin).as_posix()
+        relative_path = path.relative_to(plugin)
+        if any(part in ignored for part in relative_path.parts):
+            continue
+        rel = relative_path.as_posix()
+        if path.is_symlink():
+            errors.append(f"Context plugin must not contain symlink: {rel}")
+            continue
+        if not path.is_file(): continue
         if not covered(rel, entries): errors.append(f"Context plugin provenance missing shipped path: {rel}")
         if path.suffix in TEXT and rel not in {"provenance.json"}:
             for token in PRIVATE:
@@ -94,7 +103,7 @@ def main() -> int:
         if index + 1 == len(sys.argv):
             print("--plugin requires a path")
             return 2
-        validate_plugin(pathlib.Path(sys.argv[index + 1]).resolve(), errors)
+        validate_plugin(pathlib.Path(sys.argv[index + 1]), errors)
         print("\n".join(errors) if errors else "plugin validation passed")
         return int(bool(errors))
     try:

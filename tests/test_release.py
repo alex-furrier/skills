@@ -75,6 +75,31 @@ def test_context_plugin_copy_retains_scoped_license_and_provenance(tmp_path):
     assert result.returncode == 0 and result.stdout == "plugin validation passed\n"
 
 
+def test_context_plugin_copy_rejects_live_and_broken_symlinks(tmp_path):
+    plugin = tmp_path / "context-engineering"
+    shutil.copytree(PLUGIN, plugin)
+    outside = tmp_path / "outside.txt"
+    outside.write_text("outside the plugin")
+    (plugin / "skills/live-link").symlink_to(outside)
+    (plugin / "skills/broken-link").symlink_to(tmp_path / "missing")
+
+    result = run(sys.executable, "scripts/validate.py", "--plugin", str(plugin))
+    assert result.returncode != 0
+    assert "Context plugin must not contain symlink: skills/live-link" in result.stdout
+    assert "Context plugin must not contain symlink: skills/broken-link" in result.stdout
+
+
+def test_context_plugin_ignores_generated_environment_symlinks(tmp_path):
+    plugin = tmp_path / "context-engineering"
+    shutil.copytree(PLUGIN, plugin, ignore=shutil.ignore_patterns(".venv"))
+    environment = plugin / "cli/.venv/bin"
+    environment.mkdir(parents=True)
+    (environment / "python").symlink_to(tmp_path / "python")
+
+    result = run(sys.executable, "scripts/validate.py", "--plugin", str(plugin))
+    assert result.returncode == 0 and result.stdout == "plugin validation passed\n"
+
+
 def test_context_skill_only_copy_reports_unavailable(tmp_path):
     target = git_repo(tmp_path)
     copied = tmp_path / "context-docs"; shutil.copytree(PLUGIN / "skills/context-docs", copied)
