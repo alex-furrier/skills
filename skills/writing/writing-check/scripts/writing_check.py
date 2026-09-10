@@ -43,6 +43,8 @@ def load_policy(profile: str) -> tuple[dict[str, Any], str]:
         lock_bytes = policy_file(vale, "upstream-lock.json").read_bytes()
         manifest = json.loads(manifest_bytes)
         lock = json.loads(lock_bytes)
+        if not isinstance(lock, dict):
+            raise PolicyError("policy lock has an invalid root")
     except (OSError, json.JSONDecodeError, PolicyError) as error:
         raise PolicyError(f"invalid policy metadata: {error}") from error
     profiles, rules, config = manifest.get("profiles"), manifest.get("rules"), manifest.get("config")
@@ -195,7 +197,13 @@ def main() -> int:
     try:
         version_run = subprocess.run(version_argv, capture_output=True, text=False, timeout=30)
     except (OSError, subprocess.TimeoutExpired) as error:
-        record.update(status="execution_error", vale={"status": "execution_error", "version": {"argv": version_argv}, "error": str(error)})
+        version: dict[str, Any] = {"argv": version_argv}
+        if isinstance(error, subprocess.TimeoutExpired):
+            if error.stdout is not None:
+                version["stdout"] = error.stdout.decode("utf-8", errors="replace")
+            if error.stderr is not None:
+                version["stderr"] = error.stderr.decode("utf-8", errors="replace")
+        record.update(status="execution_error", vale={"status": "execution_error", "version": version, "error": str(error)})
         print_record(record)
         return EXIT_EXECUTION
     try:

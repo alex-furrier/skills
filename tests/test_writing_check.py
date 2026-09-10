@@ -161,6 +161,18 @@ def test_writing_check_rejects_tampered_or_missing_policy_content(tmp_path):
         assert "vale" not in data
 
 
+def test_writing_check_rejects_non_object_upstream_lock_as_policy_error(tmp_path):
+    skill = copied_skill(tmp_path)
+    (skill / "vale/upstream-lock.json").write_text("[]")
+    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+    result = check(skill, "commit", str(source), {"PATH": ""})
+    data = json.loads(result.stdout)
+    assert result.returncode == 4 and data["status"] == "execution_error"
+    assert data["error"]["code"] == "policy_validation_failed"
+    assert "invalid root" in data["error"]["message"]
+    assert "vale" not in data
+
+
 def test_writing_check_retains_lint_argv_when_lint_cannot_start(tmp_path, monkeypatch, capsys):
     checker = checker_module()
     source = tmp_path / "candidate.md"; source.write_text("Candidate.")
@@ -178,6 +190,27 @@ def test_writing_check_retains_lint_argv_when_lint_cannot_start(tmp_path, monkey
     assert data["status"] == "execution_error"
     assert data["vale"]["version"]["argv"] == ["/fake/vale", "--version"]
     assert data["vale"]["lint"]["argv"][-1] == "-"
+
+
+def test_writing_check_retains_timeout_partial_version_output(tmp_path, monkeypatch, capsys):
+    checker = checker_module()
+    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+
+    def fake_run(argv, **kwargs):
+        assert argv == ["/fake/vale", "--version"]
+        raise subprocess.TimeoutExpired(argv, 30, output=b"partial version \xff", stderr=b"partial stderr \xff")
+
+    monkeypatch.setattr(checker.shutil, "which", lambda _: "/fake/vale")
+    monkeypatch.setattr(checker.subprocess, "run", fake_run)
+    monkeypatch.setattr(sys, "argv", ["writing_check.py", "--profile", "commit", "--json", str(source)])
+    assert checker.main() == 4
+    data = json.loads(capsys.readouterr().out)
+    assert data["status"] == "execution_error"
+    assert data["vale"]["version"] == {
+        "argv": ["/fake/vale", "--version"],
+        "stdout": "partial version \ufffd",
+        "stderr": "partial stderr \ufffd",
+    }
 
 
 def test_writing_check_retains_timeout_partial_lint_output(tmp_path, monkeypatch, capsys):
