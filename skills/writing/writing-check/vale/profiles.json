@@ -38,6 +38,10 @@
     }
   },
   "policy": "All findings are advisory. Vendored Google Vale v0.7.1 rules are normalized to suggestions and never fetched during checks.",
+  "config": {
+    "path": ".vale.ini",
+    "sha256": "faf133587c3993ad6144722cf64090b2241b5171af2fa7ff8dac6b3e914aacfc"
+  },
   "rules": {
     "GoogleDocs.AMPM": {
       "path": "styles/GoogleDocs/AMPM.yml",
