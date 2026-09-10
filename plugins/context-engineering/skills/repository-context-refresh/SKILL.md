@@ -9,14 +9,18 @@ The Context CLI and `uv` are required plugin dependencies. Install the complete 
 
 # Repository Context Refresh
 
-Orchestrate existing context and writing owners. Keep historical correctness evidence separate from prose observations, then reconcile both lanes before review.
+Use this skill for a repository-wide context or documentation sweep. It coordinates
+existing owners; it does not replace their contracts or create a new workflow owner.
 
-## Modes
+## Activation and mode
 
-- **Audit** is the default. Inspect and report without changing repository files, Git, or GitHub.
-- **Apply** requires an explicit request. Update repository context and documentation through destination owners, but leave worktree, branch, commit, push, and PR policy to the calling operator.
+Use **Audit** by default for requests to review, sweep, check, or find stale
+material. Audit inspects and returns a proposal without changing repository files,
+Git, or GitHub.
 
-Treat phrases such as "review", "sweep", "check", or "what is stale" as Audit. Enter Apply only for explicit wording such as "update", "fix", "apply", or "refresh the files".
+Use **Apply** only when the request explicitly says to update, fix, apply, or
+refresh files. Apply routes approved work to destination owners. The calling
+operator retains worktree, branch, commit, push, and PR decisions.
 
 ## Dependencies
 
@@ -113,7 +117,7 @@ For every changed source, use one shared budget of up to three rewrite passes af
 - remove actionable findings;
 - meet FRE 55 or higher and FK 10 or lower when readability is `normal`;
 - resolve actionable findings without a readability target for small, insufficient, or composition-limited samples;
-- preserve factual behavior, required language, exact terms, links, commands, and authority boundaries rather than exact wording;
+- keep safety, authentication, authority, command, identifier, and other owner-designated text byte-exact unless its real owner independently authorizes a factual change; preserve the meaning of all other factual and contractual prose;
 - prefer coherent compression or section rewrites when historical implementation detail obscures the current decision;
 - rerun the exact source after each pass and discard stale records;
 - disposition only final-source residuals after the bounded loop.

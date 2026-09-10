@@ -171,6 +171,10 @@ def test_context_command_inventory_and_mutation_boundaries_are_explicit():
     writing_check = (ROOT / "skills/writing/writing-check/SKILL.md").read_text()
     assert "Keep `writing_check.py` read-only." in writing_check
     assert "only after an explicit request" in writing_check
+    protected = "byte-exact unless its real owner independently authorizes a factual change"
+    assert protected in writing_check
+    assert protected in (ROOT / "skills/writing/writing-check/references/repository-sweep.md").read_text()
+    assert protected in (PLUGIN / "skills/repository-context-refresh/SKILL.md").read_text()
 
 
 def test_context_improve_delegates_owner_order_and_skipped_candidate_boundary():

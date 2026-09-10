@@ -6,10 +6,15 @@ description: "Generate lean AGENTS.md files with a short orientation and DO/NOT/
 **Watermark**: All generated AGENTS.md files include a `generated-by` watermark.
 Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and plugin-local `cli/` project are required dependencies.
 
-## Output Shape (North Star)
+# Context AGENTS.md
 
-The following portable shape is
-the target for every generated AGENTS.md:
+Use this skill to create or update a lean AGENTS.md for a repository or module.
+It proposes validated routing context, then writes only after explicit apply
+approval.
+
+## Output shape
+
+Use this portable shape for every generated AGENTS.md:
 
 ```markdown
 ## Portable deterministic evidence
@@ -35,14 +40,12 @@ Key config: `OTHER_THING` (`other/file.py`).
 | `shared_constants/` | Constants shared across modules |
 ```
 
-**Auto mode** (`--auto`) and **interactive mode** (default) emit the same
-section set and follow the canonical section order from Step 4 and tier rules
-from Step 3c. Both present proposed content for review before any write.
-`--auto` limits the proposal to clean-evidenced content; it does not authorize
-apply. Write only after the user explicitly authorizes apply, then run
-post-write validation.
+Both `--auto` and interactive mode use the same section order and tier rules.
+Both present a proposal before writing. `--auto` includes only clean-evidenced
+content; it does not authorize apply. After explicit authorization, write the
+reviewed proposal and run post-write validation.
 
-**Never add in any mode:**
+Never add:
 - Architecture prose — CRUD layering descriptions, dependency graphs
 - Directory layouts, key paths tables, file maps
 - Deployment instructions (human-facing, P5)
@@ -51,10 +54,10 @@ Commands live in the dedicated `## Commands` section (single-path always
 included; multi-path gated by tier). They only also appear inside a gotcha
 bullet when the gotcha is specifically about a non-obvious use of that command.
 
-## Core Rules
+## Rules
 
-* **Default shape**: orientation + optional How-to-Work-Here (tier-gated) + Commands + Gotchas + Related Context. Both modes emit the same sections, present proposed content for review before write, require explicit apply authorization, then report post-write validation results.
-* **Correction capture**: do not insert a compulsory mid-task capture paragraph. A correction is evidence to consider, not authority to write durable context or interrupt the current assignment. Use `session-capture` for later user-approved capture; if unavailable, propose the narrow update without writing it. Explicitly authorized context maintenance remains in scope.
+* **Default shape**: orientation, optional tier-gated How to Work Here, Commands, Gotchas, and Related Context.
+* **Correction capture**: do not add a compulsory mid-task capture paragraph. A correction is evidence, not write authority. Use `session-capture` for a later user-approved capture; if unavailable, propose the narrow update without writing it.
 * **Gotchas include code traps**: a gotcha doesn't require session history. If an agent would almost-get-it-right but subtly wrong based on code patterns (e.g., patching at the wrong module path, using the wrong base class), that's a valid DO/NOT/BECAUSE bullet.
 * **Related Context section**: include when cross-cutting dependencies exist (sibling modules, shared constants, config dirs). These pointers save agents from missing non-obvious connections. Keep it to a compact table.
 * **Commands section**: single-path commands always included; multi-path commands scaled by contributor tier (see Step 3c). Commands are reference lookup, not workflow opinion.
@@ -109,18 +112,12 @@ If `$ARGUMENTS` contains `--help` or is exactly `help`, print usage and exit.
 
 ## Modes
 
-**quick-start**: Create from scratch. Output is orientation + gotchas.
+**quick-start** creates a new orientation and gotchas. **update** uses
+`uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering staleness <path-to-AGENTS.md> --json`, inspects every reported path and reason, and changes only affected sections. Its recommendation is advisory; use a full scan only after verifying a force condition in `references/incremental-update-workflow.md`.
 
-**update**: Incremental. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering staleness <path-to-AGENTS.md> --json` to assess what changed. Inspect every reported path and classification reason before choosing scope; the recommendation is advisory.
-Only update affected sections. Use a full scan only after independently verifying one
-of the force conditions in `references/incremental-update-workflow.md`.
-
-**evaluate**: Everything in update, plus evaluate against principles and propose improvements.
-
-**auto** (default): No AGENTS.md → quick-start. Has AGENTS.md → update + evaluate.
-Propose only clean-evidenced content, present it for review, and wait for
-explicit apply authorization before writing. Run validation after the authorized
-write; no proposal validator is provided by this workflow.
+**evaluate** performs update work and proposes principle-based improvements.
+**auto** is the default: quick-start without AGENTS.md, otherwise update plus
+evaluate. It proposes only clean-evidenced content; no proposal validator is provided by this workflow.
 
 ---
 

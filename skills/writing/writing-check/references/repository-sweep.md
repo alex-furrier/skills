@@ -43,7 +43,7 @@ Use another existing profile when the destination clearly owns it. State ambiguo
 In repository update mode:
 
 1. Verify findings against repository truth and document purpose before editing.
-2. Preserve factual behavior, current contracts, exact commands, identifiers, links, warnings, privacy, security, authentication, billing, legal claims, decision meaning, and authority boundaries. Do not preserve wording merely because it is historical.
+2. Preserve factual behavior and protected text. Keep safety, authentication, authority, command, identifier, privacy, security, billing, legal, and other owner-designated text byte-exact unless its real owner independently authorizes a factual change. Historical status alone does not protect other prose from revision.
 3. Prefer coherent section rewrites over conservative sentence patching when structure or readability is poor. Compress or remove obsolete implementation detail when the destination owner no longer needs it, especially in long retrospective ADRs and superseded plans.
 4. Route specialized documents to their existing owners when material structure or meaning changes: use `readme-improver` for READMEs, `context-agents-md` for AGENTS files, `context-contracts` for specifications and ADRs, and `context-docs` for structured architecture or reference documentation. Use `writing-core` for ordinary technical prose.
 5. If a required destination owner is unavailable, limit edits to clearly semantics-preserving corrections and defer structural or meaning-sensitive findings with a reason.

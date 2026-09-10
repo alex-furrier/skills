@@ -9,11 +9,11 @@ The Context CLI and `uv` are required plugin dependencies. Install the complete 
 
 # Session Capture
 
-Turn one session's non-obvious learning into durable knowledge without assuming
-where it belongs. This skill owns discovery, proposal quality, the approval
-boundary, and destination selection. The destination workflow owns the write.
+Use this skill to turn one current or supplied past session into durable,
+evidence-backed proposals. It owns discovery, routing, proposal quality, and the
+approval boundary; the destination workflow owns each write.
 
-## Public Boundary
+## Activation and boundary
 
 | Intent | Owner |
 |---|---|
@@ -24,14 +24,14 @@ boundary, and destination selection. The destination workflow owns the write.
 Do not use a separate multi-session workflow as a second single-session entrypoint. Do
 not merge current-state reconstruction into durable learning capture.
 
-## Quickstart
+## Happy path
 
 1. Identify the current session or a supplied past-session artifact.
-2. Extract evidenced, durable candidates.
-3. Search likely owners and route each candidate.
-4. Present ranked proposals and stop.
-5. In a subsequent user turn, write only explicitly approved items through
-   their destination owner.
+2. Extract durable candidates supported by evidence.
+3. Find each candidate's existing owner and route it.
+4. Present ranked proposals, then stop.
+5. On a subsequent turn, send only explicitly approved items to their
+   destination owner.
 6. Report exact changes or a no-change outcome.
 
 For past-session formats and extraction rules, read

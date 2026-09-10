@@ -13,14 +13,15 @@ The Context CLI and `uv` are required plugin dependencies. Install the complete 
 
 # Context Improve
 
-Two modes with different entry points:
+Use this skill to coordinate an AGENTS.md improvement for one repository or
+module. It computes depth, accepts optional supplied session evidence, and hands
+the proposal and any apply to `context-agents-md`.
 
-**Targeted** (`context-improve <repo-path>`) — you know which module needs work.
-Detects depth, mines sessions, generates lean AGENTS.md.
+## Activation and modes
 
-**General** (`context-improve`) — discovery first. Scans recent sessions, groups
-by detected repo, ranks by signal density, presents candidates. You pick, then
-it runs targeted mode.
+Use **targeted** mode as `context-improve <repo-path>` when the target is known.
+Use **general** mode as `context-improve` to choose a target; it does not scan
+local agent history or claim automatic session mining.
 
 ## Inputs
 
@@ -35,17 +36,16 @@ Parse from `$ARGUMENTS`:
 
 ---
 
-## General Mode (no repo-path provided)
+## General mode
 
-Session evidence is unavailable by default. Do not scan local agent history or
-claim automatic session mining. Ask the user to select a target path, then run
-targeted mode. A separately installed multi-session provider may supply ranked
-exported-session evidence only when the user also supplies `--sessions-dir`.
-This skill does not provide, install, or emulate that provider.
+Ask the user to select a target path, then use targeted mode. Session evidence
+is unavailable by default. A separately installed multi-session provider may
+supply ranked exported-session evidence only with user-supplied
+`--sessions-dir`; this skill does not provide, install, or emulate that provider.
 
 ---
 
-## Targeted Mode
+## Targeted mode
 
 ### Step 1: Validate Inputs + Depth Detection
 

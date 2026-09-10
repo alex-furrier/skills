@@ -5,64 +5,60 @@ description: Run source-bound Vale checks and qualified readability sampling for
 
 # Writing Check
 
-Collect deterministic evidence only. Preserve the exact UTF-8 source bytes, normalized findings, and raw Vale output. A result does not establish meaning, factuality, safety, usefulness, writing quality, or readiness.
+## Purpose and boundary
 
-## Boundary
+Collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the source bytes, normalized findings, raw Vale output, and source identity. Results do not establish meaning, factuality, safety, usefulness, writing quality, acceptance, or readiness.
 
-- Keep `writing_check.py` read-only. Never add repository discovery, batch execution, network access, or an auto-fix path to the checker.
-- During single-candidate checks and repository audits, never edit prose, source files, Git, or GitHub.
-- Enter repository update mode only after an explicit request. Apply edits outside the checker under the destination owner's authority.
-- Never run `vale sync`, fetch a package, or use a network service during a normal check.
-- Never turn findings, readability, sample size, or counts into a score or gate.
-- Report Vale line and span values as Vale coordinates, not byte offsets.
-- Let destination owners preserve commands, identifiers, links, marker blocks, warnings, billing/authentication facts, and safety or authority language.
+- Keep `writing_check.py` read-only. Do not add repository discovery, batch execution, network access, or an auto-fix path.
+- A single-candidate check or repository audit never edits prose, source files, Git, or GitHub. Enter repository update mode only after an explicit request to update prose; the destination owner applies edits outside the checker.
+- Never run `vale sync`, fetch a package, or use a network service during a normal check. Vale is required: when absent, retain source identity and return `unavailable`, never a substitute linter or clean result.
+- Findings, readability, sample size, and counts are advisory observations, never scores or gates. Vale line and span values are Vale coordinates, not byte offsets.
 
-Vale is a required Writing Check dependency. If it is absent, keep the source identity and return `unavailable`; never substitute another linter or report a clean result. The reviewed Google Vale v0.7.1 rules are bundled under `vale/styles/GoogleDocs/` with their MIT license and upstream lock. Every emitted severity is normalized to `suggestion`. `vale/profiles.json` is the authoritative profile inventory.
+The bundled, reviewed Google Vale v0.7.1 rules live in `vale/styles/GoogleDocs/`; their MIT license and upstream lock remain bundled. All severities are normalized to `suggestion`. `vale/profiles.json` is the authoritative profile inventory.
 
-## Run
+## Check one exact candidate
 
-Locate this skill directory and inspect `--help`, then run one exact candidate:
+Locate this skill directory, inspect `--help`, and run:
 
 ```bash
 python3 <skill-dir>/scripts/writing_check.py \
   --profile pr-description --json pr-body.md
 ```
 
-Use a UTF-8 file or `-` for stdin. The public checker has no personal-voice option or bundled voice policy. A caller may use a separately configured external overlay outside this checker; when that owner is unavailable, return this portable evidence unchanged and use neutral prose rather than imitating a voice.
+Pass a UTF-8 file or `-` for stdin. The public checker has no personal-voice option or bundled voice policy. A separately configured external overlay may run outside it; if unavailable, return portable evidence unchanged and use neutral prose rather than imitating a voice.
 
-For a repository-wide request, load [repository-sweep.md](references/repository-sweep.md). Default to its read-only audit mode unless the user explicitly requests repository updates. Start from its complete ledger of unique tracked human-readable documentation instead of selecting only likely files. In update mode, use its shared three-pass rewrite budget to remove actionable findings and meet applicable readability targets before dispositioning residuals. Keep all checker invocations single-candidate and source-bound. In update mode, route material edits to the available destination owner: `readme-improver` for READMEs, `context-agents-md` for AGENTS files, `context-contracts` for specifications and ADRs, `context-docs` for structured docs, and `writing-core` for ordinary technical prose. When a required owner is unavailable, limit edits to clear semantics-preserving corrections and defer structure or meaning changes with a reason.
+Choose a profile by purpose, not by the easiest readability outcome:
 
-Profiles:
+| Profile | Readability observation |
+| --- | --- |
+| `commit` | Disabled |
+| `pr-description`, `user-facing-response` | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
+| `readme` | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
+| `technical-doc`, `technical-doc-explanatory` | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10 |
+| `technical-doc-reference` | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
 
-| Profile | Vale observations | Readability |
-| --- | --- | --- |
-| `commit` | Reviewed Google Vale v0.7.1 rules | Disabled |
-| `pr-description` | Reviewed Google Vale v0.7.1 rules | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
-| `readme` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
-| `technical-doc-explanatory` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10 |
-| `technical-doc-reference` | Reviewed Google Vale v0.7.1 rules | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
-| `user-facing-response` | Reviewed Google Vale v0.7.1 rules | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
+All profiles use the reviewed Google Vale v0.7.1 observations. For every normal long-form sample, FRE 55 minimum and FK 10 maximum are advisory only. Reserve `user-facing-response` for its owner’s explicit plain-English rewrite; normal conversational drafting does not invoke Vale by default.
 
-Apply the same FRE 55 minimum and FK 10 maximum to every normal-sample long-form profile while preserving each profile's sample-size and composition rules. Reserve `user-facing-response` for an explicit plain-English rewrite owned by the `user-facing-response` skill; normal conversational drafting does not invoke Vale by default. If that owner is unavailable, keep this checker read-only and return evidence only rather than drafting replacement prose.
+Readability includes paragraphs and blockquotes, link labels, and sentence-like list items with at least five words. It excludes headings, code, inline code, destinations and URLs, comments, raw HTML, frontmatter, table cells, images, and list fragments. README and reference profiles report `composition_limited` with no target when excluded table and fragment words outnumber prose. A table-dominated PR below 100 words or five sentences remains `insufficient_sample`. Do not publish targets by default.
 
-Readability includes paragraphs and blockquotes, link labels, and sentence-like list items with at least five words. It excludes headings, code, inline code, destinations and URLs, comments and raw HTML, frontmatter, table cells, images, and list fragments. For README and reference profiles, report `composition_limited` with no target when excluded table and fragment words outnumber included prose. PRs below 100 words or five sentences remain `insufficient_sample` even when a table dominates. Targets are advisory observations, never public by default.
+## Interpret the record
 
-## Interpret structured evidence
-
-The wrapper preserves exits `0` through `4`:
+The schema-v3 record retains decoded text, raw-byte length and SHA-256, selected public policy name and digest, sample state, raw stdout/stderr/argv/exits, and normalized alerts. It intentionally has no quality verdict, protected-span authorization, persistent exception, or aggregate score.
 
 - `0` / `no_findings`: Vale ran and no configured pattern matched.
-- `1` / `findings`: Vale ran and one or more advisory patterns matched.
+- `1` / `findings`: Vale ran and found one or more advisory patterns.
 - `2` / `input_error`: source reading, UTF-8 decoding, or usage failed.
 - `3` / `unavailable`: Vale could not be resolved.
 - `4` / `execution_error`: version, execution, timeout, or JSON evidence failed.
 
-The schema-v3 record includes exact decoded text, raw-byte length and SHA-256, the selected public policy name and digest, sample state, raw stdout/stderr/argv/exits, and normalized alerts. It intentionally has no quality verdict, protected-span authorization, persistent exception, or aggregate score.
+Report `input_error`, `unavailable`, and `execution_error` explicitly; never convert them to `no_findings` or claim that a checker ran when it was unavailable.
 
-In an edit workflow, the destination owner must fix or explicitly disposition every finding for the exact source as `fix`, `keep_exact_term`, `keep_quote`, `keep_required_text`, `keep_voice`, or `defer`. Bind every disposition to `source.sha256` and the finding key. Discard it when the candidate changes; do not remap stale dispositions by location. This complete queue accounting is traceability, not a quality, readiness, or publication gate.
+Protected factual, safety, authentication, authority, command, and identifier text must remain byte-exact unless its real owner independently authorizes a factual change. This includes commands, identifiers, links, marker blocks, warnings, billing/authentication facts, and safety/authority language. A checker suggestion alone never authorizes paraphrase. In an edit workflow, the destination owner binds each fresh finding to the exact `source.sha256` and finding key as `fix`, `keep_exact_term`, `keep_quote`, `keep_required_text`, `keep_voice`, or `defer`. Discard it after any candidate change. This traceability is not a quality, readiness, or publication gate.
 
-## Upgrade or calibrate
+## Repository requests and policy maintenance
 
-Normal checks are offline. Upgrade vendored rules only in a reviewed change: fetch the named release to a temporary directory, verify its archive digest, show rule-by-rule diffs, update authoritative provenance and attribution, normalize imported severities, and rerun `evals/rule-calibration.json`. Run a shared aggregate corpus once with its complete expected-check set; report unique fixtures, executions, and rule coverage separately. Give genuinely contextual rules focused positive, negative, limitation or exact-term, and natural-prose fixtures. Every imported rule records a known limitation.
+For a repository-wide request, load [repository-sweep.md](references/repository-sweep.md). Default to its read-only audit. Its update mode uses a shared three-pass rewrite budget, still invokes the checker one exact candidate at a time, and routes material edits to the named destination owners; unavailable owners permit only clear semantics-preserving fixes.
 
-Use the retained source and findings for audit. Do not produce replacement prose unless the destination owner or user requests it.
+Normal checks are offline. Upgrade or calibrate vendored rules only in a reviewed change: fetch the named release to a temporary directory, verify the archive digest, show rule-by-rule diffs, update provenance and attribution, normalize severities, rerun `evals/rule-calibration.json`, and run the shared aggregate corpus once with complete expected-check reporting. Give contextual rules focused positive, negative, limitation/exact-term, and natural-prose fixtures, and record each imported rule’s known limitation.
+
+Use retained evidence for audits. Produce replacement prose only when the user or destination owner requests it.

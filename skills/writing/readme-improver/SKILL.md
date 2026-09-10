@@ -5,177 +5,51 @@ description: "Create, audit, and update README.md files using a reader-journey s
 
 # README Improver
 
-Improve READMEs by turning repo facts into a guided reader journey. Prefer plain,
-code-backed documentation over feature inventory, marketing language, or generic
-AI prose.
+## Purpose
 
-## Modes
+Turn verified repository facts into a reader journey: orient a cold reader, get them to a safe first result, explain the needed mental model, then link to detail. Prefer plain, code-backed documentation over inventories, marketing, and generic AI prose.
 
-Choose one mode before editing:
+## Choose the mode and path
 
-- **Init**: Create `README.md` when it is missing or intentionally being replaced
-  from scratch.
-- **Update**: Improve an existing `README.md` while preserving accurate useful
-  content and repo-specific voice.
-- **Audit**: Grade a README and produce findings without editing unless the user
-  asks for changes.
+- **Init:** create a missing README or replace it only when explicitly requested.
+- **Update:** improve an existing README while preserving accurate, useful content and repository voice.
+- **Audit:** grade and report findings without edits.
 
-When the user does not specify a mode, infer it from the repo state: missing
-README means Init, existing README means Update, review-only wording means Audit.
+Infer Init for a missing README, Update for an existing one, and Audit for review-only wording. If ambiguity remains, take the least destructive path and audit first.
 
-## Core rule
+For Init/Update:
 
-Treat a README as a journey, not an inventory. Teach the reader in this order:
+1. Scope from the README directory: a nested README documents its subtree unless told otherwise.
+2. Read local guidance first: nearest `AGENTS.md`, `CLAUDE.md`, docs index, existing README, package/task metadata, and then relevant docs, source, tests, examples, and CLI help.
+3. Verify facts before documenting them. Find the actual toolchain from task/package files and CI. Verify recommended commands with cheap, non-mutating evidence where safe; classify each as read-only, validation-only, local-file-mutating, host-mutating, or external-service-mutating.
+4. Build the shortest safe first-success path. Lead with what the reader can do. For risky setup, use `--help`, `doctor`, `status`, dry-run, or auth checks first; if setup must write without a dry-run, name the exact path it writes.
+5. Explain only the mental model and repo shape needed next. Keep deeper commands, configuration, options, troubleshooting, and contributing detail in references or linked docs.
+6. Verify the scoped `README.md` exists before claiming Init is complete.
 
-1. Orient them: what this is, who it is for, and why it exists.
-2. Get them to a first useful result with the shortest safe path.
-3. Explain the mental model, repo shape, and tradeoffs needed to keep going.
-4. Move detailed commands, config, options, troubleshooting, and contributing notes into reference sections or deeper docs.
+Load [the full workflow](references/readme-workflow.md) for discovery, structure, and verification detail. Load [the rubric](references/readme-rubric.md) for Audit and trials.
 
-These are internal planning stages, not public labels. Do **not** use workshop terminology such as `First Contact`, `Black Triangle`, `Hairball`, or similar journey labels as generated README headings or prose unless the existing project already uses them as real product/domain terms. Translate the structure into normal reader-facing headings such as `Quick start`, `How it works`, `Common workflows`, `Configuration`, or repo-specific equivalents.
+## Evidence boundaries
 
-Load [references/readme-workflow.md](references/readme-workflow.md) for the full
-workflow and [references/readme-rubric.md](references/readme-rubric.md) when
-grading or running trials.
+Extract examples from real tests, examples, CLI help, docs, scripts, or source. Mark uncertain examples as uncertain. Label YAML/TOML/JSON examples as copied or illustrative, and compare MCP/API/SDK/CLI examples with current signatures, schemas, generated help, or tests. Do not infer registry availability from metadata: distinguish source-checkout from registry installs and label unverified registry commands in the README itself.
 
-## Discovery before writing
+When a command is blocked by trust prompts, missing metadata, network installs, or unsafe side effects, do not force it. Label it `verified by running`, `verified by metadata`, `not run: unsafe/expensive`, `not run: trust required`, or `not verified`. If README/docs/guidance/source disagree, prefer executable source, tests, CLI help, and nearest `AGENTS.md`; flag stale documentation. Scan for empty headings, duplicate setup, stale migration notes, template leftovers, version drift, generated blocks, and duplicated references.
 
-Do enough discovery to avoid inventing docs:
+Protected factual, safety, authentication, authority, command, and identifier text must remain byte-exact unless its real owner independently authorizes a factual change. This includes commands, identifiers, links, marker blocks, warnings, billing/authentication facts, and safety/authority language. A checker suggestion alone never authorizes paraphrase.
 
-1. Identify the README scope from the README directory. In a monorepo, a nested
-   README documents that subtree unless the user says otherwise.
-2. Read repo guidance first: nearest `AGENTS.md`, `CLAUDE.md`, existing docs
-   index, package metadata, task files, and current README if present.
-3. Detect the actual toolchain from files such as `.mise.toml`, `justfile`,
-   `Makefile`, `pyproject.toml`, `Cargo.toml`, `package.json`, lockfiles,
-   `uv.lock`, `go.mod`, and CI workflows.
-4. Extract examples from real sources: tests, `examples/`, CLI help, docs,
-   scripts, or source comments. Mark uncertain examples as uncertain instead of
-   presenting them as tested. For YAML/TOML/JSON snippets, say whether they are
-   copied from repo docs/fixtures/tests or are minimal illustrative examples. For
-   MCP, API, SDK, or CLI-tool examples, compare copied examples against current
-   function signatures, schemas, generated help, or tests before keeping them.
-5. Verify recommended commands exist. Prefer cheap non-mutating checks such as
-   `--help`, task listing, source inspection, or metadata inspection before
-   recommending commands. Classify commands as read-only, validation-only,
-   mutating local files, host-mutating, or external-service-mutating.
-6. Do not infer PyPI, npm, Homebrew, or package-registry availability from package
-   metadata alone. Separate source-checkout installs from registry installs and
-   label registry commands that were not verified in the README itself, not only
-   in the final response.
-7. If verification is blocked by trust prompts, missing README package metadata,
-   network installs, or unsafe side effects, do not force it. Record the command
-   as metadata-backed or unverified and explain why.
-8. For Update mode, compare README claims against current repo facts and related
-   docs. When README, docs, `AGENTS.md`, tests, and source disagree, prefer
-   executable source/tests/CLI help/nearest `AGENTS.md` and flag stale docs.
-9. Scan for structural drift: empty headings, duplicate setup paths, stale
-   migration notes, template leftovers, version strings that drift, generated
-   blocks, and command/reference tables that duplicate deeper docs.
+## Write for the reader
 
-Use parallel discovery when the environment supports it. Otherwise use parallel
-tool calls or inspect inline.
+Use point-bearing headings such as `Run the local check`, code blocks for commands, and a success cue when it prevents ambiguity. Include `Pick your path` for multiple primary audiences; put companion apps/APIs after first success. For service, daemon, setup, MCP, or client integration, include a cheap success signal. For archive/catalog/generated-index repositories, make the README an index and update/contribution guide rather than forcing package sections.
 
-## Writing rules
+Keep repo-specific tradeoffs and actionable **DO X, NOT Y, BECAUSE Z** gotchas. Link out instead of copying long tables or references. Preserve accurate, distinctive maintainer wording, warnings, terms of art, and at least the useful sentence, quote, or callout from distinctive sections unless it is inaccurate or harmful. Do not leak internal planning labels such as `First Contact`, `Black Triangle`, or `Hairball` into public prose unless they are real existing domain terms.
 
-- Lead with what the reader can do, then explain why it matters.
-- Keep the fastest safe successful path near the top. For tools that write to
-  `$HOME`, install services, publish, deploy, send messages, or touch external
-  systems, start with `--help`, `doctor`, `status`, `dry-run`, auth checks, or
-  read-only commands before mutating examples. If the first meaningful setup
-  command must write local config and has no dry-run, keep it in quick start but
-  state the exact path it writes.
-- For credentialed CLIs, name required credentials/permissions and include a
-  read-only auth or status check before production API examples.
-- For setup, daemon, MCP, service, or client-integration repos, include a cheap
-  success signal: validation passing, help/version output, health/status check,
-  log line, tool-list result, or client-visible confirmation. If a cheap
-  read-only command is available, include one tiny expected-output cue or explain
-  why no output was captured.
-- For multiple primary CLIs/products, add a `Pick your path` section with one
-  shortest success path per audience. Put optional companion apps/APIs after the
-  primary first success.
-- For archive, catalog, or generated-index repos, make the README an index and
-  contribution/update guide. Do not force package-style sections.
-- Use headings that say the point: `Run the local check` beats `Validation`.
-- Include code blocks for commands. Add expected output or a success signal when
-  it prevents ambiguity.
-- Link to deeper docs instead of copying everything into the README. If command,
-  config, API, or tool references duplicate docs, keep a small workflow table and
-  link to the reference.
-- Use repo-specific wording and tradeoffs. Avoid generic claims that could fit any
-  project.
-- Keep gotchas actionable: **DO X, NOT Y, BECAUSE Z**.
-- Preserve good human-written content, maintainer warnings, and terms of art even
-  if the surrounding README needs restructuring. Preserve at least the useful
-  sentence, quote, or callout from distinctive sections unless it is inaccurate or
-  harmful. Prefer surgical updates when an existing README already has a strong
-  journey.
-- When `AGENTS.md`, `CLAUDE.md`, or a docs index is the main Init source, extract
-  only the reader-facing purpose, shortest path, small repo map, and 3-5 highest
-  value invariants. Link the rest.
-- Before finalizing Init or Update, verify the scoped `README.md` exists at the
-  target path. If Init cannot write it, stop and report blocked instead of
-  claiming completion.
+In Update, read once for voice, list journey gaps, and prefer a surgical patch when the README is already strong. Reorder around orientation, first success, mental model, and reference; do not replace it with a generic template. Remove feature soup, badge theater, decorative emoji, forced symmetry, fake enthusiasm, invented examples/output, unverified installs, contradictory setup, and conclusion filler. Keep technically exact terms and useful personality.
 
-## Final writing evidence
+## Final evidence
 
-After factual discovery, reader-journey repair, command verification, and the
-actual draft, identify maintainer-distinctive wording plus exact commands,
-identifiers, links, marker blocks, warnings, billing/authentication facts, and
-safety or authority language. These remain domain-owner judgments; never change
-them merely to satisfy a rule or readability band.
+Run `writing-check --profile readme` on the exact Init/Update candidate after factual discovery and drafting. If Vale is unavailable, complete only the authorized README judgment, report `unavailable`, do not substitute another linter, and never claim clean evidence or that a checker ran. Its Google Vale v0.7.1 observations and readability sample are advisory: under 100 included prose words or 5 sentences is `insufficient_sample`; 100–299 is normally `small_sample`; 300 words and 8 sentences is `normal` with private FRE 55 / FK 10 observations; table/fragment-heavy documents may be `composition_limited` with no target.
 
-Run `writing-check --profile readme` on the exact candidate. If the checker or
-Vale is unavailable, continue only with the authorized README judgment, report
-the unavailable state, and do not claim clean evidence or substitute another
-linter. Treat its reviewed Google Vale v0.7.1 rules and readability sample as
-advisory evidence. The policy excludes the upstream Google word lists and does
-not make contextual product substitutions:
+Judge each finding against repository truth, searchability, and the reader journey. In Init/Update, fix or explicitly disposition each against the exact `source.sha256`; an owner may retain an exact term, quote, warning, required text, or voice. This accounting is never a quality, readiness, or publication gate. Rerun after source changes. A broad rewrite of existing human-authored long-form prose, architecture, warnings, procedures, safety/security/authentication/permissions/billing/legal language, exact commands, migration behavior, or authority boundaries requires an independent semantic-preservation pass. Audit remains non-mutating.
 
-- under 100 included prose words or 5 sentences is `insufficient_sample`;
-- 100–299 words is normally `small_sample`;
-- 300 words and 8 sentences is `normal`, with private FRE 55 / FK 10 targets;
-- table- or fragment-heavy READMEs can be `composition_limited` with no target.
+## Return
 
-Judge each finding against repository truth, technical searchability, and the
-reader journey. In Init or Update mode, fix or explicitly disposition every
-finding against the exact `source.sha256`. A finding can remain visible while the
-owner keeps an exact term, quote, required warning, or distinctive voice. This
-accounting is not a quality, readiness, or publication gate. If the source
-changes, re-run the check instead of carrying forward a stale digest.
-
-Require an independent semantic-preservation pass when a broad rewrite changes
-existing human-authored long-form prose, architecture claims, warnings,
-procedures, safety/security/authentication/permissions/billing/legal language,
-exact commands, migration behavior, or authority boundaries. Audit mode remains
-non-mutating and returns evidence without replacement prose.
-
-## Anti-slop judgment
-
-Review inflated or generic words in context instead of applying an absolute
-ban. Remove feature soup before first success, badge theater, decorative emoji,
-forced symmetry, fake enthusiasm, generic conclusions, invented examples or
-output, unverified install commands, and contradictory setup sections. Keep a
-marketing-sounding term when it is technically exact and no clearer wording
-preserves the claim.
-
-Keep personality when it is specific and useful. Do not sand every README into a
-neutral template.
-
-## Output expectations
-
-For edits, provide:
-
-- Files changed.
-- What improved in the journey.
-- Top journey gaps found and whether each was fixed, deferred, or intentionally
-  left unchanged.
-- Commands or facts verified, using labels such as `verified by running`,
-  `verified by metadata`, `not run: unsafe/expensive`, `not run: trust required`,
-  or `not verified`.
-- Useful content preserved from the original README.
-- Tradeoffs or sections intentionally moved, shortened, or left alone.
-
-For audits, use the rubric in [references/readme-rubric.md](references/readme-rubric.md)
-and report concrete findings with file/section references.
+For edits, report changed files; journey improvements; the top gaps as fixed/deferred/unchanged; verified facts and commands using the labels above; preserved material; and intentional moves, shortening, or tradeoffs. For audits, use the reference rubric and cite concrete file/section evidence without replacement prose.

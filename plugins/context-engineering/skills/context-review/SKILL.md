@@ -9,8 +9,9 @@ The Context CLI and `uv` are required plugin dependencies. Install the complete 
 
 # Context Review
 
-Review context ownership without making path labels authoritative. Preserve the
-Git diff as the source evidence shown to the reviewer.
+Use this skill before handoff or during pull-request review when a diff may have
+changed durable context. It reviews ownership without writing files. The Git diff
+remains the source evidence; path labels are only inspection leads.
 
 ## Workflow
 
@@ -35,8 +36,8 @@ Git diff as the source evidence shown to the reviewer.
      --base <base-sha> --head <head-sha> --json
    ```
 
-4. Stop on exact Git errors. Otherwise inspect the raw changed paths, rename
-   pairs, and relevant diff hunks. Keep analyzer route labels advisory.
+4. Stop on exact Git errors. Otherwise inspect raw changed paths, rename
+   pairs, and relevant hunks. Analyzer route labels remain advisory.
 5. Apply the ownership tests in [review routing](references/review-routing.md):
    route to `SPEC.md`, ADRs, architecture/reference docs, `AGENTS.md`, skills,
    or no update only when the diff evidence supports that owner.

@@ -9,9 +9,11 @@ The Context CLI and `uv` are required plugin dependencies. Install the complete 
 
 # Context Contracts
 
-Keep current repository contracts small, factual, and portable.
+Use this skill when current repository behavior needs a small, factual, portable
+SPEC or ADR record. It works from current truth; use `context-backfill` for
+historical reconstruction.
 
-## Workflow
+## Activation and workflow
 
 1. Read applicable `AGENTS.md` files and identify the repository or module root.
 2. Discover current conventions before proposing files:
@@ -29,16 +31,14 @@ Keep current repository contracts small, factual, and portable.
 3. Read current code, tests, public interfaces, configuration, and existing
    architecture/reference docs. Use Git history only to explain current truth;
    route historical reconstruction to `context-backfill`.
-4. Choose the requested mode:
-   - **Analyze**: report current contracts, conventions, gaps, and contradictions.
-   - **Validate**: return deterministic findings without editing files.
-   - **Bootstrap**: draft one correctness-envelope `SPEC.md`; draft an ADR only
-     for an evidenced lasting decision.
-   - **Migrate**: replace the retired Purpose/Scope/Interfaces/Validation
-     profile with the canonical profile. Do not keep both profiles or treat the
-     retired headings as aliases.
-   - **Update**: propose the smallest edits that make existing contracts match
-     current repository truth.
+4. Select one mode:
+   - **Analyze** reports current contracts, conventions, gaps, and contradictions.
+   - **Validate** returns deterministic findings without editing files.
+   - **Bootstrap** drafts one correctness-envelope `SPEC.md` and an ADR only
+     when a lasting decision has evidence.
+   - **Migrate** replaces the retired Purpose/Scope/Interfaces/Validation
+     profile with the canonical profile; never retain both as aliases.
+   - **Update** proposes the smallest edits that match current repository truth.
 5. Present a file-by-file proposal and report `Repository write: no`.
 6. Write only after an explicit apply instruction. Preserve every existing ADR
    directory and filename convention. Never create a placeholder ADR, empty ADR

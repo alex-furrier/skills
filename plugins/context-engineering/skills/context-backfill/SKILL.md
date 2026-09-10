@@ -9,19 +9,20 @@ The Context CLI and `uv` are required plugin dependencies. Install the complete 
 
 # Context Backfill
 
-Reconstruct repository history as a proposal. Keep local Git sufficient and
-make every historical claim auditable.
+Use this skill to produce an auditable, proposal-only reconstruction of a
+repository or module at a fixed cutoff. Local Git is sufficient; merged pull
+requests add optional rationale evidence.
 
-## Depth
+## Activation and depth
 
-- **Complete-picture** is the default. Reconstruct the repository from genesis
-  through the cutoff, or a module from its first evidenced commit through the cutoff.
-  Inspect all in-scope phases, deleted and renamed design artifacts,
-  high-signal commit diffs, and optional merged-PR evidence.
-- **Quick** is an explicit speed/depth tradeoff. Use it only when the request
-  asks for a quick, bounded, or current-state-only reconstruction. Inspect the
-  cutoff tree and a limited set of relevant commits; propose only facts and
-  decisions needed for current contracts.
+Use **complete-picture** by default for a genesis-through-cutoff reconstruction.
+For a module, begin at its first evidenced commit. Inspect in-scope phases,
+renamed or deleted design artifacts, relevant diffs, and optional merged-PR
+records.
+
+Use **quick** only when the request explicitly asks for a bounded or
+current-state reconstruction. Inspect the cutoff tree and a limited relevant
+commit set; propose only facts and decisions needed for current contracts.
 
 ## Workflow
 

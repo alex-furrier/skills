@@ -21,41 +21,29 @@ The Context CLI and `uv` are required plugin dependencies. Install the complete 
 
 # Documentation Workflow
 
-A complete documentation lifecycle skill covering analysis, generation, and maintenance.
+Use this opt-in skill for structured architecture, reference, evolution, and
+docs-tree maintenance. It owns docs structure and content; `context-agents-md`
+owns AGENTS.md generation and updates.
 
-## Activation
+## Activation and mode
 
-This skill activates when users:
-- Ask to "document this module", "create docs", "write documentation"
-- Request module architecture, reference, evolution, or structured module docs
-- Want to "update docs", "sync documentation", "check if docs are current"
-- Say "analyze documentation", "audit docs", "plan documentation"
+Use **analyze** to assess a documentation need, **quickstart** to bootstrap
+concise explanation and reference pages, **update** to sync existing docs after
+code changes, or **consolidate** to inventory and tidy scattered material.
 
-## Four Modes
+When no mode is named, choose **update** for existing docs with recent changes,
+**quickstart** when the target has no docs, **analyze** for planning or
+assessment, and **consolidate** for accumulated material that needs triage. Ask
+when that evidence is unclear.
 
-| Mode | Purpose | When to Use |
-|------|---------|-------------|
-| **analyze** | Plan documentation strategy | Starting fresh, auditing existing docs |
-| **quickstart** | Bootstrap concise explanation and reference docs | New module needs durable context coverage |
-| **update** | Sync docs with code changes | After code changes, maintenance |
-| **consolidate** | Inventory and tidy existing docs | Scattered, stale, or misplaced docs across the repo |
-
-All modes end with a deterministic verification step. See the Verification section below.
-
-## Mode Selection
-
-If the user doesn't specify a mode, infer from context:
-- Existing docs + recent code changes → **update**
-- No docs exist for the target → **quickstart**
-- User wants to plan or assess → **analyze**
-- Docs have accumulated and need triage → **consolidate**
-- Unclear → ask which mode
+All modes finish with deterministic verification.
 
 Route onboarding walkthroughs and getting-started requests to the repository
 README or its established onboarding surface. They may be paired with durable
 context docs, but quickstart does not generate a tutorial.
 
-**Intent-based classification**: When selecting a mode or classifying content, use the intent classification to identify what type of documentation is needed (tutorial, how-to, explanation, reference). See `references/docs-structure.md` for the classification table and the intent-first taxonomy principle.
+Classify content by reader intent before placing it. The table and placement
+rules are in `references/docs-structure.md`.
 
 ## Historical proposal intake
 
