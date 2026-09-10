@@ -1,4 +1,5 @@
 import hashlib
+import importlib.util
 import json
 import os
 import pathlib
@@ -43,6 +44,14 @@ def check(skill, profile, input_path, env):
         [sys.executable, str(skill / "scripts/writing_check.py"), "--profile", profile, "--json", input_path],
         text=True, input=None, capture_output=True, env=env,
     )
+
+
+def checker_module():
+    spec = importlib.util.spec_from_file_location("writing_check_test_module", ROOT / "skills/writing/writing-check/scripts/writing_check.py")
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def test_writing_check_stdin_lints_the_retained_source_bytes(tmp_path):
@@ -129,7 +138,7 @@ def test_writing_check_rejects_malformed_alerts_and_coordinates(tmp_path):
 
 def test_writing_check_rejects_tampered_or_missing_policy_content(tmp_path):
     source = tmp_path / "candidate.md"; source.write_text("Candidate.")
-    for index, mutation in enumerate(("tamper-rule", "remove-rule", "tamper-license", "remove-config")):
+    for index, mutation in enumerate(("tamper-rule", "remove-rule", "tamper-license", "tamper-config", "remove-config")):
         skill = copied_skill(tmp_path / f"skill-{index}")
         if mutation == "tamper-rule":
             rule = skill / "vale/styles/GoogleDocs/AMPM.yml"
@@ -139,6 +148,9 @@ def test_writing_check_rejects_tampered_or_missing_policy_content(tmp_path):
         elif mutation == "tamper-license":
             license_file = skill / "vale/vendor/Google-LICENSE"
             license_file.write_text(license_file.read_text() + "\ntampered\n")
+        elif mutation == "tamper-config":
+            config = skill / "vale/.vale.ini"
+            config.write_text(config.read_text().replace("MinAlertLevel = suggestion", "MinAlertLevel = error"))
         else:
             (skill / "vale/.vale.ini").unlink()
         bin_dir = fake_vale(tmp_path / f"fake-{index}")
@@ -146,6 +158,47 @@ def test_writing_check_rejects_tampered_or_missing_policy_content(tmp_path):
         data = json.loads(result.stdout)
         assert result.returncode == 4 and data["status"] == "execution_error"
         assert data["error"]["code"] == "policy_validation_failed"
+        assert "vale" not in data
+
+
+def test_writing_check_retains_lint_argv_when_lint_cannot_start(tmp_path, monkeypatch, capsys):
+    checker = checker_module()
+    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+
+    def fake_run(argv, **kwargs):
+        if argv[-1] == "--version":
+            return subprocess.CompletedProcess(argv, 0, b"vale version 3.0", b"")
+        raise OSError("lint could not start")
+
+    monkeypatch.setattr(checker.shutil, "which", lambda _: "/fake/vale")
+    monkeypatch.setattr(checker.subprocess, "run", fake_run)
+    monkeypatch.setattr(sys, "argv", ["writing_check.py", "--profile", "commit", "--json", str(source)])
+    assert checker.main() == 4
+    data = json.loads(capsys.readouterr().out)
+    assert data["status"] == "execution_error"
+    assert data["vale"]["version"]["argv"] == ["/fake/vale", "--version"]
+    assert data["vale"]["lint"]["argv"][-1] == "-"
+
+
+def test_writing_check_retains_timeout_partial_lint_output(tmp_path, monkeypatch, capsys):
+    checker = checker_module()
+    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+
+    def fake_run(argv, **kwargs):
+        if argv[-1] == "--version":
+            return subprocess.CompletedProcess(argv, 0, b"vale version 3.0", b"")
+        raise subprocess.TimeoutExpired(argv, 30, output=b"partial stdout", stderr=b"partial stderr")
+
+    monkeypatch.setattr(checker.shutil, "which", lambda _: "/fake/vale")
+    monkeypatch.setattr(checker.subprocess, "run", fake_run)
+    monkeypatch.setattr(sys, "argv", ["writing_check.py", "--profile", "commit", "--json", str(source)])
+    assert checker.main() == 4
+    data = json.loads(capsys.readouterr().out)
+    assert data["status"] == "execution_error"
+    assert data["vale"]["version"]["argv"] == ["/fake/vale", "--version"]
+    assert data["vale"]["lint"]["argv"][-1] == "-"
+    assert data["vale"]["lint"]["stdout"] == "partial stdout"
+    assert data["vale"]["lint"]["stderr"] == "partial stderr"
 
 
 def test_writing_check_valid_alerts_are_normalized_as_suggestions(tmp_path):

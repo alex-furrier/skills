@@ -75,6 +75,15 @@ def validate_writing_policy(errors: list[str]) -> None:
         errors.append(f"missing Writing Check license: {license_path.relative_to(ROOT)}")
     elif hashlib.sha256(license_path.read_bytes()).hexdigest() != upstream["license_sha256"]:
         errors.append(f"Writing Check license digest mismatch: {license_path.relative_to(ROOT)}")
+    config = manifest.get("config")
+    if not isinstance(config, dict) or config.get("path") != ".vale.ini" or not isinstance(config.get("sha256"), str):
+        errors.append("invalid Writing Check config metadata")
+    else:
+        config_path = root / config["path"]
+        if not config_path.is_file():
+            errors.append(f"missing Writing Check config: {config_path.relative_to(ROOT)}")
+        elif hashlib.sha256(config_path.read_bytes()).hexdigest() != config["sha256"]:
+            errors.append(f"Writing Check config digest mismatch: {config_path.relative_to(ROOT)}")
     rules = manifest.get("rules")
     if not isinstance(rules, dict) or not rules:
         errors.append("Writing Check manifest has no rule digests")

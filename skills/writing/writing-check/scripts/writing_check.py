@@ -41,14 +41,18 @@ def load_policy(profile: str) -> tuple[dict[str, Any], str]:
     try:
         manifest_bytes = policy_file(vale, "profiles.json").read_bytes()
         lock_bytes = policy_file(vale, "upstream-lock.json").read_bytes()
-        config_bytes = policy_file(vale, ".vale.ini").read_bytes()
         manifest = json.loads(manifest_bytes)
         lock = json.loads(lock_bytes)
     except (OSError, json.JSONDecodeError, PolicyError) as error:
         raise PolicyError(f"invalid policy metadata: {error}") from error
-    profiles, rules = manifest.get("profiles"), manifest.get("rules")
+    profiles, rules, config = manifest.get("profiles"), manifest.get("rules"), manifest.get("config")
     if not isinstance(profiles, dict) or not isinstance(rules, dict):
         raise PolicyError("policy manifest has an invalid profile or rule inventory")
+    if not isinstance(config, dict) or config.get("path") != ".vale.ini" or not isinstance(config.get("sha256"), str):
+        raise PolicyError("invalid policy config metadata")
+    config_bytes = policy_file(vale, config["path"]).read_bytes()
+    if hashlib.sha256(config_bytes).hexdigest() != config["sha256"]:
+        raise PolicyError("policy config digest mismatch")
     if profile not in profiles:
         raise UnknownProfile(sorted(profiles))
     selected = profiles[profile]
@@ -207,9 +211,10 @@ def main() -> int:
         print_record(record)
         return EXIT_EXECUTION
     lint_argv = [vale, "--no-global", f"--config={ROOT / 'vale' / '.vale.ini'}", "--no-exit", "--output=JSON", "--ext=.md", "-"]
+    lint: dict[str, Any] = {"argv": lint_argv}
+    record["vale"] = {"status": "ran", "version": version, "lint": lint}
     try:
         lint_run = subprocess.run(lint_argv, input=data, capture_output=True, text=False, timeout=30)
-        lint: dict[str, Any]
         try:
             stdout, stderr = lint_run.stdout.decode("utf-8"), lint_run.stderr.decode("utf-8")
         except UnicodeDecodeError as error:
@@ -222,6 +227,11 @@ def main() -> int:
             raise RuntimeError(f"Vale exited {lint_run.returncode}")
         record["alerts"] = normalize_vale(stdout)
     except (OSError, UnicodeDecodeError, subprocess.TimeoutExpired, ValueError, RuntimeError) as error:
+        if isinstance(error, subprocess.TimeoutExpired):
+            if error.stdout is not None:
+                lint["stdout"] = error.stdout.decode("utf-8", errors="replace")
+            if error.stderr is not None:
+                lint["stderr"] = error.stderr.decode("utf-8", errors="replace")
         vale_record = record.get("vale", {})
         vale_record.update(status="execution_error", version=version, error=str(error))
         record.update(status="execution_error", vale=vale_record)
