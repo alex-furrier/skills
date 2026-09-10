@@ -94,7 +94,7 @@ def run(candidates: list[tuple[str, str]]) -> tuple[list[dict[str, Any]], int]:
     try:
         for source, profile in candidates:
             output = io.StringIO()
-            sys.argv = [str(CHECKER_PATH), "--profile", profile, "--json", "--", source]
+            sys.argv = [str(CHECKER_PATH), f"--profile={profile}", "--json", "--", source]
             with contextlib.redirect_stdout(output):
                 code = checker.main()
             records.append(json.loads(output.getvalue()))

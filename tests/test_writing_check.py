@@ -308,19 +308,25 @@ def test_repository_sweep_check_does_not_swallow_process_control_exceptions(tmp_
         sweep.run([(str(source), "commit")])
 
 
-def test_repository_sweep_check_preserves_per_candidate_failure_status(tmp_path):
+def test_repository_sweep_check_preserves_records_after_dash_prefixed_invalid_profile(tmp_path):
     skill = copied_skill(tmp_path / "skill")
-    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+    bin_dir = fake_vale(tmp_path / "fake")
+    first = tmp_path / "first.md"; first.write_text("First candidate.")
+    second = tmp_path / "second.md"; second.write_text("Second candidate.")
     candidates = tmp_path / "candidates.json"
-    candidates.write_text(json.dumps([{"source": str(source), "profile": "not-a-profile"}]))
+    candidates.write_text(json.dumps([
+        {"source": str(first), "profile": "commit"},
+        {"source": str(second), "profile": "--help"},
+    ]))
     result = subprocess.run(
         [sys.executable, str(skill / "scripts/repository_sweep_check.py"), "--candidates", str(candidates), "--jsonl"],
-        text=True, capture_output=True, env={"PATH": ""},
+        text=True, capture_output=True, env={"PATH": str(bin_dir)},
     )
-    record = json.loads(result.stdout)
+    records = [json.loads(line) for line in result.stdout.splitlines()]
     assert result.returncode == 2
-    assert record["schema"] == 3 and record["status"] == "input_error"
-    assert record["error"]["code"] == "unknown_profile"
+    assert [record["schema"] for record in records] == [3, 3]
+    assert [record["status"] for record in records] == ["no_findings", "input_error"]
+    assert records[1]["error"]["code"] == "unknown_profile"
 
 
 def test_repository_sweep_check_accepts_dash_prefixed_source_name(tmp_path):
