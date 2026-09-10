@@ -34,7 +34,7 @@ Find all documentation files:
 
 ```
 1. docs/*.md and docs/**/*.md
-2. All AGENTS.md files (non-archive, non-vendored)
+2. AGENTS.md files only to identify content that needs a proposal to `context-agents-md`
 3. Root-level .md files (README.md, TROUBLESHOOTING.md, etc.)
 ```
 
@@ -47,7 +47,7 @@ Build an inventory table before doing anything else:
 |------|-------|--------------------------|
 | docs/architecture.md | 80 | Permanent reference |
 | docs/migration-plan-2024.md | 45 | Archive candidate (migration done?) |
-| config/editor/AGENTS.md | 120 | Has human-facing content? |
+| config/editor/AGENTS.md | 120 | Route possible content move to `context-agents-md` |
 ```
 
 ---
@@ -68,7 +68,7 @@ Before classifying, observe the naming and organizational patterns that already 
 - `docs/` top-level → cross-cutting references, architecture, guides used daily
 - `docs/tools/` → per-tool docs for secondary/utility tools
 - Root-level → `README.md`, `TROUBLESHOOTING.md` (operational)
-- Module `AGENTS.md` → agent-facing file maps, commands, invariants
+- Module `AGENTS.md` → route agent-context questions to `context-agents-md`
 
 **Gaps in the derived standard** — do files exist that violate the pattern?
 - A file named `ghostty-shortcuts.md` in a repo where every other tool uses `{tool}-reference.md`
@@ -118,9 +118,8 @@ proposals; keep their source file in place until an approved application owns
 its removal. Keep onboarding material at its established path and recommend a
 README pointer or update rather than creating `tutorials/`.
 
-Also flag individual docs that exceed `README.md` P11
-sizing targets (docs files over 500 lines) as needing review or splitting in
-the manifest.
+Flag unusually large documentation pages for a maintenance review when they
+are difficult to navigate; do not apply a fixed line-count rule.
 
 ### Dimension 2: Action
 
@@ -151,8 +150,9 @@ To confirm an archive candidate: check if the work it describes is done (look at
 *Correctly typed, wrong location.*
 
 Apply the **actor test**:
-- Human-facing content in AGENTS.md → `docs/{topic}-reference.md`
-- Agent-facing content in `docs/` that belongs in a module AGENTS.md
+- AGENTS.md content that may need an extraction or routing change → proposal
+  for `context-agents-md`
+- Agent-context questions discovered in `docs/` → `context-agents-md`
 
 **Create**
 *Gap identified -- needed doc doesn't exist.*
@@ -160,8 +160,9 @@ Apply the **actor test**:
 Signals:
 - `docs/AGENTS.md` index doesn't exist
 - `docs/README.md` index doesn't exist (Navigation principle: both indexes are required for every docs/ directory)
-- A configured tool has no reference doc (e.g., `config/tmux/` exists but no `docs/tmux-reference.md` and keybindings are buried in AGENTS.md)
-- Architecture doc referenced from AGENTS.md doesn't exist
+- A configured tool has no reference doc
+- An AGENTS.md pointer names a missing architecture doc; route any AGENTS.md
+  change to `context-agents-md`
 
 **Rename**
 *Correct content, wrong name vs. derived conventions.*
@@ -195,12 +196,15 @@ ARCHIVE → docs/_archive/:
   docs/old-runbook.md — describes decommissioned system
 
 MOVE:
-  config/editor/AGENTS.md (keybindings section) → docs/editor-reference.md
-    Reason: human-facing content (actor test)
+  context-agents-md proposal: config/editor/AGENTS.md keybindings section →
+    docs/editor-reference.md
+    Reason: human-facing content (actor test); the AGENTS owner applies the
+    extraction after approval
 
 CREATE:
   docs/AGENTS.md — routing index for docs/ (currently missing)
-  docs/tmux-reference.md — keybindings found in config/tmux/AGENTS.md, human-facing
+  docs/tmux-reference.md — approved proposal from context-agents-md identifies
+  human-facing keybindings
 
 NORMALIZE FRONTMATTER:
   docs/fresh-install.md — target docs tree establishes YAML indexing
@@ -219,7 +223,8 @@ Execute in this order:
 
 1. **Create** new files (gaps)
 2. **Rename** files with naming inconsistencies (`git mv old new`)
-3. **Move** content to correct locations (extract sections, don't duplicate)
+3. **Move** owned docs content to correct locations (do not duplicate). Send
+   AGENTS.md extraction proposals to `context-agents-md` for approved apply.
 4. **Archive** — move files to `docs/_archive/`, do not delete outright
 5. **Update indexes** -- create or update `docs/README.md` (human progression) and `docs/AGENTS.md` (agent routing by doc type) to reflect all changes
 6. **Normalize** frontmatter on files you touched only when their independently
@@ -228,15 +233,10 @@ Execute in this order:
    for invocation) to check internal links, convention-conditional frontmatter,
    and index completeness. Fix any failures before reporting.
 
-**Extracting sections from AGENTS.md** (Move step):
-1. Read the full AGENTS.md
-2. Identify the human-facing section(s)
-3. Write extracted content to `docs/{topic}-reference.md`
-4. Replace the extracted section in AGENTS.md with a cross-reference pointer:
-   ```
-   See the repository editor reference for keybindings.
-   ```
-5. Do not leave AGENTS.md shorter than it needs to be — preserve all agent-facing content
+**AGENTS.md proposals**: Identify the candidate section and destination, then
+record a proposal for `context-agents-md`. Do not extract, rewrite, or add an
+AGENTS.md pointer from this workflow; that owner preserves the applicable
+AGENTS.md contract and approval boundary.
 
 **Creating `docs/AGENTS.md`**:
 - Lists every file in `docs/` with a one-line description
@@ -293,8 +293,10 @@ Remaining follow-ups:
 - **Migrate means move** — when migrating content from a source (e.g., `agent_docs/`) to `docs/`, move the files (don't copy). No duplicated truth. If the source directory is empty after migration, remove it.
 - **Archive superseded content** — if content is truly superseded (not migrated), move to `docs/_archive/` with a note. Don't delete outright.
 - **Verify before archiving** — confirm the work/system described is actually gone before archiving its doc.
-- **Don't reorganize AGENTS.md structure** — only extract human-facing content. Leave agent-facing content and structure intact.
+- **Route AGENTS.md changes** — record an extraction or routing proposal for
+  `context-agents-md`; do not implement its contract here.
 - **One pass only** — don't recursively consolidate archived files.
 - **Derive, don't impose** — conventions come from what already exists in the repo, not from an external template. If no clear pattern exists, don't invent one.
 - **Update the index** — after any RENAME or MOVE, update `docs/AGENTS.md` to reflect the new paths.
-- **P11 applies to all files** — sizing limits apply to pre-existing files too, not just newly generated ones. Flag files over 500L for splitting in the manifest. Files over 300L get a warning.
+- **Review navigation case by case** — flag a page for splitting only when its
+  structure makes it difficult to use; preserve accurate content otherwise.

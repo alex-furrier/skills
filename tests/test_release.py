@@ -173,6 +173,29 @@ def test_context_command_inventory_and_mutation_boundaries_are_explicit():
     assert "only after an explicit request" in writing_check
 
 
+def test_context_improve_delegates_owner_order_and_skipped_candidate_boundary():
+    improve = (PLUGIN / "skills/context-improve/SKILL.md").read_text()
+    owner = (PLUGIN / "skills/context-agents-md/SKILL.md").read_text()
+    assert "Context-agents-md owns the generated AGENTS.md output shape" in improve
+    assert "skipped-candidate triage and the\nproposal/apply boundary for `SKIPPED_FOR_REVIEW.md`" in improve
+    assert "never create or modify any of those files here" in improve
+    assert "Session-reflect" not in improve
+    assert "do not count\npath segments inline" in improve
+    assert "actually installed\nseparate multi-session provider" in improve
+    assert "context-engineering sessions" not in improve
+    assert "Session mining is default" not in improve
+    assert "Session evidence is optional" in improve
+
+    review = owner.index("### 4. Review and Apply AGENTS.md")
+    apply = owner.index("until the user explicitly authorizes apply", review)
+    validate = owner.index("### 5. Post-write Validate")
+    assert review < apply < validate
+    assert "no proposal validator is provided by this workflow" in owner
+    assert "skipped-candidate triage proposal\nfor interactive review" in owner
+    assert "Include any\nnon-empty skipped-file content in the interactive proposal" in owner
+    assert "create it only as\npart of an explicitly authorized apply" in owner
+
+
 def test_writing_check_profile_inventory_and_eval_manifest_validate():
     profiles = json.loads((ROOT / "skills/writing/writing-check/vale/profiles.json").read_text())["profiles"]
     assert {"technical-doc-explanatory", "technical-doc-reference"} <= set(profiles)

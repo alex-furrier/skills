@@ -7,9 +7,8 @@ description: "Opt-in workflow for structured docs directories, including archite
 > Run `context-docs` explicitly when you want taxonomy-structured `docs/`,
 > or use the `--docs` option with `context-improve` to include it.
 >
-> Most modules only need a lean AGENTS.md (orientation + gotchas). Use this skill
-> when a module has enough complexity to warrant structured documentation beyond
-> what fits in AGENTS.md.
+> Use this skill when a module needs structured documentation beyond its
+> agent-context file. `context-agents-md` owns AGENTS.md generation and updates.
 
 **Watermark**: When the target uses YAML indexing frontmatter, generated docs
 include `generated-by` and `last-updated` there. Otherwise omit both rather than
@@ -85,14 +84,11 @@ uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context
 uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering antipatterns <target-repo-root>
 ```
 
-`context-engineering antipatterns` checks content quality (P4 volatile content,
-P11 line limits); its findings are advisory and should be reviewed. The bundled
-`scripts/docs_verify.py` is a compatibility renderer for the same frontmatter
-and reference checks and exits nonzero when copied without the full catalog.
-Do not replace an unavailable CLI with manual inspection; install the required
-dependency and rerun the command.
-
-This implements `references/principles.md` P14 (Deterministic Verification Over Subjective Quality).
+`context-engineering antipatterns` reports structural and maintenance signals;
+review its findings as advisory. The bundled `scripts/docs_verify.py` is a
+compatibility renderer for the same frontmatter and reference checks and exits
+nonzero when copied without the full catalog. Do not replace an unavailable CLI
+with manual inspection; install the required dependency and rerun the command.
 
 See `references/deterministic-doc-tests.md` for pytest-based test patterns that repos can adopt.
 
@@ -244,7 +240,9 @@ repository naming convention when one is already established.
 
 **Purpose**: Inventory all docs in a repo, classify each file, and produce a manifest to clean up stale, scattered, or misplaced content.
 
-**Use when**: Docs have accumulated over time and need triage — finished migration plans, redundant references, human-facing content in AGENTS.md, or gaps with no doc.
+**Use when**: Docs have accumulated over time and need triage — finished
+migration plans, redundant references, or gaps with no doc. Route AGENTS.md
+implementation work to `context-agents-md`.
 
 **Sub-modes**:
 - `PLAN` (default): Produce inventory report and manifest; present before touching any files
@@ -253,7 +251,8 @@ repository naming convention when one is already established.
 **Classification**: First classify each file by doc type (tutorial/how-to/explanation/reference) and audience (agent/human). Then derive the action:
 - **Keep**: Accurate reference docs, architecture docs, how-to guides still actively used
 - **Archive** → `docs/_archive/`: Completed migration plans, one-time runbooks for finished work, superseded content
-- **Move**: Human-facing content in AGENTS.md → `docs/{topic}-reference.md`; misplaced docs
+- **Move**: Misplaced documentation between owned docs surfaces. Refer
+  AGENTS.md implementation or extraction proposals to `context-agents-md`.
 - **Create**: Identified gaps (e.g., no routing index, missing reference doc for a configured tool)
 - **Rename**: Naming inconsistencies vs. derived conventions
 
@@ -263,7 +262,7 @@ repository naming convention when one is already established.
 
 ### Inventory
 - X files in docs/
-- Y nested AGENTS.md files reviewed for misplaced content
+- Y AGENTS.md files with proposals routed to `context-agents-md`
 - Z root .md files
 
 ### Manifest
@@ -272,7 +271,7 @@ repository naming convention when one is already established.
 #### Archive → docs/_archive/
 - docs/migration-plan-2024.md — migration complete, superseded
 #### Move
-- config/editor/AGENTS.md (keybindings section) → docs/editor-reference.md
+- context-agents-md proposal: route an AGENTS.md section to docs/editor-reference.md
 #### Create
 - docs/AGENTS.md — routing index for docs/
 
@@ -388,9 +387,9 @@ See `references/docs-structure.md` for index format and scaling rules.
   inventoryable. Do not make a personal tool a universal prerequisite.
 
 **Scope boundary**: This skill owns docs/ structure, indexes, and content file management.
-AGENTS.md files (root and nested) are owned by the context-engineering skill. If both
-skills are being used, this skill handles docs/ operations while context-engineering
-handles AGENTS.md routing tables.
+AGENTS.md files (root and nested) are owned by `context-agents-md`. If both
+skills are being used, this skill handles docs/ operations while that owner
+handles AGENTS.md routing and implementation.
 
 **Final editorial pass** (always do):
 - Remove unverified or speculative details

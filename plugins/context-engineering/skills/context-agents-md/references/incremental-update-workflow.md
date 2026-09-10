@@ -1,80 +1,65 @@
 # Incremental Update Workflow
 
-The update mode defaults to incremental updates rather than full bottom-up
-reconstruction. This significantly reduces update time for typical repos.
+Update only the context affected by evidence. A full scan is an exception, not
+the default.
 
-## Algorithm
+## Orientation
 
-### Step 1: Assess Staleness
+Start by reading the existing AGENTS.md and the relevant portions of the
+owning `context-agents-md` skill. Preserve accurate content, the source
+identity of session-derived material, safety warnings, and the final watermark.
+The canonical output shape and section rules remain with that owner.
 
-Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering staleness <path-to-AGENTS.md> --json` to get a JSON report with:
-- Last update commit and date
-- Number of commits since
-- Every changed path, its impact label (HIGH / MEDIUM / LOW), and the rule that produced that label
-- Impact counts
-- An advisory recommendation (`skip` | `partial-update` | `full-update` | `full-rebuild`) and its inputs
+## How to Work Here
 
-The impact labels and recommendation are navigation aids, not decisions. Read every
-changed path and classification reason before choosing the update scope. Correct any
-classification that does not fit the actual role of the file.
+When the contributor tier permits workflow guidance, use this optional section
+to describe an evidenced sequence. Do not add it merely to narrate a command.
+If the tier does not permit it, omit it and route any useful candidate through
+the owner's review handling.
 
-### Step 2: Choose Scope from the Evidence
+## Commands
 
-Use the recommendation as a starting point:
+Run the staleness assessment:
 
-| Recommendation | Scope to consider |
-|---------------|-------------------|
-| `skip` | Confirm the listed paths do not change documented behavior before reporting that docs are current |
-| `partial-update` | Inspect the affected sections in Step 3 |
-| `full-update` | Review all sections and update stale ones |
-| `full-rebuild` | Consider a full quick-start scan while preserving accurate existing content |
+```bash
+uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering staleness <path-to-AGENTS.md> --json
+```
 
-Override the recommendation when the path-level evidence points elsewhere. Record the
-chosen scope and why, including any classification or recommendation you overrode.
+Read every changed path and its classification reason. The impact labels and
+recommendation are advisory navigation aids, not decisions. Record any
+classification or recommendation that you override and why.
 
-### Step 3: Targeted Section Updates
+After an approved update, run the owner-required checks:
 
-For each section of the existing AGENTS.md, check what changed:
+```bash
+uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering references <target>
+uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering antipatterns <target>
+uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering depth <target>/AGENTS.md
+```
 
-| Section | Update when... |
-|---------|---------------|
-| WHY | README or project purpose changed |
-| Commands | Package manifests, Makefiles, or CI workflows changed |
-| Invariants | CI workflows, security configs, or build constraints changed |
-| Gotchas | Common failure patterns changed (hard to detect — review if HIGH impact files changed) |
-| Progressive disclosure | New AGENTS.md files created/removed, new docs/ files added |
-| Frontmatter | Validate with `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter` — update if headings changed |
+When the update also changes a governed docs tree, run:
 
-### Step 4: Diff-Based Editing
+```bash
+uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target>
+```
 
-For each section that needs updating:
-1. Read the current content
-2. Discover the new reality (same discovery as quick-start, but only for that section)
-3. Merge: keep accurate existing content, update stale parts, add missing parts
-4. Do NOT rewrite sections that are still accurate
+Fix failures in files changed by this update; report pre-existing failures
+without silently broadening the work.
 
-### Step 5: Validate
+## Gotchas
 
-After updates:
-1. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target>` — check all frontmatter is valid
-2. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering references <target>` — check all referenced paths exist
+- Do not treat a `full-rebuild` recommendation as a force condition. First
+  confirm a malformed AGENTS.md, widespread broken references, significant
+  repository reorganization, or an explicit user request.
+- Inspect changed paths before changing a section. A high-impact label does not
+  establish that the documented behavior changed.
+- Preserve accurate sections rather than rewriting them for uniformity.
+- Keep audit and apply separate. A proposed change needs the applicable user
+  approval before it is written.
 
-## Signals That Force Full Rebuild
+## Related Context
 
-Even in incremental mode, fall back to full scan if:
-- The existing AGENTS.md has no recognizable structure (malformed or missing frontmatter)
-- More than 50% of referenced paths no longer exist
-- The repo has been significantly reorganized (many top-level dirs changed)
-- User explicitly requests full rebuild
-
-A `full-rebuild` recommendation is not itself a force condition. Confirm one of the
-underlying conditions from the path-level evidence first.
-
-## Report Format (Incremental)
-
-In addition to the standard report, include:
-- **Commits analyzed**: N commits since last doc update
-- **Scope decision**: chosen scope, evidence used, and any advisory override
-- **Sections updated**: list of which sections changed and why
-- **Sections unchanged**: list of sections that were still accurate
-- **Validation results**: output of frontmatter and reference checks
+- See the `context-agents-md` SKILL for canonical output, tier, provenance, and
+  relocation rules.
+- See `generated-doc-spec.md` for watermark and inclusion-validation details.
+- Use `session-capture` only for later user-approved durable correction capture.

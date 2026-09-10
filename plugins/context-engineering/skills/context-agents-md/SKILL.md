@@ -36,11 +36,11 @@ Key config: `OTHER_THING` (`other/file.py`).
 ```
 
 **Auto mode** (`--auto`) and **interactive mode** (default) emit the same
-section set — the distinction is whether the user reviews candidates before
-they land. Both modes follow the canonical section order from Step 4 and
-apply the tier rules from Step 3c. Interactive mode adds a human-review step
-between generation and write; auto mode writes directly using clean-validated
-content, with skipped candidates landing in `SKIPPED_FOR_REVIEW.md`.
+section set and follow the canonical section order from Step 4 and tier rules
+from Step 3c. Both present proposed content for review before any write.
+`--auto` limits the proposal to clean-evidenced content; it does not authorize
+apply. Write only after the user explicitly authorizes apply, then run
+post-write validation.
 
 **Never add in any mode:**
 - Architecture prose — CRUD layering descriptions, dependency graphs
@@ -53,7 +53,7 @@ bullet when the gotcha is specifically about a non-obvious use of that command.
 
 ## Core Rules
 
-* **Default shape**: orientation + optional How-to-Work-Here (tier-gated) + Commands + Gotchas + Related Context. Both auto and interactive mode emit the same sections; interactive adds a human review step before write.
+* **Default shape**: orientation + optional How-to-Work-Here (tier-gated) + Commands + Gotchas + Related Context. Both modes emit the same sections, present proposed content for review before write, require explicit apply authorization, then report post-write validation results.
 * **Correction capture**: do not insert a compulsory mid-task capture paragraph. A correction is evidence to consider, not authority to write durable context or interrupt the current assignment. Use `session-capture` for later user-approved capture; if unavailable, propose the narrow update without writing it. Explicitly authorized context maintenance remains in scope.
 * **Gotchas include code traps**: a gotcha doesn't require session history. If an agent would almost-get-it-right but subtly wrong based on code patterns (e.g., patching at the wrong module path, using the wrong base class), that's a valid DO/NOT/BECAUSE bullet.
 * **Related Context section**: include when cross-cutting dependencies exist (sibling modules, shared constants, config dirs). These pointers save agents from missing non-obvious connections. Keep it to a compact table.
@@ -118,7 +118,9 @@ of the force conditions in `references/incremental-update-workflow.md`.
 **evaluate**: Everything in update, plus evaluate against principles and propose improvements.
 
 **auto** (default): No AGENTS.md → quick-start. Has AGENTS.md → update + evaluate.
-Zero user input. Only includes clean-validated content.
+Propose only clean-evidenced content, present it for review, and wait for
+explicit apply authorization before writing. Run validation after the authorized
+write; no proposal validator is provided by this workflow.
 
 ---
 
@@ -127,7 +129,7 @@ Zero user input. Only includes clean-validated content.
 ### 1. Determine Root, Scope, and Depth
 
 * Find git root: `git -C <scope> rev-parse --show-toplevel`
-* Compute depth (segments from git root to target)
+* Compute depth with `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering depth <target> --json`; if it is unavailable or fails, stop rather than computing it inline.
 * Detect monorepo signals (workspaces, multiple manifests)
 * In auto mode: infer scope from `git status` if not provided
 
@@ -140,7 +142,7 @@ Read (minimal, targeted):
 ### 3. Collect Gotcha Candidates
 
 Sources (in priority order):
-1. **Optional multi-session evidence** — use a user-supplied session summary or a separately installed evidence provider when available. If neither is available, state `session_evidence: unavailable` and continue with existing context and code analysis.
+1. **Optional multi-session evidence** — use a user-supplied session summary, or candidates from an actually installed separate provider using a user-supplied exported-session directory. If neither is available, state `session_evidence: unavailable` and continue with existing context and code analysis. Do not scan local history or supply a provider.
 2. **Existing AGENTS.md content** — preserve accurate gotchas, prune stale ones.
 3. **Code analysis** — non-obvious patterns discoverable only by reading code: race conditions, import-time side effects, test harness quirks, config gotchas.
 
@@ -168,8 +170,8 @@ knowing about. Use multiple sources — the script is one signal, not the only o
    actually touches.
 2. **Existing docs** — if the target already has a README or AGENTS.md, any
    "see also" / "related" sections are a valuable starting point.
-3. **Session history** — if a separate multi-session workflow ran in Step 2, patterns
-   about cross-module issues are signal.
+3. **Session history** — user-supplied or separately provider-produced evidence
+   about cross-module issues is signal.
 4. **`map_cross_cutting.py --discover`** — runs import / git co-change /
    author-overlap analysis. High recall, surfaces non-obvious coupling
    (shared protos, orchestration systems, sibling services) that code
@@ -232,7 +234,12 @@ allows opinion. Drop entirely at 21+; candidates go to `SKIPPED_FOR_REVIEW.md`.
 - 10-15 → apply P2 harder, drop lint-enforced style items
 - > 15 → flag as splitting candidate, overflow hierarchy applies
 
-### 4. Write AGENTS.md
+### 4. Review and Apply AGENTS.md
+
+Present the proposed canonical content and skipped-candidate triage proposal
+for interactive review. Do not create or modify `AGENTS.md`, `CLAUDE.md`, or
+`SKIPPED_FOR_REVIEW.md` until the user explicitly authorizes apply. On apply,
+write only the reviewed proposal, then run Step 5 post-write validation.
 
 **Canonical section order:**
 
@@ -321,11 +328,15 @@ into three buckets — don't just delete:
 - **Why dropped**: <reason — enforced by lint, duplicates README, etc.>
 ```
 
-If there's nothing to relocate/review/drop, don't create the file.
+If there's nothing to relocate/review/drop, don't create the file. Include any
+non-empty skipped-file content in the interactive proposal; create it only as
+part of an explicitly authorized apply.
 
-### 5. Validate
+### 5. Post-write Validate
 
-Run validation via the shared CLI (paths are relative to this skill's directory):
+After an authorized apply, run validation via the shared CLI (paths are relative
+to this skill's directory). Do not report these checks as proposal validation:
+
 
 ```bash
 uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target>           # only if docs/ exist
@@ -348,7 +359,8 @@ Output in chat:
 * Line count, depth, **contributor tier** (from Step 3c)
 * Commands classification: how many single-path vs multi-path
 * Gotchas included vs. skipped (relocate / review / drop)
-* Validation results
+* Interactive-review result and post-write validation results (or `not run` when no apply was authorized)
+* Whether explicit apply authorization was received
 * **`splitting-candidate` warnings** — if any, recommend concrete next step
   (promote to `<subdir>/AGENTS.md`)
 * **Skill candidates** (P12): procedural how-to content that should become
@@ -373,7 +385,7 @@ Invoke via the shared CLI (from this skill's directory):
 | `references {path}` | After generating/updating docs | Confirms backtick paths exist |
 | `antipatterns {path}` | After any generation | Volatile content, depth-tiered line limits, section density, splitting-candidate |
 | `depth {path}` | After generating AGENTS.md | Depth-appropriate content check |
-| `sessions {path}` | Session discovery | Find relevant sessions for a target path |
+| `sessions {path} --sessions-dir <directory>` | Explicit exported-session discovery | Find user-exported sessions for a target path |
 | `cross-cutting {path} --discover` | Step 3b — Related Context candidates | Surface modules coupled via imports, git co-change, and author overlap |
 | `tier {path} --json` | Step 3c — prescriptivity tier | Classify module by unique-author count into tier with plain-language guidance |
 
@@ -400,5 +412,5 @@ Load only what the current step requires:
 
 ## Now Execute
 
-Proceed in the parsed mode. Remember: the output shape is orientation + gotchas.
-When in doubt, cut it.
+Proceed in the parsed mode. Use the canonical section order from Step 4. When in
+doubt, cut unvalidated or non-actionable content.
