@@ -16,16 +16,19 @@ def copied_skill(tmp_path):
     return skill
 
 
-def fake_vale(tmp_path, lint_stdout="{}", lint_exit=0, version_stdout="vale version 3.0", version_exit=0):
+def fake_vale(tmp_path, lint_stdout="{}", lint_exit=0, version_stdout="vale version 3.0", version_stderr="", version_exit=0):
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir(parents=True)
     script = bin_dir / "vale"
+    version_stdout_bytes = version_stdout.encode() if isinstance(version_stdout, str) else version_stdout
+    version_stderr_bytes = version_stderr.encode() if isinstance(version_stderr, str) else version_stderr
     script.write_text(
         f"#!{sys.executable}\n"
         "import pathlib, sys\n"
         "capture = pathlib.Path(__file__).with_name('captured-stdin')\n"
         "if sys.argv[1:] == ['--version']:\n"
-        f"    sys.stdout.write({version_stdout!r})\n"
+        f"    sys.stdout.buffer.write({version_stdout_bytes!r})\n"
+        f"    sys.stderr.buffer.write({version_stderr_bytes!r})\n"
         f"    raise SystemExit({version_exit})\n"
         "capture.write_bytes(sys.stdin.buffer.read())\n"
         f"sys.stdout.write({lint_stdout!r})\n"
@@ -68,6 +71,22 @@ def test_writing_check_version_failure_is_execution_error_with_evidence(tmp_path
     data = json.loads(result.stdout)
     assert result.returncode == 4 and data["status"] == "execution_error"
     assert data["vale"]["version"] == {"argv": [str(bin_dir / "vale"), "--version"], "exit": 2, "stdout": "bad version", "stderr": ""}
+
+
+def test_writing_check_rejects_invalid_utf8_version_output_with_evidence(tmp_path):
+    source = tmp_path / "candidate.md"; source.write_text("Candidate.")
+    for index, (version_stdout, version_stderr) in enumerate(((b"vale \xff", b""), (b"vale version 3.0", b"warning \xff"))):
+        skill = copied_skill(tmp_path / f"skill-{index}")
+        bin_dir = fake_vale(tmp_path / f"fake-{index}", version_stdout=version_stdout, version_stderr=version_stderr)
+        result = check(skill, "commit", str(source), {"PATH": str(bin_dir)})
+        data = json.loads(result.stdout)
+        assert result.returncode == 4 and data["status"] == "execution_error"
+        assert data["vale"]["version"] == {
+            "argv": [str(bin_dir / "vale"), "--version"],
+            "exit": 0,
+            "stdout": version_stdout.decode("utf-8", errors="replace"),
+            "stderr": version_stderr.decode("utf-8", errors="replace"),
+        }
 
 
 def test_writing_check_rejects_unsupported_lint_exit_with_evidence(tmp_path):

@@ -189,12 +189,19 @@ def main() -> int:
         return EXIT_UNAVAILABLE
     version_argv = [vale, "--version"]
     try:
-        version_run = subprocess.run(version_argv, capture_output=True, text=True, timeout=30)
+        version_run = subprocess.run(version_argv, capture_output=True, text=False, timeout=30)
     except (OSError, subprocess.TimeoutExpired) as error:
         record.update(status="execution_error", vale={"status": "execution_error", "version": {"argv": version_argv}, "error": str(error)})
         print_record(record)
         return EXIT_EXECUTION
-    version = {"argv": version_argv, "exit": version_run.returncode, "stdout": version_run.stdout, "stderr": version_run.stderr}
+    try:
+        version_stdout, version_stderr = version_run.stdout.decode("utf-8"), version_run.stderr.decode("utf-8")
+    except UnicodeDecodeError as error:
+        version = {"argv": version_argv, "exit": version_run.returncode, "stdout": version_run.stdout.decode("utf-8", errors="replace"), "stderr": version_run.stderr.decode("utf-8", errors="replace")}
+        record.update(status="execution_error", vale={"status": "execution_error", "version": version, "error": f"invalid UTF-8 in Vale version output: {error}"})
+        print_record(record)
+        return EXIT_EXECUTION
+    version = {"argv": version_argv, "exit": version_run.returncode, "stdout": version_stdout, "stderr": version_stderr}
     if version_run.returncode != 0:
         record.update(status="execution_error", vale={"status": "execution_error", "version": version, "error": f"Vale version exited {version_run.returncode}"})
         print_record(record)
