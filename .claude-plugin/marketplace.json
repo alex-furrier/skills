@@ -1,0 +1,11 @@
+{
+  "name": "safurrier-skills",
+  "owner": {"name": "safurrier"},
+  "plugins": [
+    {
+      "name": "context-engineering",
+      "source": "./plugins/context-engineering",
+      "description": "Portable deterministic Context engineering skills"
+    }
+  ]
+}

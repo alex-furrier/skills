@@ -21,5 +21,5 @@ jobs:
       - name: Verify Vale
         run: test "$(vale --version)" = "vale version 3.17.1"
       - run: python scripts/fast_check.py
-      - run: uv run --project packages/context-engineering pytest -q
+      - run: uv run --project plugins/context-engineering/cli pytest -q
       - run: mkdocs build --strict

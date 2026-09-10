@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "source_revision": "safurrier/skills@116cff9",
+  "decision": "This inventory is the complete legal and provenance contract for the independently copied context-engineering plugin. Root provenance governs the catalog as a whole; this file governs only files retained under this plugin subtree. Context skills and CLI are same-author portable adaptations with personal paths, accounts, private corpora, and organization overlays removed.",
+  "entries": [
+    {"path_prefix": ".claude-plugin/", "origin": "independently authored plugin metadata", "license": "MIT"},
+    {"path_prefix": "cli/", "origin": "same-author private-source adaptation with portable redaction", "license": "MIT"},
+    {"path_prefix": "skills/", "origin": "same-author private-source adaptation with portable redaction", "license": "MIT"},
+    {"path": "LICENSE", "origin": "standard MIT text retained with the plugin", "license": "MIT"},
+    {"path": "provenance.json", "origin": "independently authored plugin-scoped provenance inventory", "license": "MIT"}
+  ],
+  "excluded": [
+    "private evaluation corpora, reports, and session transcripts",
+    "personal voice and organization-specific overlays",
+    "account, credential, home-directory, external knowledge destination, tracker, and hosted-service routing",
+    "unlicensed third-party files copied verbatim"
+  ]
+}

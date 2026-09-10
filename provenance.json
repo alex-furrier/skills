@@ -1,22 +1,22 @@
 {
   "schema": 2,
   "source_revision": "safurrier/dots@e8dd297c82db68e1fe6fcdc51d2c661e5081aa76",
-  "decision": "Public contracts are same-author adaptations of private Dots workflows, reconciled through efa69e113 and f100a3b28. They retain portable behavior but remove personal owners, paths, account routing, private corpora, and organization overlays. Context analysis requires the bundled catalog package and uv. Writing Check vendors reviewed Google Vale v0.7.1 rules under MIT with lock and license material; personal overlays and upstream word lists remain excluded.",
+  "decision": "Public contracts are same-author adaptations reconciled through efa69e113 and f100a3b28. This root inventory governs the complete catalog; plugins/context-engineering/provenance.json is the exhaustive legal and provenance contract for the independently copied Context plugin. Writing Check vendors reviewed Google Vale v0.7.1 rules under MIT. Personal paths, owners, accounts, private corpora, and organization overlays are excluded.",
   "entries": [
-    {"path_prefix":"skills/context/", "origin":"same-author private-source adaptation with portable redaction", "license":"MIT"},
+    {"path_prefix":"plugins/context-engineering/skills/", "origin":"same-author private-source adaptation with portable redaction", "license":"MIT"},
+    {"path_prefix":"plugins/context-engineering/cli/", "origin":"same-author private-source adaptation with portable redaction", "license":"MIT"},
+    {"path_prefix":"plugins/context-engineering/.claude-plugin/", "origin":"independently authored plugin metadata", "license":"MIT"},
+    {"path":"plugins/context-engineering/LICENSE", "origin":"standard MIT text retained with the independently copied plugin", "license":"MIT"},
+    {"path":"plugins/context-engineering/provenance.json", "origin":"plugin-scoped inventory; authoritative for the independently copied plugin subtree", "license":"MIT"},
     {"path_prefix":"skills/writing/", "origin":"same-author private-source adaptation with portable redaction; writing-check includes reviewed Google Vale v0.7.1 rules under MIT", "license":"MIT"},
     {"path_prefix":"skills/writing/writing-check/vale/styles/GoogleDocs/", "origin":"vale-cli/Google v0.7.1 copied and normalized to advisory suggestions", "license":"MIT"},
     {"path_prefix":"skills/writing/writing-check/vale/vendor/", "origin":"vale-cli/Google v0.7.1 license material", "license":"MIT"},
     {"path":"skills/writing/writing-check/vale/upstream-lock.json", "origin":"same-author upstream provenance lock for vale-cli/Google v0.7.1", "license":"MIT"},
-    {"path_prefix":"packages/context-engineering/", "origin":"same-author private-source adaptation with portable redaction", "license":"MIT"},
-    {"path_prefix":"packages/writing-check/", "origin":"same-author private-source adaptation; includes reviewed Google Vale v0.7.1 rules under MIT", "license":"MIT"},
-    {"path_prefix":"packages/writing-check/vale/styles/GoogleDocs/", "origin":"vale-cli/Google v0.7.1 copied and normalized to advisory suggestions", "license":"MIT"},
-    {"path_prefix":"packages/writing-check/vale/vendor/", "origin":"vale-cli/Google v0.7.1 license material", "license":"MIT"},
-    {"path":"packages/writing-check/vale/upstream-lock.json", "origin":"same-author upstream provenance lock for vale-cli/Google v0.7.1", "license":"MIT"},
     {"path_prefix":"tests/", "origin":"independently authored public fixtures and behavioral tests", "license":"MIT"},
     {"path_prefix":"scripts/", "origin":"independently authored release validation", "license":"MIT"},
     {"path_prefix":"docs/", "origin":"independently authored public documentation", "license":"MIT"},
     {"path_prefix":".github/", "origin":"independently authored CI configuration", "license":"MIT"},
+    {"path_prefix":".claude-plugin/", "origin":"independently authored marketplace metadata", "license":"MIT"},
     {"path":"README.md", "origin":"independently authored public documentation", "license":"MIT"},
     {"path":"AGENTS.md", "origin":"independently authored guidance", "license":"MIT"},
     {"path":"CLAUDE.md", "origin":"independently authored compatibility pointer", "license":"MIT"},
@@ -27,15 +27,7 @@
     {"path":".gitignore", "origin":"independently authored configuration", "license":"MIT"},
     {"path":"mkdocs.yml", "origin":"independently authored configuration", "license":"MIT"},
     {"path":"mypy.ini", "origin":"independently authored type-checking configuration", "license":"MIT"},
-    {"path":".claude-plugin.json", "origin":"independently authored metadata", "license":"MIT"},
-    {"path_prefix":".claude-plugin/", "origin":"independently authored metadata", "license":"MIT"},
     {"path":"provenance.json", "origin":"independently authored provenance inventory", "license":"MIT"}
   ],
-  "excluded": [
-    "private evaluation corpora, reports, and session transcripts",
-    "personal voice and organization-specific overlays",
-    "account, credential, home-directory, external knowledge destination, tracker, and hosted-service routing",
-    "upstream Google WordList and WordListCase rules",
-    "unlicensed third-party files copied verbatim"
-  ]
+  "excluded": ["private evaluation corpora, reports, and session transcripts", "personal voice and organization-specific overlays", "account, credential, home-directory, external knowledge destination, tracker, and hosted-service routing", "upstream Google WordList and WordListCase rules", "unlicensed third-party files copied verbatim"]
 }

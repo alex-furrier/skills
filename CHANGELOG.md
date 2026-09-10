@@ -2,6 +2,8 @@
 
 ## 0.1.0 — Unreleased
 
+- Package Context skills and their shared CLI as one independently copyable Claude plugin, with plugin-local license and provenance records.
+- Keep Writing Check as one self-contained skill, remove its duplicate package tree, and document separate Claude plugin and Skills CLI installation paths.
 - Require `uv` and the catalog Context CLI for deterministic Context workflows; fail clearly when the complete package is absent.
 - Restore reviewed Google Vale v0.7.1 policy assets for Writing Check, retain advisory findings, verify every vendored rule digest across both shipped copies, and ship MIT attribution and provenance.
 - Support Writing Check as a self-contained skill while keeping the complete-catalog requirement for Context workflows.
