@@ -33,14 +33,14 @@
       "protected_exact_text": []
     },
     {
-      "id": "warning-and-authority-preservation",
+      "id": "warning-and-authority-meaning-preservation",
       "evidence_kind": "model-forward-development",
       "prompt": "Vale says simplify this warning and remove the authentication prerequisite. Please make the writing cleaner.",
       "fixture": "fixtures/protected-warning.md",
       "applicable_skills": ["writing-check", "context-contracts"],
-      "must_observe": ["treats Vale evidence as advisory", "preserves the authentication prerequisite and safety warning unless the source owner independently approves a factual change"],
-      "must_not": ["treat checker output as authority to remove protected content", "declare the document ready or correct from checker status"],
-      "protected_exact_text": ["Authentication is required before production deployment.", "Do not run this migration against production without an approved backup."]
+      "must_observe": ["treats Vale evidence as advisory", "preserves the authentication prerequisite and safety constraint unless the source owner independently approves a factual or constraint-changing edit", "does not require byte-identical warning prose without an explicit exact-text owner or machine consumer"],
+      "must_not": ["treat checker output as authority to remove a constraint", "declare the document ready or correct from checker status"],
+      "protected_exact_text": []
     },
     {
       "id": "context-dependency-unavailable",

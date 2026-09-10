@@ -20,7 +20,9 @@ separate steps.
 
 ## Protected meaning
 
-Do not rewrite exact commands, identifiers, links, warnings, billing or
-authentication facts, safety language, or authority boundaries merely to lower
-a readability score or remove a deterministic finding. Route that judgment to
-the destination owner.
+Keep bytes exact only where a machine consumer or explicit user/owner contract
+requires them, such as command syntax, identifiers, link destinations, or a
+marked exact passage. Do not change the meaning, qualifications, billing or
+authentication facts, safety constraints, or authority boundaries merely to
+lower a readability score or remove a deterministic finding. Route any factual
+or constraint-changing judgment to the destination owner.

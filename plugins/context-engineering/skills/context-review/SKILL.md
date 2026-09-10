@@ -28,16 +28,12 @@ remains the source evidence; path labels are only inspection leads.
 
    Contract, docs-structure, parser, and Git failures are blocking findings.
    Semantic owner routes remain advisory. Use `--all` for full-repository CI.
-3. Run the read-only semantic analyzer when reviewing diff hunks:
-
-   ```bash
-   SKILL_DIR="<absolute path to this skill>"
-   uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering review <target> \
-     --base <base-sha> --head <head-sha> --json
-   ```
-
-4. Stop on exact Git errors. Otherwise inspect raw changed paths, rename
-   pairs, and relevant hunks. Analyzer route labels remain advisory.
+3. The composed `check` result already includes the semantic analyzer's raw
+   changed paths, rename pairs, evidence, and `advisory_routes`; inspect those
+   fields when reviewing diff hunks. Do not run a second `review` command for
+   the same range.
+4. Stop on exact Git errors. Otherwise inspect the retained raw changed paths,
+   rename pairs, and relevant hunks. Analyzer route labels remain advisory.
 5. Apply the ownership tests in [review routing](references/review-routing.md):
    route to `SPEC.md`, ADRs, architecture/reference docs, `AGENTS.md`, skills,
    or no update only when the diff evidence supports that owner.

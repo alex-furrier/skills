@@ -34,7 +34,7 @@ Extract examples from real tests, examples, CLI help, docs, scripts, or source. 
 
 When a command is blocked by trust prompts, missing metadata, network installs, or unsafe side effects, do not force it. Label it `verified by running`, `verified by metadata`, `not run: unsafe/expensive`, `not run: trust required`, or `not verified`. If README/docs/guidance/source disagree, prefer executable source, tests, CLI help, and nearest `AGENTS.md`; flag stale documentation. Scan for empty headings, duplicate setup, stale migration notes, template leftovers, version drift, generated blocks, and duplicated references.
 
-Protected factual, safety, authentication, authority, command, and identifier text must remain byte-exact unless its real owner independently authorizes a factual change. This includes commands, identifiers, links, marker blocks, warnings, billing/authentication facts, and safety/authority language. A checker suggestion alone never authorizes paraphrase.
+Keep bytes exact only for a real exact-byte consumer: the candidate supplied to Writing Check and its source digest; policy, config, rule, and license integrity assets; machine-consumed command syntax and identifiers; and text the user or owning contract explicitly marks exact. Preserve the meaning, qualifications, and safety, authentication, authority, factual, and contractual constraints of all other prose. A checker suggestion alone never authorizes a factual or constraint-changing edit.
 
 ## Write for the reader
 
