@@ -9,5 +9,6 @@
 - Support Writing Check as a self-contained skill while keeping the complete-catalog requirement for Context workflows.
 - Fix Context CLI packaging and lock its development environment. Canonical `uv` commands ignore machine resolver policy and require the checked lock.
 - Replace the shell release check with typed Python automation and add pinned Mypy validation.
+- Add validated behavioral evaluation fixtures and simplify Context and Writing guidance while preserving commands, dependencies, ownership, and approval boundaries.
 
 Initial portable Context and Writing collection.
