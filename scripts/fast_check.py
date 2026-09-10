@@ -29,11 +29,15 @@ def main() -> None:
     run("uv", "run", "--python", "3.11", "--with", "pytest", "--with", "mkdocs", "pytest", "-q")
     run("uv", "run", "--python", "3.11", "--with", "mkdocs", "mkdocs", "build", "--strict")
     run("uv", "run", "--python", "3.11", "python", "scripts/validate.py")
+    run("uv", "run", "--python", "3.11", "python", "scripts/validate_evals.py")
     run("uv", "run", "--no-config", "--locked", "--no-dev", "--project", CLI,
         "context-engineering", "references", ".", "--json")
     run("uv", "run", "--python", "3.11", "python",
         "skills/writing/writing-check/scripts/writing_check.py", "--profile", "technical-doc",
         "--json", "README.md", allowed_returncodes=(0, 1))
+    run("uv", "run", "--python", "3.11", "python",
+        "skills/writing/writing-check/scripts/writing_check.py", "--profile", "technical-doc-reference",
+        "--json", "evals/README.md", allowed_returncodes=(0, 1))
     run("git", "diff", "--check")
 
 

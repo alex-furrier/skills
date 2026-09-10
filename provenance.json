@@ -15,6 +15,7 @@
     {"path_prefix":"tests/", "origin":"independently authored public fixtures and behavioral tests", "license":"MIT"},
     {"path_prefix":"scripts/", "origin":"independently authored release validation", "license":"MIT"},
     {"path_prefix":"docs/", "origin":"independently authored public documentation", "license":"MIT"},
+    {"path_prefix":"evals/", "origin":"independently authored public evaluation manifest and fixtures", "license":"MIT"},
     {"path_prefix":".github/", "origin":"independently authored CI configuration", "license":"MIT"},
     {"path_prefix":".claude-plugin/", "origin":"independently authored marketplace metadata", "license":"MIT"},
     {"path":"README.md", "origin":"independently authored public documentation", "license":"MIT"},

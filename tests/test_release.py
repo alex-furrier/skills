@@ -3,6 +3,7 @@ import json
 import os
 import pathlib
 import re
+import runpy
 import shutil
 import subprocess
 import sys
@@ -134,7 +135,69 @@ def test_validation_and_documented_install_boundaries():
 def test_all_skills_have_valid_metadata_and_links_resolve():
     skills = list((PLUGIN / "skills").glob("*/SKILL.md")) + list((ROOT / "skills/writing").glob("*/SKILL.md"))
     assert {path.parent.name for path in skills} == CONTEXT | WRITING
+    names = []
+    for skill in skills:
+        match = re.match(r"^---\nname: ([a-z0-9-]+)\ndescription: (.+)\n---", skill.read_text(), re.S)
+        assert match and match.group(1) == skill.parent.name and match.group(2).strip()
+        names.append(match.group(1))
+    assert len(names) == len(set(names))
     for path in ROOT.rglob("*.md"):
         if any(part.startswith(".") for part in path.relative_to(ROOT).parts): continue
         for target in re.findall(r"\[[^]]+\]\(([^)#]+)", path.read_text()):
             if "://" not in target: assert (path.parent / target).exists(), (path, target)
+
+
+def test_skill_direct_resource_links_have_one_level_closure():
+    skills = list((PLUGIN / "skills").glob("*/SKILL.md")) + list((ROOT / "skills/writing").glob("*/SKILL.md"))
+    for skill in skills:
+        direct = [skill.parent / target for target in re.findall(r"\[[^]]+\]\((references/[^)#]+|resources/[^)#]+)", skill.read_text())]
+        for resource in direct:
+            assert resource.is_file(), (skill, resource)
+            for target in re.findall(r"\[[^]]+\]\(([^)#]+)", resource.read_text()):
+                if "://" not in target:
+                    assert (resource.parent / target).exists(), (resource, target)
+
+
+def test_context_command_inventory_and_mutation_boundaries_are_explicit():
+    help_result = context("--help")
+    assert help_result.returncode == 0
+    documented = {"antipatterns", "backfill", "check", "contracts", "cross-cutting", "depth", "frontmatter", "references", "review", "sessions", "skills", "staleness", "tier"}
+    assert all(command in help_result.stdout for command in documented)
+    for name in CONTEXT:
+        text = (PLUGIN / "skills" / name / "SKILL.md").read_text()
+        assert "stop the requested deterministic-analysis workflow" in text
+    assert "Audit-only runs do not edit files." in (PLUGIN / "skills/context-docs/SKILL.md").read_text()
+    assert "Apply only after an explicit apply instruction" in (PLUGIN / "skills/context-review/SKILL.md").read_text()
+    writing_check = (ROOT / "skills/writing/writing-check/SKILL.md").read_text()
+    assert "Keep `writing_check.py` read-only." in writing_check
+    assert "only after an explicit request" in writing_check
+
+
+def test_writing_check_profile_inventory_and_eval_manifest_validate():
+    profiles = json.loads((ROOT / "skills/writing/writing-check/vale/profiles.json").read_text())["profiles"]
+    assert {"technical-doc-explanatory", "technical-doc-reference"} <= set(profiles)
+    sweep = (ROOT / "skills/writing/writing-check/references/repository-sweep.md").read_text()
+    assert "technical-doc-explanatory" in sweep and "technical-doc-reference" in sweep
+    result = run(sys.executable, "scripts/validate_evals.py")
+    assert result.returncode == 0 and result.stdout == "eval manifest validation passed\n"
+
+
+def test_eval_manifest_rejects_unknown_case_and_top_level_fields(tmp_path):
+    validator = runpy.run_path(str(ROOT / "scripts/validate_evals.py"))["validate_manifest"]
+    data = json.loads((ROOT / "evals/manifest.json").read_text())
+    data["cases"][0]["must_observee"] = ["misspelled field"]
+    manifest = tmp_path / "manifest.json"; manifest.write_text(json.dumps(data))
+    assert "activation-stale-agents: unknown fields: must_observee" in validator(manifest)
+    data = json.loads((ROOT / "evals/manifest.json").read_text())
+    data["catalog_revison"] = "misspelled field"
+    manifest.write_text(json.dumps(data))
+    assert "eval manifest unknown fields: catalog_revison" in validator(manifest)
+
+
+def test_eval_manifest_rejects_empty_protected_exact_text(tmp_path):
+    validator = runpy.run_path(str(ROOT / "scripts/validate_evals.py"))["validate_manifest"]
+    data = json.loads((ROOT / "evals/manifest.json").read_text())
+    data["cases"][0]["protected_exact_text"] = [""]
+    manifest = tmp_path / "manifest.json"; manifest.write_text(json.dumps(data))
+    errors = validator(manifest)
+    assert "activation-stale-agents: protected_exact_text must be a list of non-empty strings; an empty list is allowed" in errors
