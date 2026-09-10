@@ -5,36 +5,35 @@ description: Provide lightweight drafting principles for clear, specific, natura
 
 # Writing Core
 
-Write trustworthy prose that sounds like a colleague and preserves technical meaning. This skill supplies drafting principles only. It does not own repository facts, destination structure, deterministic findings, or publication.
+## Use this for ordinary technical prose
 
-## Draft
+Write like a trustworthy colleague: lead with the outcome, make the next action clear, and preserve technical meaning. This skill offers drafting guidance only. It does not own repository facts, destination structure, deterministic findings, or publication.
 
-1. State the concrete outcome, behavior, or request before background.
-2. Prefer specific nouns, actors, examples, and observed effects over promotional or abstract language.
-3. Use technical terms when they are exact, searchable, or familiar to the audience. Define an unfamiliar term when that helps more than replacing it.
-4. Let the content choose paragraph and list shape. Do not force symmetry, a fixed bullet count, or a rule of three.
-5. Keep meaningful uncertainty, limitations, and human cadence. Do not manufacture roughness to look human.
-6. Preserve exact commands, identifiers, links, quoted text, warnings, billing and authentication facts, safety language, and authority boundaries.
+## Happy path
 
-Review inflated language in context rather than applying a universal word ban. Words such as “robust,” “capability,” or “comprehensive” can be vague, but they can also be exact. Replace one only when a more specific phrase preserves the claim. Transitions, personal phrasing, and imperative mood also depend on destination and intent.
+1. State the concrete outcome, behavior, or request before the background.
+2. Use specific actors, nouns, examples, and observed effects. Keep exact, searchable, or audience-familiar technical terms; define an unfamiliar term when that is clearer than replacing it.
+3. Choose paragraphs and lists for the content. Do not force symmetry, a fixed bullet count, or a rule of three.
+4. Keep meaningful uncertainty, limitations, and natural cadence. Do not manufacture roughness to sound human.
+5. Verify facts and examples against their owner. Remove filler, feature soup, unsupported emphasis, and conclusions with no decision or action.
 
-## Route ownership
+Review broad terms such as “robust,” “capability,” and “comprehensive” in context. Replace one only when a more specific phrase preserves the claim; do not use a universal banned-word list.
 
-- For commit text, follow the target repository's documented conventions; if no configured external owner is available, preserve the author's intended meaning and use neutral imperative prose.
+## Preserve owner-controlled text
+
+Protected factual, safety, authentication, authority, command, and identifier text must remain byte-exact unless its real owner independently authorizes a factual change. This includes exact commands, identifiers, links, quoted text, warnings, billing and authentication facts, safety language, and authority boundaries. A checker suggestion, readability target, or style rule never authorizes paraphrase.
+
+## Route to the owner
+
+- Follow the target repository’s conventions for commit text. Without a configured external voice owner, preserve the author’s meaning and use neutral imperative prose.
 - Use `pr-description` for `Why / What changed / Evidence`, behavioral explanation, and reviewer value.
 - Use `readme-improver` for repository truth, reader journey, verified commands, and maintainer content.
 - Use `context-docs` for structured architecture and reference documentation.
-- Use `user-facing-response` to shape substantial agent-facing plans, explanations, recommendations, summaries, and handoffs, or to handle an explicit plain-English rewrite.
-- For a requested personal or organization-specific voice, use a configured external owner when available; otherwise preserve the supplied wording and use neutral prose.
-- Use `writing-check` only for deterministic advisory evidence after a candidate exists.
+- Use `user-facing-response` for substantial agent-facing plans, explanations, recommendations, summaries, handoffs, or an explicit plain-English rewrite.
+- Use `writing-check` only after a candidate exists, for deterministic advisory evidence. The destination owner judges findings and owns edits.
 
-When `user-facing-response` is unavailable, continue with these drafting principles and the destination owner's contract; do not add Vale to ordinary conversational drafting. A destination owner judges every finding and owns any edit. GitHub Open PR remains the sole Git/GitHub mutation owner in its publication workflow.
+For a requested personal or organization voice, use a configured external owner when available. Otherwise preserve supplied wording and use neutral prose. If `user-facing-response` is unavailable, continue with this guidance and the destination owner’s contract; do not add Vale to ordinary conversation. GitHub Open PR remains the sole Git/GitHub mutation owner in its publication workflow.
 
 ## Final pass
 
-- Verify facts and examples against the owning source.
-- Remove filler, feature soup, unsupported emphasis, and conclusions that add no decision or action.
-- Read for rhythm and ambiguity, not compliance with a fixed personal voice.
-- Run the destination's writing check when its owner requires one; `no_findings` means only that no configured pattern matched.
-
-For an explicit de-LLM rewrite or synthetic-prose audit, use `anti-llm-writer`. Do not create a generic docs improver or technical-writing editor around these principles. Load [contextual examples](resources/drafting-examples.md) only when a before/after illustration helps.
+Run the destination’s required writing check when applicable. `no_findings` means only that no configured pattern matched; it does not establish correctness or readiness. For an explicit de-LLM rewrite or synthetic-prose audit, use `anti-llm-writer`. Load [contextual examples](resources/drafting-examples.md) only when a before/after illustration will help.

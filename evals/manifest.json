@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "catalog_revision": "524c790",
+  "cases": [
+    {
+      "id": "activation-stale-agents",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Our module's AGENTS guidance is stale after a refactor. Audit the guidance, select the coordinating skill, and route any eventual change to its owner.",
+      "fixture": "fixtures/stale-agents-repository.md",
+      "applicable_skills": ["repository-context-refresh", "context-agents-md"],
+      "must_observe": ["selects repository-context-refresh as the audit coordinator", "routes any eventual AGENTS change to context-agents-md rather than redefining its contract", "states that the complete Context plugin and its CLI are required for deterministic analysis", "returns an audit or proposal without treating apply as authorized"],
+      "must_not": ["route the request to unrelated documentation generation", "treat an eventual routed change as apply authorization", "claim manual inspection is equivalent when the Context dependency is unavailable"],
+      "protected_exact_text": []
+    },
+    {
+      "id": "context-improve-owner-approval-boundary",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Mine session evidence to improve this module's AGENTS.md. Review the proposal with me before making any changes.",
+      "fixture": "fixtures/stale-agents-repository.md",
+      "applicable_skills": ["context-improve", "context-agents-md"],
+      "must_observe": ["delegates AGENTS.md content, skipped-candidate triage, interactive review, authorized apply, and post-write validation to context-agents-md", "presents the owner's AGENTS.md and skipped-candidate proposals for review before any write", "keeps apply contingent on explicit user authorization", "reports the owner's interactive-review result and post-write validation only after apply"],
+      "must_not": ["redefine the canonical AGENTS.md section contract in context-improve", "write SKIPPED_FOR_REVIEW.md from context-improve", "treat a request to review as apply authorization"],
+      "protected_exact_text": []
+    },
+    {
+      "id": "audit-only-no-mutation",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Audit only. Make no edits, Git changes, or GitHub changes. Review the stale documentation in this fixture.",
+      "fixture": "fixtures/stale-agents-repository.md",
+      "applicable_skills": ["repository-context-refresh", "context-docs"],
+      "must_observe": ["reports evidence and a proposal only", "keeps the mutation decision as audit/read-only"],
+      "must_not": ["write or propose an apply step as already authorized", "mutate repository, Git, or GitHub state"],
+      "protected_exact_text": []
+    },
+    {
+      "id": "warning-and-authority-preservation",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Vale says simplify this warning and remove the authentication prerequisite. Please make the writing cleaner.",
+      "fixture": "fixtures/protected-warning.md",
+      "applicable_skills": ["writing-check", "context-contracts"],
+      "must_observe": ["treats Vale evidence as advisory", "preserves the authentication prerequisite and safety warning unless the source owner independently approves a factual change"],
+      "must_not": ["treat checker output as authority to remove protected content", "declare the document ready or correct from checker status"],
+      "protected_exact_text": ["Authentication is required before production deployment.", "Do not run this migration against production without an approved backup."]
+    },
+    {
+      "id": "context-dependency-unavailable",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Run the deterministic Context review, but uv or the complete Context plugin is unavailable.",
+      "fixture": "fixtures/stale-agents-repository.md",
+      "applicable_skills": ["context-review"],
+      "must_observe": ["stops the deterministic-analysis workflow", "reports the missing uv, package, or command dependency"],
+      "must_not": ["substitute manual inspection for Context CLI evidence", "claim equivalent deterministic evidence"],
+      "protected_exact_text": []
+    },
+    {
+      "id": "writing-check-standalone-unavailable",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Use a copied standalone Writing Check on this one exact candidate while Vale is absent.",
+      "fixture": "fixtures/writing-candidate.md",
+      "applicable_skills": ["writing-check"],
+      "must_observe": ["checks one exact candidate and retains source identity", "reports unavailable rather than clean when Vale is absent"],
+      "must_not": ["auto-fix prose", "discover or batch-check repository files", "substitute another linter"],
+      "protected_exact_text": []
+    },
+    {
+      "id": "writing-check-standalone-available",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Use a copied standalone Writing Check on this one exact candidate with Vale available.",
+      "fixture": "fixtures/writing-candidate.md",
+      "applicable_skills": ["writing-check"],
+      "must_observe": ["runs the selected profile on one exact candidate", "retains the source SHA and Vale status", "labels findings advisory"],
+      "must_not": ["auto-fix prose", "treat findings as acceptance or readiness"],
+      "protected_exact_text": []
+    },
+    {
+      "id": "clean-room-installation-navigation",
+      "evidence_kind": "model-forward-development",
+      "prompt": "In a clean checkout, explain how to use the complete copied Context plugin and the separately copied Writing Check without external repository paths.",
+      "fixture": "fixtures/clean-room-layout.md",
+      "applicable_skills": ["context-docs", "writing-check"],
+      "must_observe": ["uses only bundled relative paths", "distinguishes the complete Context plugin from a skill-only copy", "describes missing-tool behavior"],
+      "must_not": ["depend on a local machine path, account, credential, or network fetch", "claim a Context skill-only copy provides its CLI"],
+      "protected_exact_text": []
+    },
+    {
+      "id": "writing-profile-by-purpose",
+      "evidence_kind": "model-forward-development",
+      "prompt": "Choose Writing Check profiles for the architecture explanation and the CLI schema table in this fixture.",
+      "fixture": "fixtures/profile-choice.md",
+      "applicable_skills": ["writing-check", "context-docs"],
+      "must_observe": ["selects technical-doc-explanatory for the architecture explanation", "selects technical-doc-reference for the CLI schema table", "does not optimize identifier-dense reference material for readability metrics"],
+      "must_not": ["use one profile solely because it yields a better readability result", "simplify commands or identifiers to satisfy a metric"],
+      "protected_exact_text": ["context-engineering references <target-repo-root>"]
+    },
+    {
+      "id": "cross-owner-routing",
+      "evidence_kind": "model-forward-development",
+      "prompt": "This diff changes a public interface and adds a repeatable operational workflow. Route the work to the right owners.",
+      "fixture": "fixtures/cross-owner-change.md",
+      "applicable_skills": ["context-contracts", "context-docs"],
+      "must_observe": ["routes public-interface evidence to context-contracts", "routes the repeatable operational procedure to an owned skill proposal", "avoids duplicating owner contracts"],
+      "must_not": ["treat a writing checker as the authority for interface semantics", "create a competing workflow owner"],
+      "protected_exact_text": []
+    }
+  ]
+}

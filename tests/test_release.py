@@ -1,246 +1,255 @@
-import hashlib, json, os, pathlib, re, shutil, subprocess, sys
+import hashlib
+import json
+import os
+import pathlib
+import re
+import runpy
+import shutil
+import subprocess
+import sys
 
 ROOT = pathlib.Path(__file__).parents[1]
-CATALOG = {"context-agents-md", "context-improve", "context-contracts", "context-backfill", "context-docs", "context-review", "repository-context-refresh", "session-capture", "writing-core", "writing-check", "anti-llm-writer", "user-facing-response", "readme-improver", "pr-description"}
-CONTEXT_COMMANDS = {"tier", "antipatterns", "depth", "staleness", "sessions", "cross-cutting", "frontmatter", "references", "skills", "contracts", "review", "check", "backfill"}
+PLUGIN = ROOT / "plugins/context-engineering"
+CLI = PLUGIN / "cli"
+CONTEXT = {"context-agents-md", "context-improve", "context-contracts", "context-backfill", "context-docs", "context-review", "repository-context-refresh", "session-capture"}
+WRITING = {"writing-core", "writing-check", "anti-llm-writer", "user-facing-response", "readme-improver", "pr-description"}
 
 
 def run(*args, cwd=ROOT, env=None):
-    return subprocess.run(args, cwd=cwd, text=True, capture_output=True, env={**os.environ, "PYTHONPATH": str(ROOT / "packages/context-engineering"), **(env or {})})
+    return subprocess.run(args, cwd=cwd, text=True, capture_output=True, env={**os.environ, **(env or {})})
 
 
-def context(*args, cwd=ROOT):
-    return run(sys.executable, "-m", "context_engineering", *args, "--json", cwd=cwd)
-
-
-def writing(*args, env=None):
-    return run(sys.executable, "packages/writing-check/scripts/writing_check.py", *args, env=env)
+def context(*args, project=CLI, cwd=ROOT):
+    return run("uv", "run", "--no-config", "--locked", "--no-dev", "--project", str(project), "context-engineering", *args, cwd=cwd)
 
 
 def git_repo(tmp_path):
     repo = tmp_path / "repo"; repo.mkdir()
-    run("git", "init", str(repo)); run("git", "-C", str(repo), "config", "user.email", "test@example.invalid"); run("git", "-C", str(repo), "config", "user.name", "Test")
+    for args in (("init",), ("config", "user.email", "test@example.invalid"), ("config", "user.name", "Test")):
+        run("git", "-C", str(repo), *args)
     (repo / "AGENTS.md").write_text("# Guide\n\nUse tests.\n")
-    (repo / "docs").mkdir(); (repo / "docs" / "index.md").write_text("# Docs\n")
-    (repo / "SPEC.md").write_text("# Specification\n")
-    (repo / "module").mkdir(); (repo / "module" / "one.py").write_text("import os\n")
-    (repo / "other").mkdir(); (repo / "other" / "two.py").write_text("import module.one\n")
+    (repo / "docs").mkdir(); (repo / "docs/index.md").write_text("# Docs\n")
+    (repo / "module").mkdir(); (repo / "module/one.py").write_text("import os\n")
     run("git", "-C", str(repo), "add", "."); run("git", "-C", str(repo), "commit", "-m", "base")
     return repo
 
 
-def test_catalog_contracts_have_distinctive_workflow_guards():
-    skills = {p.parent.name: p.read_text() for p in ROOT.glob("skills/*/*/SKILL.md")}
-    assert set(skills) == CATALOG
-    expected = {"context-agents-md": "DO/NOT/BECAUSE", "context-improve": "two modes", "context-contracts": "Analyze", "context-backfill": "cutoff", "context-docs": "Analyze", "context-review": "read-only", "repository-context-refresh": "Audit", "session-capture": "subsequent user turn", "writing-core": "Preserve", "writing-check": "exact", "anti-llm-writer": "LLM-shaped", "user-facing-response": "preservation ledger", "readme-improver": "reader journey", "pr-description": "base and head"}
-    for name, phrase in expected.items(): assert phrase.lower() in skills[name].lower()
+def files(root):
+    return {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file() and ".git" not in path.parts}
 
 
-def test_capture_and_context_contracts_preserve_portable_current_behavior():
-    capture = (ROOT / "skills/context/session-capture/SKILL.md").read_text()
-    repo_context = (ROOT / "skills/context/session-capture/references/repo-context.md").read_text()
-    agents = (ROOT / "skills/context/context-agents-md/SKILL.md").read_text()
-    generated_spec = (ROOT / "skills/context/context-agents-md/resources/generated-doc-spec.md").read_text()
-    docs = (ROOT / "skills/context/context-docs/SKILL.md").read_text()
-
-    assert "Treat each number as one complete decision bundle" in capture
-    assert "Targets: <primary path>; <required companion paths>" in capture
-    assert "selectable suffix" not in capture
-    assert "include it in the same numbered decision bundle" in repo_context
-    assert "compulsory mid-task capture paragraph" in agents
-    assert "<self-doc requirement paragraph>" not in agents
-    assert "### 2. Capture authority" in generated_spec
-    assert "Self-Documentation Requirement" not in generated_spec
-    assert "Portable catalog release: `safurrier-skills`" in docs
+def test_atomic_context_plugin_metadata_and_inventory():
+    manifest = json.loads((PLUGIN / ".claude-plugin/plugin.json").read_text())
+    marketplace = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text())
+    assert manifest["skills"] == "./skills"
+    assert marketplace["plugins"] == [{"name": "context-engineering", "source": "./plugins/context-engineering", "description": "Portable deterministic Context engineering skills"}]
+    assert not (ROOT / ".claude-plugin.json").exists()
+    assert {path.parent.name for path in (PLUGIN / "skills").glob("*/SKILL.md")} == CONTEXT
+    assert not (ROOT / "skills/context").exists()
 
 
-def test_metadata_provenance_privacy_and_copied_artifact_validate():
-    assert run(sys.executable, "scripts/validate.py").returncode == 0
+def test_context_installation_docs_use_claude_marketplace_commands():
+    text = "\n".join((ROOT / path).read_text() for path in ("README.md", "docs/installation.md"))
+    assert "/plugin marketplace add safurrier/skills" in text
+    assert "/plugin install context-engineering@safurrier-skills" in text
+    assert "context-engineering --help" in text
+    assert "npx skills add safurrier/skills --skill writing-check" in text
 
 
-def test_installation_and_validation_docs_require_complete_catalog():
-    installation = (ROOT / "docs/installation.md").read_text()
-    validation = (ROOT / "docs/validation.md").read_text()
-    readme = (ROOT / "README.md").read_text()
-    combined = "\n".join((installation, validation, readme))
-
-    assert "skill-only installers omit their required sibling package" in readme
-    assert "A copied `writing-check` skill is supported" in installation
-    assert "installSkillForAgent" in installation
-    assert "PYTHONPATH=packages/context-engineering" not in combined
-    assert "uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering" in installation
-    assert "uv run --no-config --locked --no-dev --project packages/context-engineering context-engineering check" in validation
-    assert "uv run --no-config --locked --project packages/context-engineering mypy" in validation
-    assert "Vale itself is required" in validation
-    assert "packages/writing-check/vale/styles/GoogleDocs" in installation
-
-
-def test_ci_installs_checksum_pinned_vale_before_python_fast_check():
-    workflow = (ROOT / ".github/workflows/ci.yml").read_text()
-    install_index = workflow.index("- name: Install Vale 3.17.1")
-    verify_index = workflow.index("- name: Verify Vale")
-    fast_check_index = workflow.index("- run: python scripts/fast_check.py")
-    assert "https://github.com/vale-cli/vale/releases/download/v3.17.1/vale_3.17.1_Linux_64-bit.tar.gz" in workflow
-    assert "db947f89f2292e6a0381a61de155f6a5f5cb4cb460ca178ea412ef605559cefd" in workflow
-    assert "sha256sum --check --strict" in workflow and "sudo install -m 0755" in workflow
-    assert 'test "$(vale --version)" = "vale version 3.17.1"' in workflow
-    assert install_index < verify_index < fast_check_index
-
-
-def test_fast_check_uses_pinned_mypy_without_a_shell_entrypoint():
-    fast_check = (ROOT / "scripts/fast_check.py").read_text()
-    pyproject = (ROOT / "packages/context-engineering/pyproject.toml").read_text()
-    mypy_config = (ROOT / "mypy.ini").read_text()
-    assert not (ROOT / "scripts/fast-check.sh").exists()
-    assert '"mypy",' in fast_check and '"--config-file",' in fast_check
-    assert '"--no-config",' in fast_check and '"--locked",' in fast_check
-    assert '"--check",' in fast_check and '"--offline",' in fast_check
-    context_index = fast_check.index('"context-engineering",')
-    runtime = fast_check[fast_check.rfind("run(", 0, context_index):]
-    assert '"--no-dev",' in runtime
-    assert '"mypy==1.18.2"' in pyproject
-    assert "check_untyped_defs = True" in mypy_config
-
-
-def test_fast_check_reports_a_missing_executable_without_a_traceback():
-    result = subprocess.run(
-        [sys.executable, str(ROOT / "scripts/fast_check.py")],
-        cwd=ROOT,
-        env={**os.environ, "PATH": ""},
-        text=True,
-        capture_output=True,
-    )
-    assert result.returncode != 0
-    assert "uv could not run:" in result.stderr
-    assert "Traceback" not in result.stderr
-
-
-def test_shipped_skills_have_no_experimental_maturity_label():
-    for skill in ROOT.glob("skills/*/*/SKILL.md"):
-        assert "experimental" not in skill.read_text().lower(), skill
-
-
-def test_context_docs_verifier_available_unavailable_and_readonly(tmp_path):
+def test_context_plugin_copy_is_relocatable_readonly(tmp_path):
+    plugin = tmp_path / "arbitrary" / "context-engineering"; plugin.parent.mkdir(); shutil.copytree(PLUGIN, plugin)
     target = git_repo(tmp_path)
-    before = {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file() and ".git" not in p.parts}
-    verifier = ROOT / "skills/context/context-docs/scripts/docs_verify.py"
-    available = run(sys.executable, str(verifier), str(target))
-    data = json.loads(available.stdout)
-    assert available.returncode == 0 and data["context_cli"] == "available" and data["findings"] == []
-    assert {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file() and ".git" not in p.parts} == before
-
-    copied = tmp_path / "context-docs"; shutil.copytree(ROOT / "skills/context/context-docs", copied)
-    unavailable = run(sys.executable, str(copied / "scripts/docs_verify.py"), str(target))
-    data = json.loads(unavailable.stdout)
-    assert unavailable.returncode == 3 and data["context_cli"] == "unavailable" and data["findings"] == []
-    assert {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file() and ".git" not in p.parts} == before
+    before = files(target)
+    assert context("--help", project=plugin / "cli").returncode == 0
+    result = context("references", str(target), "--json", project=plugin / "cli")
+    assert result.returncode == 0 and result.stdout.startswith("{")
+    assert files(target) == before
 
 
-def test_context_markdown_local_paths_and_skill_commands_resolve():
-    markdown = list((ROOT / "skills/context").rglob("*.md"))
-    for path in markdown:
-        text = path.read_text()
-        for target in re.findall(r"\[[^]]+\]\(([^)#]+)", text):
-            if "://" not in target:
-                assert (path.parent / target).exists(), (path, target)
-        for target in re.findall(r"`((?:references|resources|scripts)/[^`\s]+)`", text):
-            assert (path.parent / target).exists(), (path, target)
-        skill_root = next((parent for parent in (path.parent, *path.parents) if (parent / "SKILL.md").exists()), None)
-        for target in re.findall(r"<skill-dir>/(scripts/[^\s>`]+)", text):
-            assert skill_root is not None and (skill_root / target).exists(), (path, target)
+def test_context_plugin_copy_retains_scoped_license_and_provenance(tmp_path):
+    plugin = tmp_path / "arbitrary" / "context-engineering"; plugin.parent.mkdir(); shutil.copytree(PLUGIN, plugin)
+    inventory = json.loads((plugin / "provenance.json").read_text())
+    assert "complete legal and provenance contract" in inventory["decision"]
+    assert (plugin / "LICENSE").read_bytes() == (ROOT / "LICENSE").read_bytes()
+    result = run(sys.executable, "scripts/validate.py", "--plugin", str(plugin))
+    assert result.returncode == 0 and result.stdout == "plugin validation passed\n"
 
 
-def test_context_commands_run_readonly_on_meaningful_fixture(tmp_path):
-    repo = git_repo(tmp_path); before = {p.relative_to(repo): p.read_bytes() for p in repo.rglob("*") if p.is_file() and ".git" not in p.parts}
-    base = run("git", "-C", str(repo), "rev-parse", "HEAD").stdout.strip(); (repo / "note.md").write_text("# change\n")
-    invocations = [
-        ("tier", str(repo / "module")), ("antipatterns", str(repo)), ("depth", str(repo / "AGENTS.md")), ("staleness", str(repo / "AGENTS.md")), ("sessions", str(repo)), ("cross-cutting", str(repo / "module"), str(repo / "other")), ("frontmatter", str(repo)), ("references", str(repo)), ("skills", str(ROOT / "skills"), "--all"), ("contracts", str(repo)), ("review", str(repo), "--base", base, "--head", "HEAD"), ("check", str(repo), "--base", base, "--head", "HEAD"), ("backfill", str(repo)),
-    ]
-    for invocation in invocations:
-        result = context(*invocation)
-        assert result.returncode in (0, 1), (invocation, result.stdout, result.stderr)
-        assert result.stdout.strip().startswith("{")
-    for path, content in before.items(): assert (repo / path).read_bytes() == content
-    assert (repo / "note.md").read_text() == "# change\n"
+def test_context_plugin_copy_rejects_live_and_broken_symlinks(tmp_path):
+    plugin = tmp_path / "context-engineering"
+    shutil.copytree(PLUGIN, plugin)
+    outside = tmp_path / "outside.txt"
+    outside.write_text("outside the plugin")
+    (plugin / "skills/live-link").symlink_to(outside)
+    (plugin / "skills/broken-link").symlink_to(tmp_path / "missing")
+
+    result = run(sys.executable, "scripts/validate.py", "--plugin", str(plugin))
+    assert result.returncode != 0
+    assert "Context plugin must not contain symlink: skills/live-link" in result.stdout
+    assert "Context plugin must not contain symlink: skills/broken-link" in result.stdout
 
 
-def test_context_markdown_requires_catalog_uv_cli_and_installs_from_copy(tmp_path):
-    artifact = tmp_path / "artifact"; shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", "__pycache__", ".mypy_cache", ".pytest_cache", "site", ".venv"))
-    text = "\n".join(p.read_text() for p in (artifact / "skills/context").rglob("*.md"))
-    assert "catalog-level optional dependency" not in text
-    assert "PYTHONPATH=<catalog-root>/packages/context-engineering" not in text
-    commands = set(re.findall(r"uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering context-engineering ([a-z-]+)", text))
-    assert commands <= CONTEXT_COMMANDS and commands
-    for command in commands:
-        assert subprocess.run(["uv", "run", "--no-config", "--locked", "--no-dev", "--project", str(artifact / "packages/context-engineering"), "context-engineering", command, "--help"], text=True, capture_output=True).returncode == 0
+def test_context_plugin_ignores_generated_environment_symlinks(tmp_path):
+    plugin = tmp_path / "context-engineering"
+    shutil.copytree(PLUGIN, plugin, ignore=shutil.ignore_patterns(".venv"))
+    environment = plugin / "cli/.venv/bin"
+    environment.mkdir(parents=True)
+    (environment / "python").symlink_to(tmp_path / "python")
+
+    result = run(sys.executable, "scripts/validate.py", "--plugin", str(plugin))
+    assert result.returncode == 0 and result.stdout == "plugin validation passed\n"
 
 
-def test_writing_profiles_policy_identity_and_unavailable_vale(tmp_path):
-    sample = tmp_path / "sample.md"; sample.write_text("This is a short candidate with no prohibited wording.")
-    profiles = json.loads((ROOT / "packages/writing-check/vale/profiles.json").read_text())["profiles"]
-    for profile, policy in profiles.items():
-        result = writing("--profile", profile, "--json", str(sample), env={"PATH": "/nonexistent"})
-        data = json.loads(result.stdout)
-        assert result.returncode == 3 and data["status"] == "unavailable"
-        assert data["source"]["text"] == sample.read_text() and data["source"]["sha256"] == hashlib.sha256(sample.read_bytes()).hexdigest()
-        assert data["policy"]["name"] == policy["policy"] and len(data["policy"]["sha256"]) == 64
-    bad = writing("--profile", "bad", "--json", str(sample)); assert bad.returncode == 2 and json.loads(bad.stdout)["error"]["code"] == "unknown_profile"
-    broken = tmp_path / "bad.md"; broken.write_bytes(b"\xff"); assert writing("--profile", "readme", "--json", str(broken)).returncode == 2
+def test_context_skill_only_copy_reports_unavailable(tmp_path):
+    target = git_repo(tmp_path)
+    copied = tmp_path / "context-docs"; shutil.copytree(PLUGIN / "skills/context-docs", copied)
+    result = run(sys.executable, str(copied / "scripts/docs_verify.py"), str(target))
+    assert result.returncode == 3
+    assert json.loads(result.stdout)["context_cli"] == "unavailable"
 
 
-def test_writing_check_vendors_google_rules_and_preserves_advisory_evidence(tmp_path):
-    sample = tmp_path / "candidate.md"; sample.write_text("A short candidate.")
-    package_root = ROOT / "packages/writing-check/vale"
-    skill_root = ROOT / "skills/writing/writing-check/vale"
-    lock = json.loads((package_root / "upstream-lock.json").read_text())
-    assert lock == json.loads((skill_root / "upstream-lock.json").read_text())
-    package_manifest = json.loads((package_root / "profiles.json").read_text())
-    skill_manifest = json.loads((skill_root / "profiles.json").read_text())
-    assert lock["upstream"]["repository"] == "https://github.com/vale-cli/Google"
-    assert lock["upstream"]["tag"] == "v0.7.1" and lock["upstream"]["license"] == "MIT"
-    assert package_manifest == skill_manifest and len(package_manifest["rules"]) == 34
-    for metadata in package_manifest["rules"].values():
-        for root in (package_root, skill_root):
-            path = root / metadata["path"]
-            assert hashlib.sha256(path.read_bytes()).hexdigest() == metadata["sha256"]
-    for root in (package_root, skill_root):
-        license_path = root / lock["upstream"]["license_file"]
-        assert license_path.is_file()
-        assert hashlib.sha256(license_path.read_bytes()).hexdigest() == lock["upstream"]["license_sha256"]
-    assert (package_root / "styles/GoogleDocs/AMPM.yml").is_file()
-    fake = tmp_path / "bin"; fake.mkdir(); vale = fake / "vale"; vale.write_text("#!/bin/sh\nprintf '{\"candidate.md\":[{\"Check\":\"GoogleDocs.AMPM\",\"Message\":\"Use a.m.\",\"Line\":2,\"Span\":[1,4]}]}'\n"); vale.chmod(0o755)
-    result = writing("--profile", "pr-description", "--json", str(sample), env={"PATH": str(fake) + os.pathsep + os.environ["PATH"]}); data = json.loads(result.stdout)
-    assert result.returncode == 1 and data["alerts"][0]["rule"] == "GoogleDocs.AMPM" and data["alerts"][0]["severity"] == "suggestion" and data["vale"]["status"] == "ran"
-    table = tmp_path / "table.md"; table.write_text("| Item | Detail |\n| --- | --- |\n" + "\n".join("| alpha beta gamma delta epsilon | zeta eta theta iota kappa |" for _ in range(20)))
-    result = writing("--profile", "readme", "--json", str(table), env={"PATH": "/nonexistent"}); assert json.loads(result.stdout)["readability"]["status"] == "composition_limited"
-
-    artifact = tmp_path / "artifact"
-    shutil.copytree(ROOT, artifact, ignore=shutil.ignore_patterns(".git", ".venv", ".mypy_cache", ".pytest_cache", "site"))
-    tampered = artifact / "skills/writing/writing-check/vale/styles/GoogleDocs/AMPM.yml"
-    tampered.write_text(tampered.read_text() + "\n# tampered\n")
-    validation = subprocess.run([sys.executable, str(artifact / "scripts/validate.py"), "--copied"], text=True, capture_output=True)
-    assert validation.returncode == 1
-    assert "Writing Check rule digest mismatch" in validation.stdout
-
-    license_artifact = tmp_path / "license-artifact"
-    shutil.copytree(ROOT, license_artifact, ignore=shutil.ignore_patterns(".git", ".venv", ".mypy_cache", ".pytest_cache", "site"))
-    tampered_license = license_artifact / "packages/writing-check/vale/vendor/Google-LICENSE"
-    tampered_license.write_text(tampered_license.read_text() + "\nTampered.\n")
-    validation = subprocess.run([sys.executable, str(license_artifact / "scripts/validate.py"), "--copied"], text=True, capture_output=True)
-    assert validation.returncode == 1
-    assert "Writing Check license digest mismatch" in validation.stdout
+def test_context_docs_verifier_works_inside_complete_plugin(tmp_path):
+    plugin = tmp_path / "plugin"; shutil.copytree(PLUGIN, plugin)
+    target = git_repo(tmp_path)
+    result = run(sys.executable, str(plugin / "skills/context-docs/scripts/docs_verify.py"), str(target))
+    assert result.returncode == 0 and json.loads(result.stdout)["context_cli"] == "available"
 
 
-def test_selected_skill_copy_closure_and_plugin_metadata(tmp_path):
-    out = tmp_path / "writing-check"; shutil.copytree(ROOT / "skills/writing/writing-check", out)
-    candidate = tmp_path / "candidate.md"; candidate.write_text("A candidate.")
-    result = run(sys.executable, str(out / "scripts/writing_check.py"), "--profile", "commit", "--json", str(candidate), env={"PATH": "/nonexistent"})
-    assert result.returncode == 3 and json.loads(result.stdout)["status"] == "unavailable"
-    plugin = json.loads((ROOT / ".claude-plugin/plugin.json").read_text()); assert plugin["skills"] == "../skills"
+def test_context_skill_commands_use_plugin_local_locked_cli():
+    text = "\n".join(path.read_text() for path in (PLUGIN / "skills").rglob("*.md"))
+    assert "packages/context-engineering" not in text
+    assert "<context-plugin-root>/cli" in text
+    assert "uv run --no-config --locked --no-dev --project" in text
 
 
-def test_routes_resolve_or_describe_external_fallback():
-    text = "\n".join(p.read_text() for p in ROOT.glob("skills/*/*/SKILL.md"))
-    names = set(re.findall(r"`([a-z][a-z0-9-]+)`", text))
-    missing = names - CATALOG - {"Git", "Vale", "UTF", "JSON", "Audit", "Apply", "Draft", "Improve", "Analyze", "Init", "Update", "Consolidate", "Bootstrap", "Validate", "AGENTS", "SPEC", "ADR", "README", "FRE", "FK"}
-    assert not {"alex-writing-editor", "commit-message", "github-open-pr", "writing-voice-check"} & missing
+def test_writing_check_is_the_single_self_contained_policy_tree(tmp_path):
+    skill = ROOT / "skills/writing/writing-check"
+    assert not (ROOT / "packages/writing-check").exists()
+    assert len(list(ROOT.rglob("upstream-lock.json"))) == 1
+    copied = tmp_path / "writing-check"; shutil.copytree(skill, copied)
+    sample = tmp_path / "sample.md"; sample.write_text("A candidate.")
+    unavailable = run(sys.executable, str(copied / "scripts/writing_check.py"), "--profile", "commit", "--json", str(sample), env={"PATH": "/nonexistent"})
+    assert unavailable.returncode == 3 and json.loads(unavailable.stdout)["status"] == "unavailable"
+    lock = json.loads((copied / "vale/upstream-lock.json").read_text())
+    profiles = json.loads((copied / "vale/profiles.json").read_text())
+    assert (copied / "vale/vendor/Google-LICENSE").is_file() and len(profiles["rules"]) == 34
+    for data in profiles["rules"].values(): assert hashlib.sha256((copied / "vale" / data["path"]).read_bytes()).hexdigest() == data["sha256"]
+    assert hashlib.sha256((copied / "vale" / lock["upstream"]["license_file"]).read_bytes()).hexdigest() == lock["upstream"]["license_sha256"]
+
+
+def test_writing_check_fake_vale_preserves_advisory_behavior(tmp_path):
+    sample = tmp_path / "sample.md"; sample.write_text("A candidate.")
+    copied = tmp_path / "writing-check"; shutil.copytree(ROOT / "skills/writing/writing-check", copied)
+    fake = tmp_path / "bin"; fake.mkdir(); vale = fake / "vale"
+    vale.write_text("#!/bin/sh\nprintf '{\"candidate.md\":[{\"Check\":\"GoogleDocs.AMPM\",\"Message\":\"Use a.m.\",\"Line\":2,\"Span\":[1,4]}]}'\n")
+    vale.chmod(0o755)
+    result = run(sys.executable, str(copied / "scripts/writing_check.py"), "--profile", "commit", "--json", str(sample), env={"PATH": str(fake)})
+    data = json.loads(result.stdout)
+    assert result.returncode == 1 and data["alerts"][0]["severity"] == "suggestion" and data["vale"]["status"] == "ran"
+
+
+def test_validation_and_documented_install_boundaries():
+    assert run(sys.executable, "scripts/validate.py").returncode == 0
+    text = "\n".join((ROOT / path).read_text() for path in ("README.md", "docs/installation.md", "docs/validation.md"))
+    assert "npx skills add safurrier/skills --skill writing-check" in text
+    assert "skills.sh" in text
+    assert "<context-plugin-root>/cli" in text
+    assert "packages/writing-check" not in text and "packages/context-engineering" not in text
+
+
+def test_all_skills_have_valid_metadata_and_links_resolve():
+    skills = list((PLUGIN / "skills").glob("*/SKILL.md")) + list((ROOT / "skills/writing").glob("*/SKILL.md"))
+    assert {path.parent.name for path in skills} == CONTEXT | WRITING
+    names = []
+    for skill in skills:
+        match = re.match(r"^---\nname: ([a-z0-9-]+)\ndescription: (.+)\n---", skill.read_text(), re.S)
+        assert match and match.group(1) == skill.parent.name and match.group(2).strip()
+        names.append(match.group(1))
+    assert len(names) == len(set(names))
+    for path in ROOT.rglob("*.md"):
+        if any(part.startswith(".") for part in path.relative_to(ROOT).parts): continue
+        for target in re.findall(r"\[[^]]+\]\(([^)#]+)", path.read_text()):
+            if "://" not in target: assert (path.parent / target).exists(), (path, target)
+
+
+def test_skill_direct_resource_links_have_one_level_closure():
+    skills = list((PLUGIN / "skills").glob("*/SKILL.md")) + list((ROOT / "skills/writing").glob("*/SKILL.md"))
+    for skill in skills:
+        direct = [skill.parent / target for target in re.findall(r"\[[^]]+\]\((references/[^)#]+|resources/[^)#]+)", skill.read_text())]
+        for resource in direct:
+            assert resource.is_file(), (skill, resource)
+            for target in re.findall(r"\[[^]]+\]\(([^)#]+)", resource.read_text()):
+                if "://" not in target:
+                    assert (resource.parent / target).exists(), (resource, target)
+
+
+def test_context_command_inventory_and_mutation_boundaries_are_explicit():
+    help_result = context("--help")
+    assert help_result.returncode == 0
+    documented = {"antipatterns", "backfill", "check", "contracts", "cross-cutting", "depth", "frontmatter", "references", "review", "sessions", "skills", "staleness", "tier"}
+    assert all(command in help_result.stdout for command in documented)
+    for name in CONTEXT:
+        text = (PLUGIN / "skills" / name / "SKILL.md").read_text()
+        assert "stop the requested deterministic-analysis workflow" in text
+    assert "Audit-only runs do not edit files." in (PLUGIN / "skills/context-docs/SKILL.md").read_text()
+    assert "Apply only after an explicit apply instruction" in (PLUGIN / "skills/context-review/SKILL.md").read_text()
+    writing_check = (ROOT / "skills/writing/writing-check/SKILL.md").read_text()
+    assert "Keep `writing_check.py` read-only." in writing_check
+    assert "only after an explicit request" in writing_check
+    protected = "byte-exact unless its real owner independently authorizes a factual change"
+    assert protected in writing_check
+    assert protected in (ROOT / "skills/writing/writing-check/references/repository-sweep.md").read_text()
+    assert protected in (PLUGIN / "skills/repository-context-refresh/SKILL.md").read_text()
+
+
+def test_context_improve_delegates_owner_order_and_skipped_candidate_boundary():
+    improve = (PLUGIN / "skills/context-improve/SKILL.md").read_text()
+    owner = (PLUGIN / "skills/context-agents-md/SKILL.md").read_text()
+    assert "Context-agents-md owns the generated AGENTS.md output shape" in improve
+    assert "skipped-candidate triage and the\nproposal/apply boundary for `SKIPPED_FOR_REVIEW.md`" in improve
+    assert "never create or modify any of those files here" in improve
+    assert "Session-reflect" not in improve
+    assert "do not count\npath segments inline" in improve
+    assert "actually installed\nseparate multi-session provider" in improve
+    assert "context-engineering sessions" not in improve
+    assert "Session mining is default" not in improve
+    assert "Session evidence is optional" in improve
+
+    review = owner.index("### 4. Review and Apply AGENTS.md")
+    apply = owner.index("until the user explicitly authorizes apply", review)
+    validate = owner.index("### 5. Post-write Validate")
+    assert review < apply < validate
+    assert "no proposal validator is provided by this workflow" in owner
+    assert "skipped-candidate triage proposal\nfor interactive review" in owner
+    assert "Include any\nnon-empty skipped-file content in the interactive proposal" in owner
+    assert "create it only as\npart of an explicitly authorized apply" in owner
+
+
+def test_writing_check_profile_inventory_and_eval_manifest_validate():
+    profiles = json.loads((ROOT / "skills/writing/writing-check/vale/profiles.json").read_text())["profiles"]
+    assert {"technical-doc-explanatory", "technical-doc-reference"} <= set(profiles)
+    sweep = (ROOT / "skills/writing/writing-check/references/repository-sweep.md").read_text()
+    assert "technical-doc-explanatory" in sweep and "technical-doc-reference" in sweep
+    result = run(sys.executable, "scripts/validate_evals.py")
+    assert result.returncode == 0 and result.stdout == "eval manifest validation passed\n"
+
+
+def test_eval_manifest_rejects_unknown_case_and_top_level_fields(tmp_path):
+    validator = runpy.run_path(str(ROOT / "scripts/validate_evals.py"))["validate_manifest"]
+    data = json.loads((ROOT / "evals/manifest.json").read_text())
+    data["cases"][0]["must_observee"] = ["misspelled field"]
+    manifest = tmp_path / "manifest.json"; manifest.write_text(json.dumps(data))
+    assert "activation-stale-agents: unknown fields: must_observee" in validator(manifest)
+    data = json.loads((ROOT / "evals/manifest.json").read_text())
+    data["catalog_revison"] = "misspelled field"
+    manifest.write_text(json.dumps(data))
+    assert "eval manifest unknown fields: catalog_revison" in validator(manifest)
+
+
+def test_eval_manifest_rejects_empty_protected_exact_text(tmp_path):
+    validator = runpy.run_path(str(ROOT / "scripts/validate_evals.py"))["validate_manifest"]
+    data = json.loads((ROOT / "evals/manifest.json").read_text())
+    data["cases"][0]["protected_exact_text"] = [""]
+    manifest = tmp_path / "manifest.json"; manifest.write_text(json.dumps(data))
+    errors = validator(manifest)
+    assert "activation-stale-agents: protected_exact_text must be a list of non-empty strings; an empty list is allowed" in errors

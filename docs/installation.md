@@ -1,67 +1,61 @@
 # Installation
 
-Install Context skills from one complete catalog checkout or source archive because
-they require the sibling Context package. Writing Check can install as one copied
-skill directory because that directory includes its checker and vendored policy.
+## Context engineering Claude plugin
 
-## Complete catalog checkout
+The root marketplace manifest publishes `context-engineering` from `./plugins/context-engineering`. Install it through Claude:
 
-Place the full repository contents under one catalog root, preserving both
-`skills/` and `packages/`. Before configuring an agent, verify the required
-layout:
-
-```bash
-test -f <catalog-root>/packages/context-engineering/pyproject.toml
-test -d <catalog-root>/packages/writing-check/vale/styles/GoogleDocs
-test -d <catalog-root>/skills/context
-test -d <catalog-root>/skills/writing
+```text
+/plugin marketplace add safurrier/skills
+/plugin install context-engineering@safurrier-skills
 ```
 
-Configure the compatible agent to discover skills from
-`<catalog-root>/skills`. A plugin manager is suitable for Context skills only when
-its installed artifact preserves that complete layout; verify the Context paths
-above before relying on their deterministic workflows.
+Its local closure is:
 
-## Skill-only installer boundary
+```bash
+test -f <context-plugin-root>/.claude-plugin/plugin.json
+test -f <context-plugin-root>/LICENSE
+test -f <context-plugin-root>/provenance.json
+test -f <context-plugin-root>/cli/pyproject.toml
+test -d <context-plugin-root>/cli/src/context_engineering
+test -d <context-plugin-root>/skills
+```
 
-Do not use `npx skills add safurrier/skills` to install Context skills. The locally
-inspected Skills CLI v1.5.18 copies each discovered skill directory into an agent
-target, not sibling catalog packages. Its `installSkillForAgent` source calls
-`copyDirectory(skill.path, ...)`, so it cannot preserve the required `packages/`
-layout. This conclusion is recorded from local source inspection; no network
-installation was run.
+Configure Claude to discover the plugin's `skills/` directory. Verify the installed CLI with `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering --help`. Context workflows require `uv`, Python 3.11+, and the plugin-local CLI:
 
-A copied `writing-check` skill is supported. Verify that its installed directory
-contains these self-contained assets:
+```bash
+uv run --no-config --locked --no-dev --project <context-plugin-root>/cli \
+  context-engineering <subcommand> ...
+```
+
+Do not copy a Context skill alone. A selected-skill installer does not retain the sibling CLI project, and Context commands must report that deterministic verification is unavailable rather than locate another checkout.
+
+## Writing skills through Skills CLI
+
+Writing skills remain in the public `skills/writing/` catalog. Install Writing Check explicitly:
+
+```bash
+npx skills add safurrier/skills --skill writing-check
+```
+
+Run that command with `DISABLE_TELEMETRY=1` when telemetry must be disabled. Skills CLI discovery may list Context `SKILL.md` files, but it copies selected skill directories and cannot atomically install Context. `skills.sh` is discovery/ranking infrastructure, not the installer.
+
+A copied Writing Check directory is supported and must contain:
 
 ```bash
 test -f <writing-check-skill>/scripts/writing_check.py
 test -d <writing-check-skill>/vale/styles/GoogleDocs
+test -f <writing-check-skill>/vale/vendor/Google-LICENSE
 ```
 
-## Prerequisites
+Writing Check requires external Vale; its bundled policy is self-contained and its findings remain advisory.
 
-Obtain `uv` and Vale through the package-management or deployment mechanism
-approved for the target environment. This catalog does not prescribe or verify
-an external registry or installer. Confirm both executables before running the
-corresponding workflows:
+## Prerequisites and validation
+
+Obtain `uv` and Vale through the environment's approved package-management mechanism. This catalog does not install either executable.
 
 ```bash
 uv --version
 vale --version
 ```
 
-Context workflows require `uv`, Python 3.11+, and
-`packages/context-engineering`. Run deterministic analysis with:
-
-```bash
-uv run --no-config --locked --no-dev --project <catalog-root>/packages/context-engineering \
-  context-engineering <subcommand> ...
-```
-
-Writing Check requires Vale and the bundled Google Vale rules at
-`packages/writing-check/vale/`. Its findings are advisory, but a missing Vale
-executable is unavailable evidence rather than a replacement-policy result.
-
-Run [reproducible validation](validation.md) from the catalog root after
-installation.
+Run [reproducible validation](validation.md) from this source checkout after installation.
