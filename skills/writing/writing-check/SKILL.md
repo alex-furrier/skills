@@ -9,9 +9,9 @@ description: Run source-bound Vale checks and qualified readability sampling for
 
 Collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the source bytes, normalized findings, raw Vale output, and source identity. Results do not establish meaning, factuality, safety, usefulness, writing quality, acceptance, or readiness.
 
-- Keep the installed `writing-check` command read-only. It remains single-candidate; do not add repository discovery, network access, or an auto-fix path.
+- Keep the installed `writing-check` command read-only. It remains single-candidate; do not add repository discovery or an auto-fix path. On first use, its pinned PyPI Vale wrapper may download the Vale executable from the Vale GitHub release; later checks use that installed executable.
 - A single-candidate check or repository audit never edits prose, source files, Git, or GitHub. Enter repository update mode only after an explicit request to update prose; the destination owner applies edits outside the checker.
-- Never run `vale sync`, fetch a package, or use a network service during a normal check. Vale is required: when absent, retain source identity and return `unavailable`, never a substitute linter or clean result.
+- Never run `vale sync`, fetch policy or rule packages, or use a substitute network service during a normal check. Vale is required: when absent, retain source identity and return `unavailable`, never a substitute linter or clean result.
 - Findings, readability, sample size, and counts are advisory observations, never scores or gates. Vale line and span values are Vale coordinates, not byte offsets.
 
 The `safurrier-writing-check` package bundles the reviewed Google Vale v0.7.1 rules, their MIT license, upstream lock, and a pinned Vale runtime dependency. From a checkout of this catalog, install it once with `uv tool install ./packages/writing-check`; then `writing-check --help` works without a second setup command. If the command is missing or returns `unavailable` or `execution_error`, report that state rather than running a substitute checker. All severities are normalized to `suggestion`.
