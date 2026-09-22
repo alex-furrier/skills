@@ -11,6 +11,10 @@ Shape substantial conversational prose without taking over facts, decisions, tec
 
 Choose **normal mode** for a substantial plan, explanation, recommendation, summary, or handoff. Choose **explicit plain-English rewrite mode** only when the user asks to simplify clearly bounded pasted text or the immediately preceding assistant response. Do not infer rewrite mode from requests to be clear, concise, polished, or scannable. Skip this skill for short confirmations, exact quotations, raw command output, and artifacts with a destination voice owner.
 
+## Writing Check dependency
+
+This skill invokes the independently distributed `safurrier-writing-check` package only for explicit plain-English rewrites. From a checkout of this catalog, install it with `uv tool install ./packages/writing-check`; then `writing-check --help` is available without another setup command. If the command is missing or returns `unavailable` or `execution_error`, complete the preservation-checked rewrite, report that advisory check as unavailable, and do not substitute another linter.
+
 ## Normal mode
 
 1. Keep the active domain skill responsible for facts, decisions, and output contract.

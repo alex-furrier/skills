@@ -15,7 +15,14 @@ def test_writing_wheel_contains_cli_policy_and_license(tmp_path):
     wheel = next(dist.glob("*.whl"))
     with zipfile.ZipFile(wheel) as archive:
         names = set(archive.namelist())
-    assert {"writing_check/cli.py", "writing_check/sweep.py", "writing_check/vale/profiles.json", "writing_check/vale/vendor/Google-LICENSE"} <= names
+    assert {
+        "writing_check/cli.py",
+        "writing_check/sweep.py",
+        "writing_check/vale/profiles.json",
+        "writing_check/vale/vendor/Google-LICENSE",
+        "provenance.json",
+        "safurrier_writing_check-1.0.0.dist-info/licenses/LICENSE",
+    } <= names
 
 
 def install_wheel(tmp_path):

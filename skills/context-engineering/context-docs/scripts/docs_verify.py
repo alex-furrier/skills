@@ -38,6 +38,17 @@ def main() -> int:
                 },
                 3,
             )
+        except OSError as error:
+            return emit(
+                {
+                    "schema": 1,
+                    "target": str(root),
+                    "context_cli": "execution_error",
+                    "reason": f"context-engineering {check} could not be executed: {error}",
+                    "findings": [],
+                },
+                4,
+            )
         try:
             payload = json.loads(result.stdout)
         except json.JSONDecodeError:

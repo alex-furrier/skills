@@ -93,6 +93,27 @@ def test_docs_verifier_uses_installed_context_command_from_a_copied_skill(tmp_pa
     assert set(record["checks"]) == {"frontmatter", "references"}
 
 
+def test_docs_verifier_reports_unexecutable_context_command_as_evidence(tmp_path):
+    skill = tmp_path / "copied-skill"
+    shutil.copytree(ROOT / "skills/context-engineering/context-docs", skill)
+    commands = tmp_path / "commands"
+    commands.mkdir()
+    command = commands / "context-engineering"
+    command.write_text("not an executable\n", encoding="utf-8")
+    command.chmod(0o644)
+    result = subprocess.run(
+        [sys.executable, str(skill / "scripts/docs_verify.py"), str(ROOT)],
+        text=True,
+        capture_output=True,
+        env={"PATH": str(commands)},
+    )
+    record = json.loads(result.stdout)
+    assert result.returncode == 4
+    assert record["context_cli"] == "execution_error"
+    assert "could not be executed" in record["reason"]
+    assert record["findings"] == []
+
+
 def test_fast_check_runs_writing_check_on_the_exact_readme_candidate():
     text = (ROOT / "scripts/fast_check.py").read_text()
     assert '"packages/writing-check"' in text

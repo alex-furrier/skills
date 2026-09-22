@@ -75,6 +75,10 @@ The helper disables external diff/text conversion, parses NUL-delimited raw and 
 
 Put its summary in `What changed`: totals, core conceptual groups, one folded supporting category, and the statement that additions + deletions describe diff shape; modified lines can count twice; they are not effort, risk, quality, review time, or readiness. Keep binary/submodule changes visible without invented counts. Exactly 500 does not trigger the table, though composition can justify it earlier. Beneath it, include collapsed **Core changes** and **Supporting changes** inventories: every mechanically sourced core file grouped with additions, deletions, events, and subtotals; supporting totals by kind plus every supporting file, kind, counts, and subtotals. Never invent a path, move supporting work for narrative balance, or substitute tables for behavioral explanation.
 
+## Writing Check dependency
+
+This skill invokes the independently distributed `safurrier-writing-check` package. From a checkout of this catalog, install it with `uv tool install ./packages/writing-check`; then `writing-check --help` is available without another setup command. If the command is missing or returns `unavailable` or `execution_error`, report that advisory check as unavailable and do not substitute another linter.
+
 ## Preserve and check the final candidate
 
 In Improve mode, retain accurate, specific, useful human wording where practical while reorganizing under the required contract. Change it only for a factual mismatch, missing critical context, weak hierarchy, duplication, synthetic prose, stale evidence, or contract compliance. Keep required text, closing lines, links, credits, checklists, disclosures, and author uncertainty. Never rewrite inside machine-managed marker blocks; the mutation owner merges them byte-for-byte and stops when ownership/placement is unclear.

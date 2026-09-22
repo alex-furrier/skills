@@ -5,7 +5,7 @@ description = "Portable source-bound advisory Writing Check with bundled Vale po
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["vale==3.21.0.0"]
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 authors = [{name = "Safurrier"}]
 
 [project.scripts]
@@ -18,6 +18,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/writing_check"]
+force-include = {"provenance.json" = "provenance.json"}
 
 [tool.hatch.build]
-include = ["src/writing_check/**"]
+include = ["src/writing_check/**", "LICENSE", "provenance.json"]

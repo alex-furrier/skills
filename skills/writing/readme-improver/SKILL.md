@@ -44,6 +44,10 @@ Keep repo-specific tradeoffs and actionable **DO X, NOT Y, BECAUSE Z** gotchas. 
 
 In Update, read once for voice, list journey gaps, and prefer a surgical patch when the README is already strong. Reorder around orientation, first success, mental model, and reference; do not replace it with a generic template. Remove feature soup, badge theater, decorative emoji, forced symmetry, fake enthusiasm, invented examples/output, unverified installs, contradictory setup, and conclusion filler. Keep technically exact terms and useful personality.
 
+## Writing Check dependency
+
+This skill invokes the independently distributed `safurrier-writing-check` package. From a checkout of this catalog, install it with `uv tool install ./packages/writing-check`; then `writing-check --help` is available without another setup command. If the command is missing or returns `unavailable` or `execution_error`, report that advisory check as unavailable and do not substitute another linter.
+
 ## Final evidence
 
 Run `writing-check --profile readme` on the exact Init/Update candidate after factual discovery and drafting. If Vale is unavailable, complete only the authorized README judgment, report `unavailable`, do not substitute another linter, and never claim clean evidence or that a checker ran. Its Google Vale v0.7.1 observations and readability sample are advisory: under 100 included prose words or 5 sentences is `insufficient_sample`; 100–299 is normally `small_sample`; 300 words and 8 sentences is `normal` with private FRE 55 / FK 10 observations; table/fragment-heavy documents may be `composition_limited` with no target.
