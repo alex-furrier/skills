@@ -31,7 +31,7 @@ Use another existing profile when the destination clearly owns it. State ambiguo
 
 ## Check each candidate
 
-1. Inspect the checker help once. After discovery has produced explicit exact source/profile pairs, either run `writing_check.py` per candidate or use the bounded caller-side path: `writing-check-sweep --candidates pairs.json --jsonl`, where `pairs.json` is a non-empty JSON array of objects containing exactly `source` and `profile`. It performs no discovery and accepts no stdin candidate.
+1. Inspect the checker help once. After discovery has produced explicit exact source/profile pairs, either run `writing-check` per candidate or use the bounded caller-side path: `writing-check-sweep --candidates pairs.json --jsonl`, where `pairs.json` is a non-empty JSON array of objects containing exactly `source` and `profile`. It performs no discovery and accepts no stdin candidate.
 2. Retain each schema-v3 JSON Lines record independently. The caller validates the bundled policy for each candidate and shares only the in-process Vale version probe; source bytes, policy digest, findings, readability state, raw tool evidence, and status remain candidate-specific.
 3. Do not combine records into a score, quality verdict, readiness gate, or new aggregate schema.
 4. Treat unavailable or execution-error records as missing evidence, not clean results.

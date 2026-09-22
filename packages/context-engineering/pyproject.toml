@@ -2,6 +2,7 @@
 name = "safurrier-context-engineering"
 version = "2.6.0"
 description = "Portable CLI for Context Engineering analyzers."
+license = {file = "LICENSE"}
 requires-python = ">=3.11"
 dependencies = []
 
@@ -14,6 +15,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/context_engineering"]
+force-include = {"provenance.json" = "provenance.json"}
+
+[tool.hatch.build]
+include = ["src/context_engineering/**", "LICENSE", "provenance.json"]
 
 [dependency-groups]
 dev = [

@@ -14,6 +14,8 @@ PAIRS = (
     (ROOT / "packages/context-engineering/src", ROOT / "plugins/context-engineering/cli/src"),
 )
 FILES = (
+    (ROOT / "packages/context-engineering/LICENSE", ROOT / "plugins/context-engineering/cli/LICENSE"),
+    (ROOT / "packages/context-engineering/provenance.json", ROOT / "plugins/context-engineering/cli/provenance.json"),
     (ROOT / "packages/context-engineering/pyproject.toml", ROOT / "plugins/context-engineering/cli/pyproject.toml"),
     (ROOT / "packages/context-engineering/uv.lock", ROOT / "plugins/context-engineering/cli/uv.lock"),
 )

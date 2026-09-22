@@ -5,7 +5,7 @@ description: "This skill audits or refreshes a repository's durable context and 
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Repository Context Refresh
 
@@ -79,7 +79,7 @@ Require the documentation lane to:
 - retain every alias as a path-level ledger entry and validate path-sensitive links and ownership;
 - record generated, dependency, archive, fixture, vendored, copied, and unresolved-provenance exclusions with evidence such as symlink target, byte digest, SYNC marker, generator owner, or directory contract;
 - select profiles by document purpose;
-- run one source-bound checker invocation per owning source through a caller-side loop and manifest outside `writing_check.py`;
+- run one source-bound checker invocation per owning source through a caller-side loop and manifest outside the single-candidate command;
 - inspect links, command surfaces, source-of-truth claims, and ownership boundaries against current repository truth;
 - when executable CLI help is unavailable or would require trusting/mutating tool state, inspect parser source and command tests instead and mark CLI-help validation incomplete;
 - report Vale/readability observations separately from factual or structural drift.

@@ -5,7 +5,7 @@ description: "This skill analyzes, validates, bootstraps, migrates, and updates 
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Contracts
 

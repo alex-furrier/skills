@@ -20,6 +20,18 @@ def main() -> None:
     run("uv", "lock", "--no-config", "--project", "packages/writing-check", "--check", "--offline")
     run("uv", "run", "--python", "3.11", "--with", "pytest", "--with", "mkdocs", "pytest", "-q")
     run("uv", "run", "--python", "3.11", "--with", "mkdocs", "mkdocs", "build", "--strict")
+    run(
+        "uv",
+        "run",
+        "--project",
+        "packages/writing-check",
+        "writing-check",
+        "--profile",
+        "readme",
+        "--json",
+        "README.md",
+        allowed_returncodes=(0, 1),
+    )
     run("python", "scripts/validate.py")
     run("python", "scripts/validate_evals.py")
     run("git", "diff", "--check")

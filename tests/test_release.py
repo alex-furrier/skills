@@ -1,3 +1,5 @@
+import json
+import os
 import pathlib
 import re
 import shutil
@@ -40,7 +42,10 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
     assert result.returncode == 0, result.stderr
     wheel = next(dist.glob("*.whl"))
     with zipfile.ZipFile(wheel) as archive:
-        assert "context_engineering/cli/dispatch.py" in archive.namelist()
+        names = set(archive.namelist())
+    assert "context_engineering/cli/dispatch.py" in names
+    assert "safurrier_context_engineering-2.6.0.dist-info/licenses/LICENSE" in names
+    assert "provenance.json" in names
     environment = tmp_path / "venv"
     assert run("uv", "venv", str(environment)).returncode == 0
     assert run("uv", "pip", "install", "--python", str(environment / "bin/python"), str(wheel)).returncode == 0
@@ -55,9 +60,42 @@ def test_release_validation_passes():
     assert result.returncode == 0, result.stdout
 
 
-def test_docs_describe_independent_commands_without_a_second_vale_setup():
+def test_docs_describe_source_installs_and_defer_registry_commands_until_publication():
     text = "\n".join((ROOT / name).read_text() for name in ("README.md", "docs/installation.md"))
-    assert "uv tool install safurrier-context-engineering" in text
-    assert "uv tool install safurrier-writing-check" in text
+    assert "Writing and Writing Check are one suite" in text
+    assert "optional suite" in text
+    assert "uv tool install ./packages/context-engineering" in text
+    assert "uv tool install ./packages/writing-check" in text
+    assert "After package publication" in text
     assert "writing-check --help" in text
     assert "runtime install" not in text and "writing-check doctor" not in text
+
+
+def test_docs_verifier_uses_installed_context_command_from_a_copied_skill(tmp_path):
+    dist = tmp_path / "dist"
+    assert run("uv", "build", str(CONTEXT), "--out-dir", str(dist)).returncode == 0
+    environment = tmp_path / "venv"
+    assert run("uv", "venv", str(environment)).returncode == 0
+    wheel = next(dist.glob("*.whl"))
+    assert run("uv", "pip", "install", "--python", str(environment / "bin/python"), str(wheel)).returncode == 0
+    skill = tmp_path / "copied-skill"
+    shutil.copytree(ROOT / "skills/context-engineering/context-docs", skill)
+    env = {"PATH": f"{environment / 'bin'}:{os.environ['PATH']}"}
+    result = subprocess.run(
+        [sys.executable, str(skill / "scripts/docs_verify.py"), str(ROOT)],
+        text=True,
+        capture_output=True,
+        env=env,
+    )
+    record = json.loads(result.stdout)
+    assert result.returncode == 0, result.stderr
+    assert record["context_cli"] == "available"
+    assert set(record["checks"]) == {"frontmatter", "references"}
+
+
+def test_fast_check_runs_writing_check_on_the_exact_readme_candidate():
+    text = (ROOT / "scripts/fast_check.py").read_text()
+    assert '"packages/writing-check"' in text
+    assert '"--profile",' in text and '"readme",' in text
+    assert '"README.md",' in text
+    assert "allowed_returncodes=(0, 1)" in text

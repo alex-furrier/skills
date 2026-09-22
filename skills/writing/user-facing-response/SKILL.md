@@ -28,8 +28,7 @@ Do not run `writing-check` or Vale by default. If `writing-core` is unavailable,
 5. Save the exact UTF-8 candidate and run:
 
    ```bash
-   uv run --script <writing-check-skill-dir>/scripts/writing_check.py \
-     --profile user-facing-response --json <candidate.md>
+   writing-check --profile user-facing-response --json <candidate.md>
    ```
 
 6. Confirm the returned text and `source.sha256` identify that exact candidate. Treat findings and readability as advisory evidence, not a gate, score, factual judgment, or authorization.

@@ -14,7 +14,7 @@ Collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the s
 - Never run `vale sync`, fetch a package, or use a network service during a normal check. Vale is required: when absent, retain source identity and return `unavailable`, never a substitute linter or clean result.
 - Findings, readability, sample size, and counts are advisory observations, never scores or gates. Vale line and span values are Vale coordinates, not byte offsets.
 
-The `safurrier-writing-check` package bundles the reviewed Google Vale v0.7.1 rules, their MIT license, upstream lock, and a pinned Vale runtime dependency. Install it once with `uv tool install safurrier-writing-check`; then `writing-check --help` works without a second setup command. If the command is missing or returns `unavailable` or `execution_error`, report that state rather than running a substitute checker. All severities are normalized to `suggestion`.
+The `safurrier-writing-check` package bundles the reviewed Google Vale v0.7.1 rules, their MIT license, upstream lock, and a pinned Vale runtime dependency. From a checkout of this catalog, install it once with `uv tool install ./packages/writing-check`; then `writing-check --help` works without a second setup command. If the command is missing or returns `unavailable` or `execution_error`, report that state rather than running a substitute checker. All severities are normalized to `suggestion`.
 
 ## Check one exact candidate
 

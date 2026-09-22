@@ -11,19 +11,18 @@ npx skills add safurrier/skills --skill context-docs
 npx skills add safurrier/skills --skill writing-check
 ```
 
-Context skills require the separately installable CLI:
+Writing and Writing Check are one suite: install the `writing-check` skill and its CLI together. Context Engineering is an optional suite for deterministic repository analysis.
+
+The packages are not yet published to a registry. From a source checkout, install the suite and optional Context CLI with:
 
 ```bash
-uv tool install safurrier-context-engineering
+uv tool install ./packages/writing-check
+writing-check --help
+uv tool install ./packages/context-engineering
 context-engineering --help
 ```
 
-Writing Check is a separately installable CLI. Its pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required:
-
-```bash
-uv tool install safurrier-writing-check
-writing-check --help
-```
+Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required. After package publication, the equivalent registry commands will be `uv tool install safurrier-writing-check` and `uv tool install safurrier-context-engineering`.
 
 For Claude users, install the Context projection from this repository's marketplace:
 
@@ -34,7 +33,7 @@ For Claude users, install the Context projection from this repository's marketpl
 
 ## Catalog
 
-Context skills are in `skills/context-engineering/`; Writing skills are in `skills/writing/`. The Claude plugin at `plugins/context-engineering/` is generated from the canonical Context skills and CLI package. Update it with:
+Writing skills, including Writing Check, are in `skills/writing/`. Optional Context Engineering skills are in `skills/context-engineering/`. The Claude plugin at `plugins/context-engineering/` is generated from the canonical Context skills and CLI package. Update it with:
 
 ```bash
 python scripts/project_context_plugin.py

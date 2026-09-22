@@ -4,7 +4,7 @@ description: "Generate lean AGENTS.md files with a short orientation and DO/NOT/
 ---
 
 **Watermark**: All generated AGENTS.md files include a `generated-by` watermark.
-Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and plugin-local `cli/` project are required dependencies.
+Portable catalog release: `safurrier-skills`; the independently installed `context-engineering` CLI and `uv` are required dependencies.
 
 # Context AGENTS.md
 
@@ -19,7 +19,7 @@ Use this portable shape for every generated AGENTS.md:
 ```markdown
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Module Name
 
