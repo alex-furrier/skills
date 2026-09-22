@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import pathlib
 import re
 import shutil
@@ -167,6 +168,14 @@ def print_record(record: dict[str, Any]) -> None:
     print(json.dumps(record, indent=2))
 
 
+def resolve_vale() -> str | None:
+    """Prefer Vale installed beside this command's Python interpreter."""
+    environment_vale = pathlib.Path(sys.executable).parent / "vale"
+    if environment_vale.is_file() and os.access(environment_vale, os.X_OK):
+        return str(environment_vale)
+    return shutil.which("vale")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--profile", required=True)
@@ -188,7 +197,7 @@ def main() -> int:
         print_record({"schema": 3, "status": "input_error", "profile": args.profile, "error": {"code": "invalid_utf8" if isinstance(error, UnicodeDecodeError) else "input_read_failed", "message": str(error)}})
         return EXIT_INPUT
     record: dict[str, Any] = {"schema": 3, "status": None, "advisory": True, "profile": args.profile, "policy": {"name": selected_policy["policy"], "sha256": policy_digest}, "source": {"kind": kind, "identifier": identifier, "encoding": "utf-8", "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(), "text": text}, "readability": readability(text, args.profile), "alerts": [], "vale": {}}
-    vale = shutil.which("vale")
+    vale = resolve_vale()
     if not vale:
         record.update(status="unavailable", vale={"status": "unavailable", "reason": "Vale was not found; no substitute was run."})
         print_record(record)

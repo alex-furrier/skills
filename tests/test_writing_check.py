@@ -1,4 +1,5 @@
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -35,6 +36,22 @@ def install_wheel(tmp_path):
     return environment
 
 
+def test_documented_tool_install_finds_its_own_vale_dependency(tmp_path):
+    tools, binaries = tmp_path / "tools", tmp_path / "bin"
+    environment = {**os.environ, "UV_TOOL_DIR": str(tools), "UV_TOOL_BIN_DIR": str(binaries)}
+    installed = subprocess.run(["uv", "tool", "install", "./packages/writing-check"], cwd=ROOT, text=True, capture_output=True, env=environment)
+    assert installed.returncode == 0, installed.stderr
+    candidate = tmp_path / "candidate.md"
+    candidate.write_text("A short candidate.\n", encoding="utf-8")
+    result = subprocess.run([str(binaries / "writing-check"), "--profile", "commit", "--json", str(candidate)], text=True, capture_output=True, env={"PATH": ""})
+    record = json.loads(result.stdout)
+    assert result.returncode in (0, 1)
+    assert record["status"] in {"no_findings", "findings"}
+    vale_path = pathlib.Path(record["vale"]["argv"][0])
+    assert tools in vale_path.parents
+    assert binaries not in vale_path.parents
+
+
 def test_writing_wheel_installs_a_working_command_without_extra_setup(tmp_path):
     environment = install_wheel(tmp_path)
     help_result = subprocess.run([str(environment / "bin/writing-check"), "--help"], text=True, capture_output=True)
@@ -53,6 +70,9 @@ def test_writing_check_reports_missing_or_invalid_vale_as_evidence(tmp_path):
     command = str(environment / "bin/writing-check")
     candidate = tmp_path / "candidate.md"
     candidate.write_text("Exact candidate.\n", encoding="utf-8")
+    installed_vale = environment / "bin/vale"
+    hidden_vale = environment / "bin/vale-hidden"
+    installed_vale.rename(hidden_vale)
     unavailable = subprocess.run([command, "--profile", "commit", "--json", str(candidate)], text=True, capture_output=True, env={"PATH": ""})
     record = json.loads(unavailable.stdout)
     assert unavailable.returncode == 3 and record["status"] == "unavailable"
