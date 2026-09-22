@@ -1,3 +1,4 @@
+import importlib.util
 import json
 import os
 import pathlib
@@ -7,11 +8,17 @@ import subprocess
 import sys
 import zipfile
 
-from scripts.project_context_plugin import same_tree
-
 ROOT = pathlib.Path(__file__).parents[1]
 CONTEXT = ROOT / "packages/context-engineering"
 PLUGIN = ROOT / "plugins/context-engineering"
+
+
+def projection_module():
+    spec = importlib.util.spec_from_file_location("project_context_plugin", ROOT / "scripts/project_context_plugin.py")
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def run(*args, cwd=ROOT):
@@ -52,7 +59,7 @@ def test_projection_comparison_checks_common_files_by_bytes_when_metadata_matche
     os.utime(destination_file, ns=(timestamp, timestamp))
     assert source_file.stat().st_size == destination_file.stat().st_size
     assert source_file.stat().st_mtime_ns == destination_file.stat().st_mtime_ns
-    assert not same_tree(source, destination)
+    assert not projection_module().same_tree(source, destination)
 
 
 def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path):
