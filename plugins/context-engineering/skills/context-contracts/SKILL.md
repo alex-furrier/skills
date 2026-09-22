@@ -5,7 +5,7 @@ description: "This skill analyzes, validates, bootstraps, migrates, and updates 
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Contracts
 
@@ -20,7 +20,7 @@ historical reconstruction.
 
    ```bash
    SKILL_DIR="<absolute path to this skill>"
-   uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering contracts <target> --json
+   context-engineering contracts <target> --json
    ```
 
    Add `--require-spec` or `--require-adrs` only when repository policy or the
@@ -69,7 +69,7 @@ frontmatter convention receives plain Markdown.
 
 ## Dependencies
 
-Require Git, `uv`, and the complete Context plugin's `cli/` project. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace deterministic validation with manual discovery.
+Require Git, `uv`, and the installed `context-engineering` command. Run `context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace deterministic validation with manual discovery.
 
 ## Report
 

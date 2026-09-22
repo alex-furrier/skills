@@ -9,20 +9,19 @@ description: Run source-bound Vale checks and qualified readability sampling for
 
 Collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the source bytes, normalized findings, raw Vale output, and source identity. Results do not establish meaning, factuality, safety, usefulness, writing quality, acceptance, or readiness.
 
-- Keep `writing_check.py` read-only. It remains single-candidate; do not add repository discovery, network access, or an auto-fix path.
+- Keep the installed `writing-check` command read-only. It remains single-candidate; do not add repository discovery, network access, or an auto-fix path.
 - A single-candidate check or repository audit never edits prose, source files, Git, or GitHub. Enter repository update mode only after an explicit request to update prose; the destination owner applies edits outside the checker.
 - Never run `vale sync`, fetch a package, or use a network service during a normal check. Vale is required: when absent, retain source identity and return `unavailable`, never a substitute linter or clean result.
 - Findings, readability, sample size, and counts are advisory observations, never scores or gates. Vale line and span values are Vale coordinates, not byte offsets.
 
-The bundled, reviewed Google Vale v0.7.1 rules live in `vale/styles/GoogleDocs/`; their MIT license and upstream lock remain bundled. All severities are normalized to `suggestion`. `vale/profiles.json` is the authoritative profile inventory.
+The `safurrier-writing-check` package bundles the reviewed Google Vale v0.7.1 rules, their MIT license, upstream lock, and a pinned Vale runtime dependency. Install it once with `uv tool install safurrier-writing-check`; then `writing-check --help` works without a second setup command. If the command is missing or returns `unavailable` or `execution_error`, report that state rather than running a substitute checker. All severities are normalized to `suggestion`.
 
 ## Check one exact candidate
 
-Locate this skill directory, inspect `--help`, and run:
+Inspect `writing-check --help`, then run:
 
 ```bash
-python3 <skill-dir>/scripts/writing_check.py \
-  --profile pr-description --json pr-body.md
+writing-check --profile pr-description --json pr-body.md
 ```
 
 Pass a UTF-8 file or `-` for stdin. The public checker has no personal-voice option or bundled voice policy. A separately configured external overlay may run outside it; if unavailable, return portable evidence unchanged and use neutral prose rather than imitating a voice.
@@ -57,7 +56,7 @@ Keep bytes exact only for a real exact-byte consumer: the candidate supplied to 
 
 ## Repository requests and policy maintenance
 
-For a repository-wide request, load [repository-sweep.md](references/repository-sweep.md). Default to its read-only audit. A caller may run explicitly selected `{ "source": "…", "profile": "…" }` pairs in one process with `scripts/repository_sweep_check.py --candidates pairs.json --jsonl`; it emits independent unchanged schema-v3 JSON Lines records and never discovers candidates. Its update mode uses a shared three-pass rewrite budget and routes material edits to the named destination owners; unavailable owners permit only clear semantics-preserving fixes.
+For a repository-wide request, load [repository-sweep.md](references/repository-sweep.md). Default to its read-only audit. A caller may run explicitly selected `{ "source": "…", "profile": "…" }` pairs in one process with `writing-check-sweep --candidates pairs.json --jsonl`; it emits independent unchanged schema-v3 JSON Lines records and never discovers candidates. Its update mode uses a shared three-pass rewrite budget and routes material edits to the named destination owners; unavailable owners permit only clear semantics-preserving fixes.
 
 Normal checks are offline. Upgrade or calibrate vendored rules only in a reviewed change: fetch the named release to a temporary directory, verify the archive digest, show rule-by-rule diffs, update provenance and attribution, normalize severities, rerun `evals/rule-calibration.json`, and run the shared aggregate corpus once with complete expected-check reporting. Give contextual rules focused positive, negative, limitation/exact-term, and natural-prose fixtures, and record each imported rule’s known limitation.
 

@@ -17,7 +17,7 @@ Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and plugin-
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Documentation Workflow
 
@@ -67,9 +67,9 @@ claim against the named cutoff or current source before applying it.
 All modes end with deterministic verification through the required catalog CLI:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target-repo-root>
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering references <target-repo-root>
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering antipatterns <target-repo-root>
+context-engineering frontmatter <target-repo-root>
+context-engineering references <target-repo-root>
+context-engineering antipatterns <target-repo-root>
 ```
 
 `context-engineering antipatterns` reports structural and maintenance signals;
@@ -320,7 +320,7 @@ If the user approves a proposal, follow
    the approved trigger, procedure, boundaries, and validation steps. Use an
    installed skill-authoring workflow when available; otherwise follow the
    portable requirements in the linked convention.
-3. Validate with `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering skills <skill-dir>`. If the required CLI cannot run, stop and report the missing dependency; do not replace plugin validation with direct local checks.
+3. Validate with `context-engineering skills <skill-dir>`. If the required CLI cannot run, stop and report the missing dependency; do not replace plugin validation with direct local checks.
 
 ---
 

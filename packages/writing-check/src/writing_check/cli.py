@@ -13,7 +13,7 @@ import sys
 from typing import Any
 
 EXIT_CLEAN, EXIT_FINDINGS, EXIT_INPUT, EXIT_UNAVAILABLE, EXIT_EXECUTION = range(5)
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parent
 WORD = re.compile(r"[A-Za-z]+(?:['’][A-Za-z]+)?")
 SENTENCE = re.compile(r"[.!?]+")
 
@@ -250,5 +250,10 @@ def main() -> int:
     return EXIT_FINDINGS if record["alerts"] else EXIT_CLEAN
 
 
-if __name__ == "__main__":
+def entrypoint() -> None:
+    """Run the installed Writing Check command."""
     raise SystemExit(main())
+
+
+if __name__ == "__main__":
+    entrypoint()

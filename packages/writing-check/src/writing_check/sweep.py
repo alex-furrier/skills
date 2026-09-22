@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import importlib.util
+import importlib
 import io
 import json
 import pathlib
@@ -17,7 +17,7 @@ import subprocess
 import sys
 from typing import Any, Callable, Protocol, TypeAlias, cast
 
-CHECKER_PATH = pathlib.Path(__file__).with_name("writing_check.py")
+CHECKER_PATH = pathlib.Path(__file__).with_name("cli.py")
 ProbeFailure: TypeAlias = OSError | subprocess.TimeoutExpired
 ProbeResult: TypeAlias = subprocess.CompletedProcess[bytes] | ProbeFailure
 
@@ -33,12 +33,7 @@ class _Checker(Protocol):
 
 
 def _load_checker() -> _Checker:
-    spec = importlib.util.spec_from_file_location("writing_check_for_sweep", CHECKER_PATH)
-    if spec is None or spec.loader is None:
-        raise RuntimeError("could not load writing_check.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return cast(_Checker, module)
+    return cast(_Checker, importlib.import_module("writing_check.cli"))
 
 
 def _input_error(message: str) -> dict[str, Any]:

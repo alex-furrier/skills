@@ -22,7 +22,7 @@ the owner's review handling.
 Run the staleness assessment:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering staleness <path-to-AGENTS.md> --json
+context-engineering staleness <path-to-AGENTS.md> --json
 ```
 
 Read every changed path and its classification reason. The impact labels and
@@ -32,15 +32,15 @@ classification or recommendation that you override and why.
 After an approved update, run the owner-required checks:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering references <target>
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering antipatterns <target>
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering depth <target>/AGENTS.md
+context-engineering references <target>
+context-engineering antipatterns <target>
+context-engineering depth <target>/AGENTS.md
 ```
 
 When the update also changes a governed docs tree, run:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target>
+context-engineering frontmatter <target>
 ```
 
 Fix failures in files changed by this update; report pre-existing failures

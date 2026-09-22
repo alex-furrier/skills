@@ -1,7 +1,7 @@
 [project]
-name = "context-engineering"
+name = "safurrier-context-engineering"
 version = "2.6.0"
-description = "Shared CLI for the context-engineering plugin's analyzers."
+description = "Portable CLI for Context Engineering analyzers."
 requires-python = ">=3.11"
 dependencies = []
 
