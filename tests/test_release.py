@@ -7,6 +7,8 @@ import subprocess
 import sys
 import zipfile
 
+from scripts.project_context_plugin import same_tree
+
 ROOT = pathlib.Path(__file__).parents[1]
 CONTEXT = ROOT / "packages/context-engineering"
 PLUGIN = ROOT / "plugins/context-engineering"
@@ -34,6 +36,23 @@ def test_all_canonical_skills_have_valid_metadata_and_resolving_links(tmp_path):
 def test_claude_plugin_is_exact_projection_of_canonical_context_sources():
     result = run(sys.executable, "scripts/project_context_plugin.py", "--check")
     assert result.returncode == 0, result.stdout
+
+
+def test_projection_comparison_checks_common_files_by_bytes_when_metadata_matches(tmp_path):
+    source = tmp_path / "source"
+    destination = tmp_path / "destination"
+    source.mkdir()
+    destination.mkdir()
+    source_file = source / "same-size.txt"
+    destination_file = destination / "same-size.txt"
+    source_file.write_text("source", encoding="utf-8")
+    destination_file.write_text("target", encoding="utf-8")
+    timestamp = 1_700_000_000_000_000_000
+    os.utime(source_file, ns=(timestamp, timestamp))
+    os.utime(destination_file, ns=(timestamp, timestamp))
+    assert source_file.stat().st_size == destination_file.stat().st_size
+    assert source_file.stat().st_mtime_ns == destination_file.stat().st_mtime_ns
+    assert not same_tree(source, destination)
 
 
 def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path):

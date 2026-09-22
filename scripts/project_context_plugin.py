@@ -23,7 +23,9 @@ FILES = (
 
 def same_tree(source: pathlib.Path, destination: pathlib.Path) -> bool:
     comparison = filecmp.dircmp(source, destination)
-    if comparison.left_only or comparison.right_only or comparison.diff_files or comparison.funny_files:
+    if comparison.left_only or comparison.right_only or comparison.funny_files:
+        return False
+    if any(not filecmp.cmp(source / name, destination / name, shallow=False) for name in comparison.common_files):
         return False
     return all(same_tree(source / name, destination / name) for name in comparison.common_dirs)
 
