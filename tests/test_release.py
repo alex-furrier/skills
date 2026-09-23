@@ -100,7 +100,7 @@ def test_independent_wheel_install_from_unrelated_directory(
     tmp_path, package, command, expected_files, distribution
 ):
     dist = tmp_path / "dist"
-    built = run("uv", "build", "--offline", str(package), "--out-dir", str(dist), cwd=tmp_path)
+    built = run("uv", "build", str(package), "--out-dir", str(dist), cwd=tmp_path)
     assert built.returncode == 0, built.stderr
     wheel = next(dist.glob("*.whl"))
     with zipfile.ZipFile(wheel) as archive:
