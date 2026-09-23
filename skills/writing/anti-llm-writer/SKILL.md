@@ -33,7 +33,7 @@ See [rewrite-reference.md](references/rewrite-reference.md) for the detailed pro
 
 ## Evidence and preservation boundaries
 
-Do not make prose worse, flatten technical nuance, remove useful organization, replace every bullet with a paragraph, or inject a quirky voice that was not present. Preserve the author's meaning, qualifications, warnings, factual and contractual claims, and safety, authentication, and authority boundaries. Leave machine-consumed syntax and owner-marked literal text intact; do not treat ordinary prose as immutable. A checker suggestion never authorizes a factual or constraint-changing edit.
+Do not make prose worse, flatten technical nuance, remove useful organization, replace every bullet with a paragraph, or inject a quirky voice that was not present. Preserve the author's meaning, qualifications, warnings, factual and contractual claims, and safety, authentication, and authority boundaries. Do not rewrite policy, configuration, rule, or license assets as style cleanup: preserve their operative content and any literal text their integrity requires. Explanatory prose about those assets can be revised without changing its constraints. Leave machine-consumed syntax and owner-marked literal text intact; do not treat ordinary prose as immutable. A checker suggestion never authorizes a factual or constraint-changing edit.
 
 ## Response format
 
