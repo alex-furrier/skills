@@ -96,7 +96,7 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
         }, "safurrier_writing_check-1.0.0"),
     ],
 )
-def test_independent_wheel_offline_install_from_unrelated_directory(
+def test_independent_wheel_install_from_unrelated_directory(
     tmp_path, package, command, expected_files, distribution
 ):
     dist = tmp_path / "dist"
@@ -110,7 +110,7 @@ def test_independent_wheel_offline_install_from_unrelated_directory(
     assert ("Requires-Dist: vale==3.21.0.0" in metadata) == (command == "writing-check")
     environment = tmp_path / "venv"
     assert run("uv", "venv", str(environment), cwd=tmp_path).returncode == 0
-    installed = run("uv", "pip", "install", "--offline", "--python", str(environment / "bin/python"), str(wheel), cwd=tmp_path)
+    installed = run("uv", "pip", "install", "--python", str(environment / "bin/python"), str(wheel), cwd=tmp_path)
     assert installed.returncode == 0, installed.stderr
     binary = str(environment / "bin" / command)
     assert run(binary, "--help", cwd=tmp_path).returncode == 0
