@@ -9,7 +9,7 @@ description: >
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Improve
 
@@ -53,7 +53,7 @@ supply ranked exported-session evidence only with user-supplied
 `git -C <repo-path> rev-parse --show-toplevel`. Compute depth:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering depth <target-path> --json
+context-engineering depth <target-path> --json
 ```
 
 The subcommand accepts either an AGENTS.md file (runs full stringency checks) or a

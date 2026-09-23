@@ -13,11 +13,11 @@ description: "Opt-in workflow for structured docs directories, including archite
 **Watermark**: When the target uses YAML indexing frontmatter, generated docs
 include `generated-by` and `last-updated` there. Otherwise omit both rather than
 introducing a metadata convention.
-Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and plugin-local `cli/` project are required dependencies.
+Portable catalog release: `safurrier-skills`; the independently installed `context-engineering` CLI and `uv` are required dependencies.
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Documentation Workflow
 
@@ -67,15 +67,15 @@ claim against the named cutoff or current source before applying it.
 All modes end with deterministic verification through the required catalog CLI:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target-repo-root>
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering references <target-repo-root>
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering antipatterns <target-repo-root>
+context-engineering frontmatter <target-repo-root>
+context-engineering references <target-repo-root>
+context-engineering antipatterns <target-repo-root>
 ```
 
 `context-engineering antipatterns` reports structural and maintenance signals;
 review its findings as advisory. The bundled `scripts/docs_verify.py` is a
 compatibility renderer for the same frontmatter and reference checks and exits
-nonzero when copied without the full catalog. Do not replace an unavailable CLI
+nonzero when the independently installed CLI is unavailable. Do not replace an unavailable CLI
 with manual inspection; install the required dependency and rerun the command.
 
 See `references/deterministic-doc-tests.md` for pytest-based test patterns that repos can adopt.
@@ -320,7 +320,7 @@ If the user approves a proposal, follow
    the approved trigger, procedure, boundaries, and validation steps. Use an
    installed skill-authoring workflow when available; otherwise follow the
    portable requirements in the linked convention.
-3. Validate with `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering skills <skill-dir>`. If the required CLI cannot run, stop and report the missing dependency; do not replace plugin validation with direct local checks.
+3. Validate with `context-engineering skills <skill-dir>`. If the required CLI cannot run, stop and report the missing dependency; do not replace plugin validation with direct local checks.
 
 ---
 

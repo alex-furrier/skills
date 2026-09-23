@@ -79,9 +79,9 @@ Keep the root pointer concise because `docs/AGENTS.md` owns detailed routing:
 Run the shared validators from the target module:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering references .
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter .
+context-engineering references .
+context-engineering frontmatter .
 ```
 
-For PR or full-tree proof, use `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering check` so nested context
+For PR or full-tree proof, use `context-engineering check` so nested context
 roots are validated against exact Git trees.

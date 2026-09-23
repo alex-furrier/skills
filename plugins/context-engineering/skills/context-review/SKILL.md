@@ -5,7 +5,7 @@ description: "This skill reviews a branch or pull request diff for missing durab
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Review
 
@@ -22,7 +22,7 @@ remains the source evidence; path labels are only inspection leads.
 
    ```bash
    SKILL_DIR="<absolute path to this skill>"
-   uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering check <target> \
+   context-engineering check <target> \
      --base <base-sha> --head <head-sha> --json
    ```
 
@@ -68,7 +68,7 @@ remains the source evidence; path labels are only inspection leads.
 
 ## Dependencies
 
-Require Git, `uv`, and the complete Context plugin's `cli/` project. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace the deterministic analyzer with manual diff inspection. Harness Kit and GitHub access remain optional.
+Require Git, `uv`, and the installed `context-engineering` command. Run `context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace the deterministic analyzer with manual diff inspection. Harness Kit and GitHub access remain optional.
 
 ## Report
 

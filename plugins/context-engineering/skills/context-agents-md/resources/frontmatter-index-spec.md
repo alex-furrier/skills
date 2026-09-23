@@ -120,7 +120,7 @@ frontmatter first and decides whether loading the full doc is worth the context 
 
 ## Validation
 
-Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target>` to verify:
+Run `context-engineering frontmatter <target>` to verify:
 - Every content file in a docs tree that establishes the convention has
   frontmatter (AGENTS.md and index README.md files are excluded)
 - Required fields present (id, title, description, index)

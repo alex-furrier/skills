@@ -31,7 +31,7 @@ Use another existing profile when the destination clearly owns it. State ambiguo
 
 ## Check each candidate
 
-1. Inspect the checker help once. After discovery has produced explicit exact source/profile pairs, either run `writing_check.py` per candidate or use the bounded caller-side path: `python3 <skill-dir>/scripts/repository_sweep_check.py --candidates pairs.json --jsonl`, where `pairs.json` is a non-empty JSON array of objects containing exactly `source` and `profile`. It performs no discovery and accepts no stdin candidate.
+1. Inspect the checker help once. After discovery has produced explicit exact source/profile pairs, either run `writing-check` per candidate or use the bounded caller-side path: `writing-check-sweep --candidates pairs.json --jsonl`, where `pairs.json` is a non-empty JSON array of objects containing exactly `source` and `profile`. It performs no discovery and accepts no stdin candidate.
 2. Retain each schema-v3 JSON Lines record independently. The caller validates the bundled policy for each candidate and shares only the in-process Vale version probe; source bytes, policy digest, findings, readability state, raw tool evidence, and status remain candidate-specific.
 3. Do not combine records into a score, quality verdict, readiness gate, or new aggregate schema.
 4. Treat unavailable or execution-error records as missing evidence, not clean results.
@@ -63,7 +63,7 @@ For every changed candidate, aim for `no_findings` and, when readability is `nor
 
 Run the finding-resolution portion for `insufficient_sample`, `small_sample`, and `composition_limited` results, but do not assign them a readability target. Do not rewrite for `disabled`, `unavailable`, or `execution_error`; report the unusable checker state instead. The bounded loop is workflow guidance, not a checker gate or a new exit condition.
 
-Do not add repository discovery, network access, or auto-fix behavior to `writing_check.py`. The separate bounded caller emits only independent JSON Lines records, not an aggregate schema.
+Do not add repository discovery, network access, or auto-fix behavior to `writing-check`. The separate bounded caller emits only independent JSON Lines records, not an aggregate schema.
 
 ## Report
 

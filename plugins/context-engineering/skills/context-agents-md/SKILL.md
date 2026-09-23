@@ -4,7 +4,7 @@ description: "Generate lean AGENTS.md files with a short orientation and DO/NOT/
 ---
 
 **Watermark**: All generated AGENTS.md files include a `generated-by` watermark.
-Portable catalog release: `safurrier-skills`; its Context CLI, `uv`, and plugin-local `cli/` project are required dependencies.
+Portable catalog release: `safurrier-skills`; the independently installed `context-engineering` CLI and `uv` are required dependencies.
 
 # Context AGENTS.md
 
@@ -19,7 +19,7 @@ Use this portable shape for every generated AGENTS.md:
 ```markdown
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Module Name
 
@@ -113,7 +113,7 @@ If `$ARGUMENTS` contains `--help` or is exactly `help`, print usage and exit.
 ## Modes
 
 **quick-start** creates a new orientation and gotchas. **update** uses
-`uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering staleness <path-to-AGENTS.md> --json`, inspects every reported path and reason, and changes only affected sections. Its recommendation is advisory; use a full scan only after verifying a force condition in `references/incremental-update-workflow.md`.
+`context-engineering staleness <path-to-AGENTS.md> --json`, inspects every reported path and reason, and changes only affected sections. Its recommendation is advisory; use a full scan only after verifying a force condition in `references/incremental-update-workflow.md`.
 
 **evaluate** performs update work and proposes principle-based improvements.
 **auto** is the default: quick-start without AGENTS.md, otherwise update plus
@@ -126,7 +126,7 @@ evaluate. It proposes only clean-evidenced content; no proposal validator is pro
 ### 1. Determine Root, Scope, and Depth
 
 * Find git root: `git -C <scope> rev-parse --show-toplevel`
-* Compute depth with `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering depth <target> --json`; if it is unavailable or fails, stop rather than computing it inline.
+* Compute depth with `context-engineering depth <target> --json`; if it is unavailable or fails, stop rather than computing it inline.
 * Detect monorepo signals (workspaces, multiple manifests)
 * In auto mode: infer scope from `git status` if not provided
 
@@ -175,7 +175,7 @@ knowing about. Use multiple sources — the script is one signal, not the only o
    reading alone misses:
 
    ```bash
-   uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering cross-cutting <target> --discover --lookback-days 180 --top 12 --json
+   context-engineering cross-cutting <target> --discover --lookback-days 180 --top 12 --json
    ```
 
 Combine all four sources, then filter to 3-6 entries using the decision rule:
@@ -201,7 +201,7 @@ nothing meaningful is coupled.
 Classify the module's tier via the shared CLI:
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering tier <target> --json
+context-engineering tier <target> --json
 ```
 
 Returns `tier` ∈ `{1, 2-5, 6-20, 21+}` plus plain-language guidance for
@@ -336,10 +336,10 @@ to this skill's directory). Do not report these checks as proposal validation:
 
 
 ```bash
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering frontmatter <target>           # only if docs/ exist
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering references <target>            # path reference checks
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering antipatterns <target>          # volatile content, line limits, density, splitting-candidate
-uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering depth <target>/AGENTS.md       # depth-appropriate content
+context-engineering frontmatter <target>           # only if docs/ exist
+context-engineering references <target>            # path reference checks
+context-engineering antipatterns <target>          # volatile content, line limits, density, splitting-candidate
+context-engineering depth <target>/AGENTS.md       # depth-appropriate content
 ```
 
 The `antipatterns splitting-candidate` warning fires when 3+ gotcha
@@ -373,7 +373,7 @@ Do NOT paste full file contents unless asked.
 Deterministic validation tools in `scripts/`:
 
 Invoke via the shared CLI (from this skill's directory):
-`uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering <subcommand>`
+`context-engineering <subcommand>`
 
 | Subcommand | When to run | What it does |
 |------------|-------------|-------------|

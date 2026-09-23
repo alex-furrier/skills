@@ -5,7 +5,7 @@ description: "This skill reconstructs proposal-only historical evidence, correct
 
 ## Portable deterministic evidence
 
-The Context CLI and `uv` are required plugin dependencies. Install the complete Context plugin, including `cli/`; do not copy a Context skill alone. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If `uv`, the package, or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
 
 # Context Backfill
 
@@ -35,7 +35,7 @@ commit set; propose only facts and decisions needed for current contracts.
 
    ```bash
    SKILL_DIR="<absolute path to this skill>"
-   uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering backfill <target> \
+   context-engineering backfill <target> \
      --cutoff <sha> --json
    ```
 
@@ -48,7 +48,7 @@ commit set; propose only facts and decisions needed for current contracts.
    For an explicitly requested quick reconstruction:
 
    ```bash
-   uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering backfill <target> \
+   context-engineering backfill <target> \
      --cutoff <sha> --quick --json
    ```
 
@@ -133,7 +133,7 @@ commit set; propose only facts and decisions needed for current contracts.
 
 ## Dependencies
 
-Require Git, `uv`, and the complete Context plugin's `cli/` project. Run `uv run --no-config --locked --no-dev --project <context-plugin-root>/cli context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace deterministic extraction with manual local-Git inspection. GitHub CLI, network access, and Harness Kit remain optional enrichment.
+Require Git, `uv`, and the installed `context-engineering` command. Run `context-engineering ...`. If that command cannot run, stop and report the missing dependency; do not replace deterministic extraction with manual local-Git inspection. GitHub CLI, network access, and Harness Kit remain optional enrichment.
 
 ## Report
 
