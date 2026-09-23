@@ -33,7 +33,7 @@ See [rewrite-reference.md](references/rewrite-reference.md) for the detailed pro
 
 ## Evidence and preservation boundaries
 
-Do not make prose worse, flatten technical nuance, remove useful organization, replace every bullet with a paragraph, or inject a quirky voice that was not present. Keep bytes exact only for a real exact-byte consumer: the candidate supplied to Writing Check and its source digest; policy, config, rule, and license integrity assets; machine-consumed command syntax and identifiers; and text the user or owning contract explicitly marks exact. Preserve the meaning, qualifications, and safety, authentication, authority, factual, and contractual constraints of all other prose. A checker suggestion never authorizes a factual or constraint-changing edit.
+Do not make prose worse, flatten technical nuance, remove useful organization, replace every bullet with a paragraph, or inject a quirky voice that was not present. Preserve the author's meaning, qualifications, warnings, factual and contractual claims, and safety, authentication, and authority boundaries. Leave machine-consumed syntax and owner-marked literal text intact; do not treat ordinary prose as immutable. A checker suggestion never authorizes a factual or constraint-changing edit.
 
 ## Response format
 
