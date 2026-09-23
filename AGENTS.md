@@ -10,6 +10,7 @@ python scripts/fast_check.py
 
 ## Rules
 
+- **DO** edit Context sources under `skills/context-engineering/` and `packages/context-engineering/`, then run `python scripts/project_context_plugin.py`. **NOT** hand-edit `plugins/context-engineering/`. **BECAUSE** the Claude plugin is a checked projection, not a second source of truth.
 - **DO** validate copied artifacts. **NOT** import Dots during tests. **BECAUSE** releases must work independently.
 - **DO** record provenance for every shipped file. **NOT** copy unlicensed external material. **BECAUSE** publication needs redistributable inputs.
 - **DO** keep findings advisory unless a named repository contract makes them blocking. **NOT** turn style output into a quality score. **BECAUSE** tools do not establish semantic correctness.

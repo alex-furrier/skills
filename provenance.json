@@ -18,6 +18,7 @@
     {"path_prefix":"evals/", "origin":"independently authored public evaluation manifest and fixtures", "license":"MIT"},
     {"path_prefix":".github/", "origin":"independently authored CI configuration", "license":"MIT"},
     {"path_prefix":".claude-plugin/", "origin":"independently authored marketplace metadata", "license":"MIT"},
+    {"path":"SPEC.md", "origin":"independently authored correctness-envelope specification", "license":"MIT"},
     {"path":"README.md", "origin":"independently authored public documentation", "license":"MIT"},
     {"path":"AGENTS.md", "origin":"independently authored guidance", "license":"MIT"},
     {"path":"CLAUDE.md", "origin":"independently authored compatibility pointer", "license":"MIT"},

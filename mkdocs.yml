@@ -5,3 +5,8 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Validation: validation.md
+  - Architecture: architecture.md
+  - Evolution: evolution.md
+  - Decisions:
+      - Overview: decisions/index.md
+      - Canonical skills and projected Context plugin: decisions/0001-canonical-skills-and-projected-context-plugin.md
