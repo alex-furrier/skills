@@ -21,7 +21,7 @@ Review broad terms such as “robust,” “capability,” and “comprehensive�
 
 ## Preserve owner-controlled text
 
-Keep bytes exact only for a real exact-byte consumer: the candidate supplied to Writing Check and its source digest; policy, config, rule, and license integrity assets; machine-consumed command syntax and identifiers; and text the user or owning contract explicitly marks exact. Preserve the meaning, qualifications, and safety, authentication, authority, factual, and contractual constraints of all other prose. A checker suggestion, readability target, or style rule never authorizes a factual or constraint-changing edit.
+Preserve technical meaning, qualifications, warnings, facts, and safety, authentication, contractual, and authority boundaries. Literal bytes matter for machine-consumed syntax and identifiers, policy, configuration, rule, or license integrity, a machine-managed block, or an explicit owner requirement; ordinary prose need not retain its spelling. When using Writing Check, bind findings to the checked candidate and its source digest. A checker suggestion, readability target, or style rule never authorizes a factual or constraint-changing edit.
 
 ## Route to the owner
 
