@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import json
 import os
 import pathlib
@@ -8,8 +9,11 @@ import subprocess
 import sys
 import zipfile
 
+import pytest
+
 ROOT = pathlib.Path(__file__).parents[1]
 CONTEXT = ROOT / "packages/context-engineering"
+WRITING = ROOT / "packages/writing-check"
 PLUGIN = ROOT / "plugins/context-engineering"
 
 
@@ -81,6 +85,55 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
     assert result.returncode == 0 and result.stdout.startswith("{")
 
 
+@pytest.mark.parametrize(
+    ("package", "command", "expected_files", "distribution"),
+    [
+        (CONTEXT, "context-engineering", {"context_engineering/cli/dispatch.py"}, "safurrier_context_engineering-2.6.0"),
+        (WRITING, "writing-check", {
+            "writing_check/cli.py", "writing_check/sweep.py", "writing_check/vale/.vale.ini",
+            "writing_check/vale/profiles.json", "writing_check/vale/upstream-lock.json",
+            "writing_check/vale/vendor/Google-LICENSE",
+        }, "safurrier_writing_check-1.0.0"),
+    ],
+)
+def test_independent_wheel_offline_install_from_unrelated_directory(
+    tmp_path, package, command, expected_files, distribution
+):
+    dist = tmp_path / "dist"
+    built = run("uv", "build", "--offline", str(package), "--out-dir", str(dist), cwd=tmp_path)
+    assert built.returncode == 0, built.stderr
+    wheel = next(dist.glob("*.whl"))
+    with zipfile.ZipFile(wheel) as archive:
+        names = set(archive.namelist())
+        metadata = archive.read(f"{distribution}.dist-info/METADATA").decode()
+    assert expected_files | {"provenance.json", f"{distribution}.dist-info/licenses/LICENSE"} <= names
+    assert ("Requires-Dist: vale==3.21.0.0" in metadata) == (command == "writing-check")
+    environment = tmp_path / "venv"
+    assert run("uv", "venv", str(environment), cwd=tmp_path).returncode == 0
+    installed = run("uv", "pip", "install", "--offline", "--python", str(environment / "bin/python"), str(wheel), cwd=tmp_path)
+    assert installed.returncode == 0, installed.stderr
+    binary = str(environment / "bin" / command)
+    assert run(binary, "--help", cwd=tmp_path).returncode == 0
+    if command == "writing-check":
+        candidate = tmp_path / "candidate.md"
+        candidate.write_text("A short candidate.\n", encoding="utf-8")
+        local_vale = environment / "bin/vale"
+        assert local_vale.is_file()  # The pinned dependency installed beside the CLI, not globally.
+        hidden_vale = environment / "bin/vale-hidden"
+        local_vale.rename(hidden_vale)  # Do not trigger the wrapper's first-use network download.
+        checked = subprocess.run(
+            [binary, "--profile", "commit", "--json", str(candidate)],
+            cwd=tmp_path, text=True, capture_output=True, env={"PATH": ""},
+        )
+        record = json.loads(checked.stdout)
+        assert checked.returncode == 3, checked.stderr
+        assert record["status"] == record["vale"]["status"] == "unavailable"
+        assert record["source"]["sha256"] == hashlib.sha256(candidate.read_bytes()).hexdigest()
+    else:
+        checked = run(binary, "references", ".", "--json", cwd=tmp_path)
+        assert checked.returncode == 0 and checked.stdout.startswith("{"), checked.stderr
+
+
 def test_release_validation_passes():
     result = run(sys.executable, "scripts/validate.py")
     assert result.returncode == 0, result.stdout
@@ -93,8 +146,26 @@ def test_docs_describe_source_installs_and_defer_registry_commands_until_publica
     assert "uv tool install ./packages/context-engineering" in text
     assert "uv tool install ./packages/writing-check" in text
     assert "After package publication" in text
+    assert "gh repo clone safurrier/skills" in text
+    assert "private" in text and "authenticated" in text
     assert "writing-check --help" in text
     assert "runtime install" not in text and "writing-check doctor" not in text
+
+
+@pytest.mark.parametrize(
+    ("skill", "package", "command"),
+    [("context-engineering/context-review", "context-engineering", "context-engineering"),
+     ("writing/writing-check", "writing-check", "writing-check")],
+)
+def test_selected_skill_alone_documents_authenticated_missing_cli_route(tmp_path, skill, package, command):
+    copied = tmp_path / "selected-skill"
+    shutil.copytree(ROOT / "skills" / skill, copied)
+    text = (copied / "SKILL.md").read_text()
+    assert "gh repo clone safurrier/skills" in text
+    assert f'uv tool install "$checkout/skills/packages/{package}"' in text
+    assert f"{command} --help" in text
+    assert "consent" in text and "private" in text and "unavailable" in text
+    assert not (tmp_path / "packages").exists()
 
 
 def test_docs_verifier_uses_installed_context_command_from_a_copied_skill(tmp_path):

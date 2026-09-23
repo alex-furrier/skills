@@ -17,7 +17,7 @@ Portable catalog release: `safurrier-skills`; the independently installed `conte
 
 ## Portable deterministic evidence
 
-The independently installed `context-engineering` CLI and `uv` are required dependencies. From a source checkout, install it with `uv tool install ./packages/context-engineering`; then run `context-engineering ...`. If `uv` or the command is unavailable, stop the requested deterministic-analysis workflow and report the missing dependency; do not substitute read-only inspection or claim equivalent evidence.
+The independently installed `context-engineering` CLI is required. If missing, request explicit install consent. With `uv` and authenticated `gh` access to the private `safurrier/skills` repository, clone to a directory you control, inspect and trust the checkout, then run `uv tool install "$checkout/skills/packages/context-engineering"` and `context-engineering --help` (set `checkout="$(mktemp -d)"`; run `gh repo clone safurrier/skills "$checkout/skills"`). From an existing trusted checkout, `uv tool install ./packages/context-engineering` works. If `uv`, `gh`, access, network, install, or help fails, stop and report deterministic analysis unavailable; never install automatically or substitute manual inspection.
 
 # Documentation Workflow
 
