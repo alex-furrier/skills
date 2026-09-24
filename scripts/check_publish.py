@@ -94,6 +94,8 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
         raise ValueError("archive metadata name/version mismatch")
     if sorted(parsed.get_all("Requires-Dist", [])) != sorted(project_metadata.get("dependencies", [])):
         raise ValueError("archive dependencies differ from project metadata")
+    if module == "writing_check" and parsed.get_payload(decode=True) != (project / "README.md").read_bytes():
+        raise ValueError("archive description differs from source README")
     if wheel:
         entries = ConfigParser(interpolation=None)
         entries.read_string(members[f"{dist_info}entry_points.txt"].decode("utf-8"))

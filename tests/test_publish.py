@@ -124,6 +124,40 @@ def test_release_rejects_metadata_tampering(package, version, tmp_path):
         wheel.write_bytes(original)
 
 
+@pytest.mark.parametrize("wheel", [True, False])
+def test_writing_check_rejects_tampered_metadata_description(wheel, tmp_path):
+    name, module = publish.PACKAGES["writing-check"]
+    dist = tmp_path / "dist"
+    result = subprocess.run(["uv", "build", str(ROOT / "packages/writing-check"), "--out-dir", str(dist)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    (dist / ".gitignore").unlink()
+    replacement = b"unreviewed release description\n"
+    if wheel:
+        artifact = next(dist.glob("*.whl"))
+        altered = tmp_path / "altered.whl"
+        with zipfile.ZipFile(artifact) as source, zipfile.ZipFile(altered, "w") as target:
+            for member in source.infolist():
+                data = source.read(member)
+                if member.filename.endswith(".dist-info/METADATA"):
+                    data = data.split(b"\n\n", 1)[0] + b"\n\n" + replacement
+                target.writestr(member, data)
+    else:
+        artifact = next(dist.glob("*.tar.gz"))
+        altered = tmp_path / "altered.tar.gz"
+        with tarfile.open(altered, "w:gz") as target:
+            with tarfile.open(artifact, "r:gz") as source:
+                for member in source:
+                    if member.name.endswith("/PKG-INFO"):
+                        data = source.extractfile(member).read().split(b"\n\n", 1)[0] + b"\n\n" + replacement
+                        member.size = len(data)
+                        target.addfile(member, io.BytesIO(data))
+                    else:
+                        target.addfile(member, source.extractfile(member) if member.isfile() else None)
+    shutil.copyfile(altered, artifact)
+    with pytest.raises(ValueError, match="archive description differs from source README"):
+        publish.check_artifacts(dist, name, module, "1.0.0")
+
+
 @pytest.mark.parametrize("package,version", [("context-engineering", "2.6.0"), ("writing-check", "1.0.0")])
 def test_release_rejects_unsafe_sdist_directory(package, version, tmp_path):
     name, module = publish.PACKAGES[package]
