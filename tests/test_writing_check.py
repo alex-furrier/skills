@@ -22,7 +22,7 @@ def test_writing_wheel_contains_cli_policy_and_license(tmp_path):
         "writing_check/vale/profiles.json",
         "writing_check/vale/vendor/Google-LICENSE",
         "provenance.json",
-        "safurrier_writing_check-1.0.0.dist-info/licenses/LICENSE",
+        "writing_check_cli-1.0.0.dist-info/licenses/LICENSE",
     } <= names
 
 

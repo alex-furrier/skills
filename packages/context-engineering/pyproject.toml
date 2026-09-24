@@ -1,5 +1,5 @@
 [project]
-name = "safurrier-context-engineering"
+name = "context-engineering-cli"
 version = "2.6.0"
 description = "Portable CLI for Context Engineering analyzers."
 license = {file = "LICENSE"}

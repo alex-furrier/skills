@@ -74,7 +74,7 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
     with zipfile.ZipFile(wheel) as archive:
         names = set(archive.namelist())
     assert "context_engineering/cli/dispatch.py" in names
-    assert "safurrier_context_engineering-2.6.0.dist-info/licenses/LICENSE" in names
+    assert "context_engineering_cli-2.6.0.dist-info/licenses/LICENSE" in names
     assert "provenance.json" in names
     environment = tmp_path / "venv"
     assert run("uv", "venv", str(environment)).returncode == 0
@@ -88,12 +88,12 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
 @pytest.mark.parametrize(
     ("package", "command", "expected_files", "distribution"),
     [
-        (CONTEXT, "context-engineering", {"context_engineering/cli/dispatch.py"}, "safurrier_context_engineering-2.6.0"),
+        (CONTEXT, "context-engineering", {"context_engineering/cli/dispatch.py"}, "context_engineering_cli-2.6.0"),
         (WRITING, "writing-check", {
             "writing_check/cli.py", "writing_check/sweep.py", "writing_check/vale/.vale.ini",
             "writing_check/vale/profiles.json", "writing_check/vale/upstream-lock.json",
             "writing_check/vale/vendor/Google-LICENSE",
-        }, "safurrier_writing_check-1.0.0"),
+        }, "writing_check_cli-1.0.0"),
     ],
 )
 def test_independent_wheel_install_from_unrelated_directory(
@@ -146,6 +146,8 @@ def test_docs_describe_source_installs_and_defer_registry_commands_until_publica
     assert "uv tool install ./packages/context-engineering" in text
     assert "uv tool install ./packages/writing-check" in text
     assert "After package publication" in text
+    assert "uv tool install context-engineering-cli" in text
+    assert "uv tool install writing-check-cli" in text
     assert "gh repo clone safurrier/skills" in text
     assert "private" in text and "authenticated" in text
     assert "writing-check --help" in text

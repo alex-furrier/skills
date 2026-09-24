@@ -4,8 +4,8 @@ These are **candidate** workflows, not evidence that either project exists on Py
 
 | Distribution | Project directory | First release tag | PyPI trusted publisher workflow filename | PyPI environment field |
 | --- | --- | --- | --- | --- |
-| `safurrier-context-engineering` | `packages/context-engineering` | context-engineering-v2.6.0 | publish-context-engineering.yml | Leave blank |
-| `safurrier-writing-check` | `packages/writing-check` | writing-check-v1.0.0 | publish-writing-check.yml | Leave blank |
+| `context-engineering-cli` | `packages/context-engineering` | context-engineering-v2.6.0 | publish-context-engineering.yml | Leave blank |
+| `writing-check-cli` | `packages/writing-check` | writing-check-v1.0.0 | publish-writing-check.yml | Leave blank |
 
 Only publishing a GitHub Release on an exact matching tag routes to the corresponding job; push, PR, and draft releases do not deploy. The tag must identify the same version as that package's `pyproject.toml`. The workflow checks the release identity, tag target, full repository fast check, and built wheel/sdist at the release event commit in a job without OIDC. A separate minimal-permission OIDC upload job receives only the validated artifacts and checks their digest before the trusted-publisher upload. Each release uploads exactly one distribution. Do not use an unreviewed tag, release, or artifact.
 
