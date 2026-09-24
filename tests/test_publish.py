@@ -136,7 +136,7 @@ def test_release_rejects_wrong_tag_ref_or_version(package, version):
 
 
 @pytest.mark.parametrize("package", ["context-engineering", "writing-check"])
-def test_publish_workflows_are_release_only_and_scoped(package):
+def test_publish_workflows_are_scoped_to_release_or_guarded_recovery(package):
     workflow = (ROOT / ".github/workflows" / f"publish-{package}.yml").read_text()
     assert "  release:\n    types: [published]" in workflow
     assert "push:" not in workflow and "pull_request:" not in workflow
@@ -158,11 +158,23 @@ def test_publish_workflows_are_release_only_and_scoped(package):
     assert 'test "$(find dist -mindepth 1 -type d | wc -l)" -eq 0' in publish_job
     assert "python scripts/fast_check.py" in workflow
     checkout = build.split("      - uses: actions/checkout@", 1)[1].split("      - uses:", 1)[0]
-    assert "ref: ${{ github.sha }}" in checkout
+    if package == "context-engineering":
+        assert "workflow_dispatch:" in workflow
+        assert "ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}" in checkout
+        assert "github.event.release.target_commitish" in build
+        assert 'test "$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")" = "$EXPECTED_SHA"' in build
+        assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in build
+        assert 'release["tag_name"] != os.environ["RELEASE_TAG"]' in build
+        assert '"refs/tags/$RELEASE_TAG" "$RELEASE_TAG" --dist dist' in build
+    else:
+        assert "workflow_dispatch:" not in workflow
+        assert "ref: ${{ github.event.release.tag_name }}" in checkout
+        assert "EXPECTED_SHA: ${{ github.event.release.target_commitish }}" in build
+        assert 'test "$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")" = "$EXPECTED_SHA"' in build
+        assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in build
     assert "fetch-depth: 0" in checkout
     assert "persist-credentials: false" in checkout
     assert "git fetch" not in build
-    assert 'test "$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")" = "$GITHUB_SHA"' in build
 
 
 @pytest.mark.parametrize("package,version", [("context-engineering", "2.6.0"), ("writing-check", "1.0.0")])
