@@ -13,10 +13,10 @@ Installing a skill copies its instructions only, not the sibling CLI package. In
 
 ## Writing suite
 
-Writing and Writing Check are one suite. Install the independent Writing Check CLI from a trusted checkout (see the private GitHub source route below):
+Writing and Writing Check are one suite. With explicit consent, install the [published Writing Check CLI 1.0.0](https://pypi.org/project/writing-check-cli/):
 
 ```bash
-uv tool install ./packages/writing-check
+uv tool install writing-check-cli==1.0.0
 writing-check --help
 ```
 
@@ -24,18 +24,18 @@ The package includes the reviewed Google Vale policy and pins the `vale` Python 
 
 ## Optional Context Engineering
 
-Context Engineering is an optional suite. Install its independent CLI from a trusted checkout, then verify it is on `PATH`:
+Context Engineering is an optional suite. With explicit consent, install the [published Context Engineering CLI 2.6.0](https://pypi.org/project/context-engineering-cli/), then verify it is on `PATH`:
 
 ```bash
-uv tool install ./packages/context-engineering
+uv tool install context-engineering-cli==2.6.0
 context-engineering --help
 ```
 
 A Context skill reports its deterministic analysis as unavailable when this command is missing or incompatible; it does not search for another checkout or substitute manual analysis.
 
-## Missing CLI with only selected skills installed
+## Trusted source checkout fallback
 
-The catalog is currently a private GitHub repository. If you have access, `gh` authenticated for the private alex-furrier/skills repository, and `uv` installed, explicitly approve installing code from a trusted checkout before running these commands. Use a directory you control; inspect the checkout before installation. Do not run them automatically as part of a skill check.
+If you prefer a source install and have access to the private GitHub repository, `gh` authenticated for it, and `uv` installed, explicitly approve installing code from a trusted checkout before running these commands. Use a directory you control; inspect the checkout before installation. Do not run them automatically as part of a skill check.
 
 ```bash
 checkout="$(mktemp -d)"
@@ -47,7 +47,7 @@ uv tool install "$checkout/skills/packages/context-engineering" # if Context Eng
 context-engineering --help
 ```
 
-Run only the install and help commands for the CLI you need. If `uv` or `gh` is absent, private-repository access is unavailable, clone/install fails (including network or dependency downloads), or help fails, report the dependency unavailable; do not claim its analysis ran. Installing Writing Check's Python dependency can fetch Vale from its GitHub release on first use; report `unavailable` or `execution_error` if that check cannot run.
+Run only the install and help commands for the CLI you need. If `uv` is absent, the registry install fails, or help fails, report the dependency unavailable; do not claim its analysis ran. For the optional source route, the same applies if `gh` or private-repository access is unavailable or clone/install fails (including network or dependency downloads). Installing Writing Check's Python dependency can fetch Vale from its GitHub release on first use; report `unavailable` or `execution_error` if that check cannot run.
 
 Claude users can instead install the projected plugin:
 
@@ -57,7 +57,5 @@ Claude users can instead install the projected plugin:
 ```
 
 The plugin is a projection of the canonical Context skills and package, not their source of truth.
-
-After package publication, the equivalent registry commands will be `uv tool install writing-check-cli` and `uv tool install context-engineering-cli`. Until then, use the trusted source-checkout commands above or the built-wheel commands in [reproducible validation](validation.md).
 
 Run [reproducible validation](validation.md) from a source checkout when contributing.
