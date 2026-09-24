@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import tarfile
 import io
+import json
 import zipfile
 
 import pytest
@@ -55,6 +56,54 @@ def test_release_routing_and_artifacts(package, version, distribution, tmp_path)
         archive.addfile(info, io.BytesIO(data))
     with pytest.raises(ValueError, match="unsafe archive path"):
         publish.check_artifacts(dist, name, module, version)
+
+
+@pytest.mark.parametrize(
+    "package,version,missing",
+    [
+        ("context-engineering", "2.6.0", "pyproject.toml"),
+        ("context-engineering", "2.6.0", "README.md"),
+        ("writing-check", "1.0.0", "README.md"),
+        ("writing-check", "1.0.0", "pyproject.toml"),
+        ("writing-check", "1.0.0", "provenance.json"),
+        ("context-engineering", "2.6.0", "src/context_engineering/"),
+        ("writing-check", "1.0.0", "src/writing_check/"),
+    ],
+)
+def test_shipped_source_requires_package_provenance(package, version, missing, tmp_path):
+    name, module = publish.PACKAGES[package]
+    dist = tmp_path / "dist"
+    result = subprocess.run(["uv", "build", str(ROOT / "packages" / package), "--out-dir", str(dist)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    sdist = next(dist.glob("*.tar.gz"))
+    with tarfile.open(sdist, "r:gz") as archive:
+        members = {item.name: archive.extractfile(item).read() for item in archive if item.isfile()}
+    base = f"{name.replace('-', '_')}-{version}/"
+    if package == "context-engineering" and missing == "README.md":
+        members[f"{base}README.md"] = b"new source-authored README\n"
+    inventory = json.loads(members[f"{base}provenance.json"])
+    inventory["entries"] = [
+        entry for entry in inventory["entries"]
+        if entry.get("path", entry.get("path_prefix")) != missing
+    ]
+    members[f"{base}provenance.json"] = json.dumps(inventory).encode()
+    with pytest.raises(ValueError, match="package provenance missing shipped source path"):
+        publish.check_members(members, name, module, version, False)
+
+
+def test_package_provenance_rejects_boolean_schema(tmp_path):
+    name, module, version = "context-engineering-cli", "context_engineering", "2.6.0"
+    dist = tmp_path / "dist"
+    result = subprocess.run(["uv", "build", str(ROOT / "packages/context-engineering"), "--out-dir", str(dist)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    with tarfile.open(next(dist.glob("*.tar.gz")), "r:gz") as archive:
+        members = {item.name: archive.extractfile(item).read() for item in archive if item.isfile()}
+    base = f"{name.replace('-', '_')}-{version}/"
+    inventory = json.loads(members[f"{base}provenance.json"])
+    inventory["schema"] = True
+    members[f"{base}provenance.json"] = json.dumps(inventory).encode()
+    with pytest.raises(ValueError, match="invalid package provenance entries"):
+        publish.check_members(members, name, module, version, False)
 
 
 @pytest.mark.parametrize("package,version", [("context-engineering", "2.6.0"), ("writing-check", "1.0.0")])

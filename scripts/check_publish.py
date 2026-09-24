@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from configparser import ConfigParser
 from email.parser import BytesParser
+import json
 import pathlib
 import re
 import tarfile
@@ -78,6 +79,32 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
         if members[path] != (source / path.removeprefix(package_root)).read_bytes():
             raise ValueError(f"package payload differs from source: {path}")
     project = ROOT / "packages" / ("context-engineering" if module == "context_engineering" else "writing-check")
+    # Check the independently shipped source paths, not build-generated metadata.
+    authored_paths = {f"src/{module}/{path.removeprefix(package_root)}" for path in actual}
+    authored_paths.update({"LICENSE", "provenance.json"})
+    if not wheel:
+        authored_paths.add("pyproject.toml")
+        if f"{base}README.md" in members:
+            authored_paths.add("README.md")
+    try:
+        inventory = json.loads(members["provenance.json" if wheel else f"{base}provenance.json"])
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("invalid package provenance") from error
+    entries = (
+        inventory.get("entries")
+        if isinstance(inventory, dict) and type(inventory.get("schema")) is int and inventory["schema"] == 1
+        else None
+    )
+    if not isinstance(entries, list) or any(
+        not isinstance(entry, dict)
+        or not all(isinstance(entry.get(field), str) and entry[field] for field in ("origin", "license"))
+        or not (isinstance(entry.get("path"), str) and entry["path"] or isinstance(entry.get("path_prefix"), str) and entry["path_prefix"])
+        for entry in entries
+    ):
+        raise ValueError("invalid package provenance entries")
+    for path in sorted(authored_paths):
+        if not any(path == entry.get("path") or path.startswith(entry.get("path_prefix", "\0")) for entry in entries):
+            raise ValueError(f"package provenance missing shipped source path: {path}")
     for archive_path, source_path in (
         (("provenance.json" if wheel else f"{base}provenance.json"), project / "provenance.json"),
         ((f"{dist_info}licenses/LICENSE" if wheel else f"{base}LICENSE"), project / "LICENSE"),
@@ -86,7 +113,9 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
             raise ValueError(f"archive notice differs from source: {archive_path}")
     if not wheel and members[f"{base}pyproject.toml"] != (project / "pyproject.toml").read_bytes():
         raise ValueError("sdist project metadata differs from source")
-    if not wheel and module == "writing_check" and members[f"{base}README.md"] != (project / "README.md").read_bytes():
+    if not wheel and f"{base}README.md" in members and (
+        not (project / "README.md").is_file() or members[f"{base}README.md"] != (project / "README.md").read_bytes()
+    ):
         raise ValueError("sdist README differs from source")
     project_metadata = tomllib.loads((project / "pyproject.toml").read_text())["project"]
     parsed = BytesParser().parsebytes(members[f"{dist_info}METADATA" if wheel else f"{base}PKG-INFO"])
