@@ -134,6 +134,19 @@ def test_independent_wheel_install_from_unrelated_directory(
         assert checked.returncode == 0 and checked.stdout.startswith("{"), checked.stderr
 
 
+def test_release_workflows_pin_full_setup_uv_sha_and_guard_context_recovery():
+    context = (ROOT / ".github/workflows/publish-context-engineering.yml").read_text()
+    writing = (ROOT / ".github/workflows/publish-writing-check.yml").read_text()
+    pin = "astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e"
+    assert pin in context and pin in writing
+    assert "workflow_dispatch:" in context
+    assert "ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.sha }}" in context
+    assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in context
+    assert 'release["target_commitish"] != os.environ["EXPECTED_SHA"]' in context
+    assert 'release["draft"] or release["prerelease"]' in context
+    assert '"refs/tags/$RELEASE_TAG" "$RELEASE_TAG"' in context
+
+
 def test_release_validation_passes():
     result = run(sys.executable, "scripts/validate.py")
     assert result.returncode == 0, result.stdout
