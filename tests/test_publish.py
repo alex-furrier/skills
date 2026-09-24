@@ -62,7 +62,9 @@ def test_release_routing_and_artifacts(package, version, distribution, tmp_path)
     "package,version,missing",
     [
         ("context-engineering", "2.6.0", "pyproject.toml"),
+        ("context-engineering", "2.6.0", ".gitignore"),
         ("context-engineering", "2.6.0", "README.md"),
+        ("writing-check", "1.0.0", ".gitignore"),
         ("writing-check", "1.0.0", "README.md"),
         ("writing-check", "1.0.0", "pyproject.toml"),
         ("writing-check", "1.0.0", "provenance.json"),
@@ -88,6 +90,19 @@ def test_shipped_source_requires_package_provenance(package, version, missing, t
     ]
     members[f"{base}provenance.json"] = json.dumps(inventory).encode()
     with pytest.raises(ValueError, match="package provenance missing shipped source path"):
+        publish.check_members(members, name, module, version, False)
+
+
+def test_sdist_gitignore_must_match_repository_source(tmp_path):
+    name, module, version = "context-engineering-cli", "context_engineering", "2.6.0"
+    dist = tmp_path / "dist"
+    result = subprocess.run(["uv", "build", str(ROOT / "packages/context-engineering"), "--out-dir", str(dist)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    with tarfile.open(next(dist.glob("*.tar.gz")), "r:gz") as archive:
+        members = {item.name: archive.extractfile(item).read() for item in archive if item.isfile()}
+    base = f"{name.replace('-', '_')}-{version}/"
+    members[f"{base}.gitignore"] = b"unreviewed build exclusion\n"
+    with pytest.raises(ValueError, match="sdist .gitignore differs from source"):
         publish.check_members(members, name, module, version, False)
 
 

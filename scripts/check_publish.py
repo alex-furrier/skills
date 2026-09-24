@@ -84,6 +84,8 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
     authored_paths.update({"LICENSE", "provenance.json"})
     if not wheel:
         authored_paths.add("pyproject.toml")
+        if f"{base}.gitignore" in members:
+            authored_paths.add(".gitignore")
         if f"{base}README.md" in members:
             authored_paths.add("README.md")
     try:
@@ -113,6 +115,8 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
             raise ValueError(f"archive notice differs from source: {archive_path}")
     if not wheel and members[f"{base}pyproject.toml"] != (project / "pyproject.toml").read_bytes():
         raise ValueError("sdist project metadata differs from source")
+    if not wheel and f"{base}.gitignore" in members and members[f"{base}.gitignore"] != (ROOT / ".gitignore").read_bytes():
+        raise ValueError("sdist .gitignore differs from source")
     if not wheel and f"{base}README.md" in members and (
         not (project / "README.md").is_file() or members[f"{base}README.md"] != (project / "README.md").read_bytes()
     ):
