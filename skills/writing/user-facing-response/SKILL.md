@@ -13,7 +13,7 @@ Choose **normal mode** for a substantial plan, explanation, recommendation, summ
 
 ## Writing Check dependency
 
-This skill invokes the independently distributed `safurrier-writing-check` package only for explicit plain-English rewrites. From a checkout of this catalog, install it with `uv tool install ./packages/writing-check`; then `writing-check --help` is available without another setup command. If the command is missing or returns `unavailable` or `execution_error`, complete the preservation-checked rewrite, report that advisory check as unavailable, and do not substitute another linter.
+This skill invokes the independently distributed `safurrier-writing-check` package only for explicit plain-English rewrites. If the CLI is missing, request explicit install consent. With `uv` and authenticated `gh` access to the private `safurrier/skills` repository, set `checkout="$(mktemp -d)"`, run `gh repo clone safurrier/skills "$checkout/skills"`, inspect and trust the checkout, then run `uv tool install "$checkout/skills/packages/writing-check"` and `writing-check --help`. From an existing trusted checkout, `uv tool install ./packages/writing-check` works. Never install automatically. If `uv`, `gh`, access, network, install, or help fails, report the check unavailable rather than claiming it ran. If the command is missing or returns `unavailable` or `execution_error`, complete the preservation-checked rewrite, report that advisory check as unavailable, and do not substitute another linter.
 
 ## Normal mode
 
