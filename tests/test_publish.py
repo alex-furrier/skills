@@ -144,6 +144,27 @@ def test_release_rejects_unsafe_sdist_directory(package, version, tmp_path):
         publish.check_artifacts(dist, name, module, version)
 
 
+def test_writing_check_sdist_rejects_tampered_readme(tmp_path):
+    name, module = publish.PACKAGES["writing-check"]
+    dist = tmp_path / "dist"
+    result = subprocess.run(["uv", "build", str(ROOT / "packages/writing-check"), "--out-dir", str(dist)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    (dist / ".gitignore").unlink()
+    sdist = next(dist.glob("*.tar.gz"))
+    with tarfile.open(tmp_path / "altered.tar.gz", "w:gz") as target:
+        with tarfile.open(sdist, "r:gz") as source:
+            for member in source:
+                if member.name.endswith("/README.md"):
+                    data = b"unreviewed release instructions\n"
+                    member.size = len(data)
+                    target.addfile(member, io.BytesIO(data))
+                else:
+                    target.addfile(member, source.extractfile(member) if member.isfile() else None)
+    shutil.copyfile(tmp_path / "altered.tar.gz", sdist)
+    with pytest.raises(ValueError, match="sdist README differs from source"):
+        publish.check_artifacts(dist, name, module, "1.0.0")
+
+
 def test_writing_check_sdist_requires_readme(tmp_path):
     name, module = publish.PACKAGES["writing-check"]
     dist = tmp_path / "dist"

@@ -86,6 +86,8 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
             raise ValueError(f"archive notice differs from source: {archive_path}")
     if not wheel and members[f"{base}pyproject.toml"] != (project / "pyproject.toml").read_bytes():
         raise ValueError("sdist project metadata differs from source")
+    if not wheel and module == "writing_check" and members[f"{base}README.md"] != (project / "README.md").read_bytes():
+        raise ValueError("sdist README differs from source")
     project_metadata = tomllib.loads((project / "pyproject.toml").read_text())["project"]
     parsed = BytesParser().parsebytes(members[f"{dist_info}METADATA" if wheel else f"{base}PKG-INFO"])
     if parsed["Name"] != name or parsed["Version"] != version:
