@@ -13,8 +13,8 @@ import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PACKAGES = {
-    "context-engineering": ("safurrier-context-engineering", "context_engineering"),
-    "writing-check": ("safurrier-writing-check", "writing_check"),
+    "context-engineering": ("context-engineering-cli", "context_engineering"),
+    "writing-check": ("writing-check-cli", "writing_check"),
 }
 VERSION = re.compile(r"[0-9]+\.[0-9]+\.[0-9]+")
 

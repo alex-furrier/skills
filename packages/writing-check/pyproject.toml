@@ -1,5 +1,5 @@
 [project]
-name = "safurrier-writing-check"
+name = "writing-check-cli"
 version = "1.0.0"
 description = "Portable source-bound advisory Writing Check with bundled Vale policy."
 readme = "README.md"

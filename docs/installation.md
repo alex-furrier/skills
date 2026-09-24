@@ -58,6 +58,6 @@ Claude users can instead install the projected plugin:
 
 The plugin is a projection of the canonical Context skills and package, not their source of truth.
 
-After package publication, the equivalent registry commands will be `uv tool install safurrier-writing-check` and `uv tool install safurrier-context-engineering`. Until then, use the trusted source-checkout commands above or the built-wheel commands in [reproducible validation](validation.md).
+After package publication, the equivalent registry commands will be `uv tool install writing-check-cli` and `uv tool install context-engineering-cli`. Until then, use the trusted source-checkout commands above or the built-wheel commands in [reproducible validation](validation.md).
 
 Run [reproducible validation](validation.md) from a source checkout when contributing.

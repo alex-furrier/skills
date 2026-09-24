@@ -18,9 +18,9 @@ uv build packages/writing-check
 Test clean-wheel command surfaces in temporary environments:
 
 ```bash
-uv tool install packages/context-engineering/dist/safurrier_context_engineering-*.whl
+uv tool install packages/context-engineering/dist/context_engineering_cli-*.whl
 context-engineering --help
-uv tool install packages/writing-check/dist/safurrier_writing_check-*.whl
+uv tool install packages/writing-check/dist/writing_check_cli-*.whl
 writing-check --help
 ```
 

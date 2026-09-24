@@ -22,7 +22,7 @@ uv tool install ./packages/context-engineering
 context-engineering --help
 ```
 
-Installing selected skills alone does not include the CLI packages. If the CLI is missing and you have access to this private repository, follow the [authenticated GitHub checkout route](docs/installation.md#missing-cli-with-only-selected-skills-installed); it requires `gh`, `uv`, explicit install consent, and a trusted checkout. If the route or CLI check fails, report the dependency unavailable. Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required. After package publication, the equivalent registry commands will be `uv tool install safurrier-writing-check` and `uv tool install safurrier-context-engineering`.
+Installing selected skills alone does not include the CLI packages. If the CLI is missing and you have access to this private repository, follow the [authenticated GitHub checkout route](docs/installation.md#missing-cli-with-only-selected-skills-installed); it requires `gh`, `uv`, explicit install consent, and a trusted checkout. If the route or CLI check fails, report the dependency unavailable. Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required. After package publication, the equivalent registry commands will be `uv tool install writing-check-cli` and `uv tool install context-engineering-cli`.
 
 For Claude users, install the Context projection from this repository's marketplace:
 

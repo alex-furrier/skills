@@ -16,10 +16,15 @@ publish = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(publish)
 
 
-@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.0"), ("writing-check", "1.0.0")])
-def test_release_routing_and_artifacts(package, version, tmp_path):
+@pytest.mark.parametrize(
+    "package,version,distribution",
+    [("context-engineering", "2.6.0", "context-engineering-cli"),
+     ("writing-check", "1.0.0", "writing-check-cli")],
+)
+def test_release_routing_and_artifacts(package, version, distribution, tmp_path):
     tag = f"{package}-v{version}"
     name, module, parsed_version = publish.release_identity(package, f"refs/tags/{tag}", tag)
+    assert name == distribution
     assert parsed_version == version
     dist = tmp_path / "dist"
     result = subprocess.run(["uv", "build", str(ROOT / "packages" / package), "--out-dir", str(dist)], capture_output=True, text=True)
