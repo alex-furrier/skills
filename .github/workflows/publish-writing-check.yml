@@ -49,7 +49,6 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    environment: pypi-writing-check
     permissions:
       id-token: write
     steps:
