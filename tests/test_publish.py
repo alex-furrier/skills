@@ -71,7 +71,7 @@ def test_publish_workflows_are_release_only_and_scoped(package):
     workflow = (ROOT / ".github/workflows" / f"publish-{package}.yml").read_text()
     assert "  release:\n    types: [published]" in workflow
     assert "push:" not in workflow and "pull_request:" not in workflow
-    assert f"environment: pypi-{package}" in workflow
+    assert "environment:" not in workflow
     assert f"check_publish.py {package}" in workflow
     assert f"uv build packages/{package} --out-dir dist" in workflow
     assert "id-token: write" in workflow and "contents: read" in workflow
