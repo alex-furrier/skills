@@ -140,9 +140,10 @@ def test_release_workflows_pin_full_setup_uv_sha_and_guard_context_recovery():
     pin = "astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e"
     assert pin in context and pin in writing
     assert "workflow_dispatch:" in context
-    assert "ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.sha }}" in context
+    assert "ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}" in context
     assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in context
-    assert 'release["target_commitish"] != os.environ["EXPECTED_SHA"]' in context
+    assert 'release["tag_name"] != os.environ["RELEASE_TAG"]' in context
+    assert 'context-engineering "refs/tags/$RELEASE_TAG" "$RELEASE_TAG" --dist dist' in context
     assert 'release["draft"] or release["prerelease"]' in context
     assert '"refs/tags/$RELEASE_TAG" "$RELEASE_TAG"' in context
 

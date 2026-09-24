@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
           fetch-depth: 0
           persist-credentials: false
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
@@ -35,7 +35,7 @@ jobs:
       - name: Check tag target and release identity
         env:
           RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
-          EXPECTED_SHA: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_sha || github.sha }}
+          EXPECTED_SHA: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_sha || github.event.release.target_commitish }}
           GH_TOKEN: ${{ github.token }}
         run: |
           test "$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")" = "$EXPECTED_SHA"
@@ -51,9 +51,8 @@ jobs:
               "gh", "api", f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/tags/{os.environ['RELEASE_TAG']}"
           ]))
           if (release["draft"] or release["prerelease"] or
-                  release["tag_name"] != os.environ["RELEASE_TAG"] or
-                  release["target_commitish"] != os.environ["EXPECTED_SHA"]):
-              sys.exit("Dispatch requires an existing published release at the approved commit")
+                  release["tag_name"] != os.environ["RELEASE_TAG"]):
+              sys.exit("Dispatch requires an existing published release for the checked tag")
           PY
           fi
           python scripts/check_publish.py context-engineering "refs/tags/$RELEASE_TAG" "$RELEASE_TAG"
@@ -65,7 +64,7 @@ jobs:
         run: |
           uv build packages/context-engineering --out-dir dist
           rm dist/.gitignore
-          python scripts/check_publish.py context-engineering "$GITHUB_REF" "$RELEASE_TAG" --dist dist
+          python scripts/check_publish.py context-engineering "refs/tags/$RELEASE_TAG" "$RELEASE_TAG" --dist dist
       - name: Record validated artifact digest
         id: digest
         run: echo "digest=$(sha256sum dist/* | sha256sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"

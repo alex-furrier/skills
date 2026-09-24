@@ -160,14 +160,18 @@ def test_publish_workflows_are_scoped_to_release_or_guarded_recovery(package):
     checkout = build.split("      - uses: actions/checkout@", 1)[1].split("      - uses:", 1)[0]
     if package == "context-engineering":
         assert "workflow_dispatch:" in workflow
-        assert "ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.sha }}" in checkout
+        assert "ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}" in checkout
+        assert "github.event.release.target_commitish" in build
         assert 'test "$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")" = "$EXPECTED_SHA"' in build
         assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in build
-        assert 'release["target_commitish"] != os.environ["EXPECTED_SHA"]' in build
+        assert 'release["tag_name"] != os.environ["RELEASE_TAG"]' in build
+        assert '"refs/tags/$RELEASE_TAG" "$RELEASE_TAG" --dist dist' in build
     else:
         assert "workflow_dispatch:" not in workflow
-        assert "ref: ${{ github.sha }}" in checkout
-        assert 'test "$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")" = "$GITHUB_SHA"' in build
+        assert "ref: ${{ github.event.release.tag_name }}" in checkout
+        assert "EXPECTED_SHA: ${{ github.event.release.target_commitish }}" in build
+        assert 'test "$(git rev-parse --verify "refs/tags/$RELEASE_TAG^{commit}")" = "$EXPECTED_SHA"' in build
+        assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in build
     assert "fetch-depth: 0" in checkout
     assert "persist-credentials: false" in checkout
     assert "git fetch" not in build
