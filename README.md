@@ -7,8 +7,8 @@ A portable catalog of engineering Agent Skills. Root `skills/` is canonical; the
 Install individual catalog skills with Vercel Skills:
 
 ```bash
-npx skills add safurrier/skills --skill context-docs
-npx skills add safurrier/skills --skill writing-check
+npx skills add alex-furrier/skills --skill context-docs
+npx skills add alex-furrier/skills --skill writing-check
 ```
 
 Writing and Writing Check are one suite: install the `writing-check` skill and its CLI together. Context Engineering is an optional suite for deterministic repository analysis.
@@ -27,7 +27,7 @@ Installing selected skills alone does not include the CLI packages. If the CLI i
 For Claude users, install the Context projection from this repository's marketplace:
 
 ```text
-/plugin marketplace add safurrier/skills
+/plugin marketplace add alex-furrier/skills
 /plugin install context-engineering@safurrier-skills
 ```
 

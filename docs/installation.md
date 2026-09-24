@@ -5,8 +5,8 @@
 Install any canonical root skill with Vercel Skills:
 
 ```bash
-npx skills add safurrier/skills --skill context-docs
-npx skills add safurrier/skills --skill writing-check
+npx skills add alex-furrier/skills --skill context-docs
+npx skills add alex-furrier/skills --skill writing-check
 ```
 
 Installing a skill copies its instructions only, not the sibling CLI package. Install its documented CLI when the workflow needs deterministic analysis.
@@ -35,11 +35,11 @@ A Context skill reports its deterministic analysis as unavailable when this comm
 
 ## Missing CLI with only selected skills installed
 
-The catalog is currently a private GitHub repository. If you have access, `gh` authenticated for the private safurrier/skills repository, and `uv` installed, explicitly approve installing code from a trusted checkout before running these commands. Use a directory you control; inspect the checkout before installation. Do not run them automatically as part of a skill check.
+The catalog is currently a private GitHub repository. If you have access, `gh` authenticated for the private alex-furrier/skills repository, and `uv` installed, explicitly approve installing code from a trusted checkout before running these commands. Use a directory you control; inspect the checkout before installation. Do not run them automatically as part of a skill check.
 
 ```bash
 checkout="$(mktemp -d)"
-gh repo clone safurrier/skills "$checkout/skills"
+gh repo clone alex-furrier/skills "$checkout/skills"
 # Inspect and trust "$checkout/skills" before installing either package.
 uv tool install "$checkout/skills/packages/writing-check"       # if Writing Check is needed
 writing-check --help
@@ -52,7 +52,7 @@ Run only the install and help commands for the CLI you need. If `uv` or `gh` is 
 Claude users can instead install the projected plugin:
 
 ```text
-/plugin marketplace add safurrier/skills
+/plugin marketplace add alex-furrier/skills
 /plugin install context-engineering@safurrier-skills
 ```
 
