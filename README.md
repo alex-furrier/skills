@@ -4,7 +4,7 @@ A portable catalog of engineering Agent Skills. Root `skills/` is canonical; the
 
 ## Install
 
-Install individual catalog skills with Vercel Skills:
+Install individual catalog skills with Vercel Skills if you have access to this private repository:
 
 ```bash
 npx skills add alex-furrier/skills --skill context-docs
@@ -13,16 +13,16 @@ npx skills add alex-furrier/skills --skill writing-check
 
 Writing and Writing Check are one suite: install the `writing-check` skill and its CLI together. Context Engineering is an optional suite for deterministic repository analysis.
 
-The packages are not yet published to a registry. From a trusted source checkout, install the suite and optional Context CLI with:
+Installing selected skills alone does not include their CLI packages. With explicit install consent, install the published CLIs you need from PyPI using `uv`:
 
 ```bash
-uv tool install ./packages/writing-check
+uv tool install writing-check-cli
 writing-check --help
-uv tool install ./packages/context-engineering
+uv tool install context-engineering-cli
 context-engineering --help
 ```
 
-Installing selected skills alone does not include the CLI packages. If the CLI is missing and you have access to this private repository, follow the [authenticated GitHub checkout route](docs/installation.md#missing-cli-with-only-selected-skills-installed); it requires `gh`, `uv`, explicit install consent, and a trusted checkout. If the route or CLI check fails, report the dependency unavailable. Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required. After package publication, the equivalent registry commands will be `uv tool install writing-check-cli` and `uv tool install context-engineering-cli`.
+Writing Check 1.0.0 and Context Engineering 2.6.0 are [published on PyPI](docs/installation.md). A [trusted source checkout](docs/installation.md#trusted-source-checkout-fallback) remains an optional fallback. Never install automatically; if installation or the CLI check fails, report the dependency unavailable rather than claiming analysis ran. Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required.
 
 For Claude users, install the Context projection from this repository's marketplace:
 
