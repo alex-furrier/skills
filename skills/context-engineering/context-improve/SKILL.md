@@ -9,7 +9,7 @@ description: >
 
 ## Portable deterministic evidence
 
-The independently installed `context-engineering` CLI is required. If missing, request explicit install consent. With `uv` and authenticated `gh` access to the private `safurrier/skills` repository, clone to a directory you control, inspect and trust the checkout, then run `uv tool install "$checkout/skills/packages/context-engineering"` and `context-engineering --help` (set `checkout="$(mktemp -d)"`; run `gh repo clone safurrier/skills "$checkout/skills"`). From an existing trusted checkout, `uv tool install ./packages/context-engineering` works. If `uv`, `gh`, access, network, install, or help fails, stop and report deterministic analysis unavailable; never install automatically or substitute manual inspection.
+The independently installed `context-engineering` CLI is required. If missing, request explicit install consent. With `uv` and authenticated `gh` access to the private `alex-furrier/skills` repository, clone to a directory you control, inspect and trust the checkout, then run `uv tool install "$checkout/skills/packages/context-engineering"` and `context-engineering --help` (set `checkout="$(mktemp -d)"`; run `gh repo clone alex-furrier/skills "$checkout/skills"`). From an existing trusted checkout, `uv tool install ./packages/context-engineering` works. If `uv`, `gh`, access, network, install, or help fails, stop and report deterministic analysis unavailable; never install automatically or substitute manual inspection.
 
 # Context Improve
 

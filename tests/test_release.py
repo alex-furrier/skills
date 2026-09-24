@@ -148,7 +148,7 @@ def test_docs_describe_source_installs_and_defer_registry_commands_until_publica
     assert "After package publication" in text
     assert "uv tool install context-engineering-cli" in text
     assert "uv tool install writing-check-cli" in text
-    assert "gh repo clone safurrier/skills" in text
+    assert "gh repo clone alex-furrier/skills" in text
     assert "private" in text and "authenticated" in text
     assert "writing-check --help" in text
     assert "runtime install" not in text and "writing-check doctor" not in text
@@ -163,7 +163,7 @@ def test_selected_skill_alone_documents_authenticated_missing_cli_route(tmp_path
     copied = tmp_path / "selected-skill"
     shutil.copytree(ROOT / "skills" / skill, copied)
     text = (copied / "SKILL.md").read_text()
-    assert "gh repo clone safurrier/skills" in text
+    assert "gh repo clone alex-furrier/skills" in text
     assert f'uv tool install "$checkout/skills/packages/{package}"' in text
     assert f"{command} --help" in text
     assert "consent" in text and "private" in text and "unavailable" in text
