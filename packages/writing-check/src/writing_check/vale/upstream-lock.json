@@ -8,6 +8,9 @@
     "archive_sha256": "9d1df0cff56cebe192cf29024069e0751d163baaaa5e5314ecbd97dc2aeb6bd3",
     "license": "MIT",
     "license_file": "vendor/Google-LICENSE",
+    "attribution_file": "vendor/Google-NOTICE.md",
+    "source_guide": "https://developers.google.com/style",
+    "source_guide_license": "https://creativecommons.org/licenses/by/4.0/",
     "license_sha256": "f661986be23c000812a439e03dfed8d16ff23117e8d1219fc2beb7cd01393640"
   },
   "inventory": "profiles.json is the authoritative active, excluded, profile-selector, provenance, digest, normalization, limitation, and overlay inventory.",
