@@ -247,6 +247,41 @@ def test_release_rejects_unsafe_sdist_directory(package, version, tmp_path):
         publish.check_artifacts(dist, name, module, version)
 
 
+@pytest.mark.parametrize("wheel", [True, False])
+def test_writing_check_archives_require_exact_google_notice(wheel, tmp_path):
+    name, module, version = "writing-check-cli", "writing_check", "1.0.0"
+    dist = tmp_path / "dist"
+    result = subprocess.run(["uv", "build", str(ROOT / "packages/writing-check"), "--out-dir", str(dist)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    if wheel:
+        with zipfile.ZipFile(next(dist.glob("*.whl"))) as archive:
+            members = {item.filename: archive.read(item) for item in archive.infolist()}
+        notice = "writing_check/vale/vendor/Google-NOTICE.md"
+    else:
+        with tarfile.open(next(dist.glob("*.tar.gz")), "r:gz") as archive:
+            members = {item.name: archive.extractfile(item).read() for item in archive if item.isfile()}
+        notice = "writing_check_cli-1.0.0/src/writing_check/vale/vendor/Google-NOTICE.md"
+    source = ROOT / "packages/writing-check/src/writing_check/vale/vendor/Google-NOTICE.md"
+    assert members[notice] == source.read_bytes()
+    text = source.read_text()
+    for required in (
+        "vale-cli/Google/tree/v0.7.1",
+        "Google-LICENSE",
+        "developers.google.com/style",
+        "creativecommons.org/licenses/by/4.0/",
+        "not maintained or endorsed by Google",
+        "normalizes rule severity levels to suggestions",
+    ):
+        assert required in text
+    publish.check_members(members, name, module, version, wheel)
+    del members[notice]
+    with pytest.raises(ValueError, match="required archive members missing"):
+        publish.check_members(members, name, module, version, wheel)
+    members[notice] = source.read_bytes().replace(b"not maintained or endorsed", b"endorsed")
+    with pytest.raises(ValueError, match="package payload differs from source"):
+        publish.check_members(members, name, module, version, wheel)
+
+
 def test_writing_check_sdist_rejects_tampered_readme(tmp_path):
     name, module = publish.PACKAGES["writing-check"]
     dist = tmp_path / "dist"

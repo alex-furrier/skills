@@ -18,8 +18,6 @@ PACKAGES = {
     "writing-check": ("writing-check-cli", "writing_check"),
 }
 VERSION = re.compile(r"[0-9]+\.[0-9]+\.[0-9]+")
-
-
 def release_identity(package: str, ref: str, tag: str) -> tuple[str, str, str]:
     name, module = PACKAGES[package]
     prefix = f"{package}-v"
@@ -61,7 +59,7 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
     if module == "writing_check":
         if not wheel:
             required.add(f"{base}README.md")
-        required |= {f"{package_root}vale/{item}" for item in (".vale.ini", "profiles.json", "upstream-lock.json", "vendor/Google-LICENSE")}
+        required |= {f"{package_root}vale/{item}" for item in (".vale.ini", "profiles.json", "upstream-lock.json", "vendor/Google-LICENSE", "vendor/Google-NOTICE.md")}
         if not any(path.startswith(f"{package_root}vale/styles/GoogleDocs/") and path.endswith(".yml") for path in members):
             raise ValueError("Vale rules missing")
     if required - members.keys():
