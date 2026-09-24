@@ -57,6 +57,7 @@ jobs:
         with:
           artifact-ids: ${{ needs.build.outputs.artifact_id }}
           path: dist/
+          merge-multiple: true
       - name: Verify validated artifact bytes
         env:
           EXPECTED_DIGEST: ${{ needs.build.outputs.digest }}

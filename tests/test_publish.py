@@ -82,7 +82,11 @@ def test_publish_workflows_are_release_only_and_scoped(package):
     assert "id-token: write" in publish_job and "actions/checkout@" not in publish_job
     assert "needs: build" in publish_job
     assert "actions/upload-artifact@" in build and "actions/download-artifact@" in publish_job
-    assert "EXPECTED_DIGEST" in publish_job and "artifact-ids:" in publish_job
+    assert "EXPECTED_DIGEST" in publish_job
+    download = publish_job.split("      - uses: actions/download-artifact@", 1)[1].split("      - name:", 1)[0]
+    assert "artifact-ids: ${{ needs.build.outputs.artifact_id }}" in download
+    assert "path: dist/\n          merge-multiple: true" in download
+    assert 'test "$(find dist -mindepth 1 -type d | wc -l)" -eq 0' in publish_job
     assert "python scripts/fast_check.py" in workflow
     checkout = build.split("      - uses: actions/checkout@", 1)[1].split("      - uses:", 1)[0]
     assert "ref: ${{ github.sha }}" in checkout
