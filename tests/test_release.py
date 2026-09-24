@@ -158,8 +158,8 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
     installation = (ROOT / "docs/installation.md").read_text()
     publishing = (ROOT / "docs/publishing.md").read_text()
     for text in (readme, installation):
-        assert "uv tool install context-engineering-cli" in text
-        assert "uv tool install writing-check-cli" in text
+        assert "uv tool install context-engineering-cli==2.6.0" in text
+        assert "uv tool install writing-check-cli==1.0.0" in text
         assert "explicit" in text and "consent" in text
         assert "writing-check --help" in text
         assert "runtime install" not in text and "writing-check doctor" not in text
@@ -175,21 +175,33 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
     assert "https://github.com/alex-furrier/skills/actions/runs/36072533222" in publishing
 
 
+def test_all_canonical_cli_skills_pin_registry_installs():
+    for directory, package, version in (
+        ("context-engineering", "context-engineering-cli", "2.6.0"),
+        ("writing", "writing-check-cli", "1.0.0"),
+    ):
+        for skill in (ROOT / "skills" / directory).glob("*/SKILL.md"):
+            text = skill.read_text()
+            if f"uv tool install {package}" in text:
+                assert f"uv tool install {package}=={version}" in text, skill
+                assert not re.search(rf"uv tool install {package}(?!=={re.escape(version)})", text), skill
+
+
 @pytest.mark.parametrize(
-    ("skill", "package", "command"),
-    [("context-engineering/context-review", "context-engineering", "context-engineering"),
-     ("writing/writing-check", "writing-check", "writing-check")],
+    ("skill", "package", "command", "version"),
+    [("context-engineering/context-review", "context-engineering", "context-engineering", "2.6.0"),
+     ("writing/writing-check", "writing-check", "writing-check", "1.0.0")],
 )
-def test_selected_skill_alone_documents_registry_and_optional_source_route(tmp_path, skill, package, command):
+def test_selected_skill_alone_documents_registry_and_optional_source_route(tmp_path, skill, package, command, version):
     copied = tmp_path / "selected-skill"
     shutil.copytree(ROOT / "skills" / skill, copied)
     text = (copied / "SKILL.md").read_text()
-    assert f"uv tool install {package}-cli" in text
+    assert f"uv tool install {package}-cli=={version}" in text
     assert "gh repo clone alex-furrier/skills" in text
     assert f'uv tool install "$checkout/skills/packages/{package}"' in text
     assert f"{command} --help" in text
     assert "consent" in text and "private" in text and "unavailable" in text
-    assert text.index(f"uv tool install {package}-cli") < text.index("gh repo clone")
+    assert text.index(f"uv tool install {package}-cli=={version}") < text.index("gh repo clone")
     assert not (tmp_path / "packages").exists()
 
 

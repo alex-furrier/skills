@@ -16,7 +16,7 @@ Installing a skill copies its instructions only, not the sibling CLI package. In
 Writing and Writing Check are one suite. With explicit consent, install the [published Writing Check CLI 1.0.0](https://pypi.org/project/writing-check-cli/):
 
 ```bash
-uv tool install writing-check-cli
+uv tool install writing-check-cli==1.0.0
 writing-check --help
 ```
 
@@ -27,7 +27,7 @@ The package includes the reviewed Google Vale policy and pins the `vale` Python 
 Context Engineering is an optional suite. With explicit consent, install the [published Context Engineering CLI 2.6.0](https://pypi.org/project/context-engineering-cli/), then verify it is on `PATH`:
 
 ```bash
-uv tool install context-engineering-cli
+uv tool install context-engineering-cli==2.6.0
 context-engineering --help
 ```
 

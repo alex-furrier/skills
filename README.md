@@ -16,9 +16,9 @@ Writing and Writing Check are one suite: install the `writing-check` skill and i
 Installing selected skills alone does not include their CLI packages. With explicit install consent, install the published CLIs you need from PyPI using `uv`:
 
 ```bash
-uv tool install writing-check-cli
+uv tool install writing-check-cli==1.0.0
 writing-check --help
-uv tool install context-engineering-cli
+uv tool install context-engineering-cli==2.6.0
 context-engineering --help
 ```
 
