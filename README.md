@@ -22,7 +22,7 @@ uv tool install context-engineering-cli==2.6.0
 context-engineering --help
 ```
 
-Writing Check 1.0.0 and Context Engineering 2.6.0 are [published on PyPI](docs/installation.md). A [trusted source checkout](docs/installation.md#trusted-source-checkout-fallback) remains an optional fallback. Never install automatically; if installation or the CLI check fails, report the dependency unavailable rather than claiming analysis ran. Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required.
+Writing Check 1.0.0 and Context Engineering 2.6.0 are [published on PyPI](docs/installation.md). Context Engineering 2.6.1 is prepared in source but not yet published; keep the 2.6.0 registry pin until the new release is verified. A [trusted source checkout](docs/installation.md#trusted-source-checkout-fallback) remains an optional fallback. Never install automatically; if installation or the CLI check fails, report the dependency unavailable rather than claiming analysis ran. Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required.
 
 For Claude users, install the Context projection from this repository's marketplace:
 

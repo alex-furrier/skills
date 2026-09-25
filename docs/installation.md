@@ -31,6 +31,8 @@ uv tool install context-engineering-cli==2.6.0
 context-engineering --help
 ```
 
+The repository prepares Context Engineering CLI 2.6.1 as an unpublished release source. Until publication is verified, the registry command above intentionally pins the published 2.6.0; a trusted checkout of this release source can provide 2.6.1 using the fallback below.
+
 A Context skill reports its deterministic analysis as unavailable when this command is missing or incompatible; it does not search for another checkout or substitute manual analysis.
 
 ## Trusted source checkout fallback
