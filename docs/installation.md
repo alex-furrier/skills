@@ -24,14 +24,12 @@ The package includes the reviewed Google Vale policy and pins the `vale` Python 
 
 ## Optional Context Engineering
 
-Context Engineering is an optional suite. With explicit consent, install the [published Context Engineering CLI 2.6.0](https://pypi.org/project/context-engineering-cli/), then verify it is on `PATH`:
+Context Engineering is an optional suite. With explicit consent, install the [published Context Engineering CLI 2.6.1](https://pypi.org/project/context-engineering-cli/), then verify it is on `PATH`:
 
 ```bash
-uv tool install context-engineering-cli==2.6.0
+uv tool install context-engineering-cli==2.6.1
 context-engineering --help
 ```
-
-The repository prepares Context Engineering CLI 2.6.1 as an unpublished release source. Until publication is verified, the registry command above intentionally pins the published 2.6.0; a trusted checkout of this release source can provide 2.6.1 using the fallback below.
 
 A Context skill reports its deterministic analysis as unavailable when this command is missing or incompatible; it does not search for another checkout or substitute manual analysis.
 

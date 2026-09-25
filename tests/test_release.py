@@ -158,7 +158,8 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
     installation = (ROOT / "docs/installation.md").read_text()
     publishing = (ROOT / "docs/publishing.md").read_text()
     for text in (readme, installation):
-        assert "uv tool install context-engineering-cli==2.6.0" in text
+        assert "uv tool install context-engineering-cli==2.6.1" in text
+        assert "context-engineering-cli==2.6.0" not in text
         assert "uv tool install writing-check-cli==1.0.0" in text
         assert "explicit" in text and "consent" in text
         assert "writing-check --help" in text
@@ -169,7 +170,13 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
     assert 'uv tool install "$checkout/skills/packages/writing-check"' in installation
     assert "gh repo clone alex-furrier/skills" in installation
     assert "private" in installation and "authenticated" in installation
+    assert "published Context Engineering CLI 2.6.1" in installation
     assert "https://pypi.org/project/context-engineering-cli/" in installation
+    assert "https://pypi.org/project/context-engineering-cli/2.6.1/" in publishing
+    assert "context-engineering-v2.6.1" in publishing
+    assert "fda3af779a399f7b3b5f586e7dcf119d2be3638c" in publishing
+    assert "https://github.com/alex-furrier/skills/actions/runs/36173696116" in publishing
+    assert "context-engineering-v2.6.0" in publishing
     assert "https://pypi.org/project/writing-check-cli/" in installation
     assert "https://github.com/alex-furrier/skills/actions/runs/36072208510" in publishing
     assert "https://github.com/alex-furrier/skills/actions/runs/36072533222" in publishing
@@ -177,7 +184,7 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
 
 def test_all_canonical_cli_skills_pin_registry_installs():
     for directory, package, version in (
-        ("context-engineering", "context-engineering-cli", "2.6.0"),
+        ("context-engineering", "context-engineering-cli", "2.6.1"),
         ("writing", "writing-check-cli", "1.0.0"),
     ):
         for skill in (ROOT / "skills" / directory).glob("*/SKILL.md"):
@@ -185,11 +192,14 @@ def test_all_canonical_cli_skills_pin_registry_installs():
             if f"uv tool install {package}" in text:
                 assert f"uv tool install {package}=={version}" in text, skill
                 assert not re.search(rf"uv tool install {package}(?!=={re.escape(version)})", text), skill
+                if directory == "context-engineering":
+                    projected = PLUGIN / "skills" / skill.parent.name / "SKILL.md"
+                    assert projected.read_text() == text
 
 
 @pytest.mark.parametrize(
     ("skill", "package", "command", "version"),
-    [("context-engineering/context-review", "context-engineering", "context-engineering", "2.6.0"),
+    [("context-engineering/context-review", "context-engineering", "context-engineering", "2.6.1"),
      ("writing/writing-check", "writing-check", "writing-check", "1.0.0")],
 )
 def test_selected_skill_alone_documents_registry_and_optional_source_route(tmp_path, skill, package, command, version):
