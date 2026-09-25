@@ -74,7 +74,7 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
     with zipfile.ZipFile(wheel) as archive:
         names = set(archive.namelist())
     assert "context_engineering/cli/dispatch.py" in names
-    assert "context_engineering_cli-2.6.0.dist-info/licenses/LICENSE" in names
+    assert "context_engineering_cli-2.6.1.dist-info/licenses/LICENSE" in names
     assert "provenance.json" in names
     environment = tmp_path / "venv"
     assert run("uv", "venv", str(environment)).returncode == 0
@@ -88,7 +88,7 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
 @pytest.mark.parametrize(
     ("package", "command", "expected_files", "distribution"),
     [
-        (CONTEXT, "context-engineering", {"context_engineering/cli/dispatch.py"}, "context_engineering_cli-2.6.0"),
+        (CONTEXT, "context-engineering", {"context_engineering/cli/dispatch.py"}, "context_engineering_cli-2.6.1"),
         (WRITING, "writing-check", {
             "writing_check/cli.py", "writing_check/sweep.py", "writing_check/vale/.vale.ini",
             "writing_check/vale/profiles.json", "writing_check/vale/upstream-lock.json",

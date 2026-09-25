@@ -19,7 +19,7 @@ spec.loader.exec_module(publish)
 
 @pytest.mark.parametrize(
     "package,version,distribution",
-    [("context-engineering", "2.6.0", "context-engineering-cli"),
+    [("context-engineering", "2.6.1", "context-engineering-cli"),
      ("writing-check", "1.0.0", "writing-check-cli")],
 )
 def test_release_routing_and_artifacts(package, version, distribution, tmp_path):
@@ -61,14 +61,14 @@ def test_release_routing_and_artifacts(package, version, distribution, tmp_path)
 @pytest.mark.parametrize(
     "package,version,missing",
     [
-        ("context-engineering", "2.6.0", "pyproject.toml"),
-        ("context-engineering", "2.6.0", ".gitignore"),
-        ("context-engineering", "2.6.0", "README.md"),
+        ("context-engineering", "2.6.1", "pyproject.toml"),
+        ("context-engineering", "2.6.1", ".gitignore"),
+        ("context-engineering", "2.6.1", "README.md"),
         ("writing-check", "1.0.0", ".gitignore"),
         ("writing-check", "1.0.0", "README.md"),
         ("writing-check", "1.0.0", "pyproject.toml"),
         ("writing-check", "1.0.0", "provenance.json"),
-        ("context-engineering", "2.6.0", "src/context_engineering/"),
+        ("context-engineering", "2.6.1", "src/context_engineering/"),
         ("writing-check", "1.0.0", "src/writing_check/"),
     ],
 )
@@ -94,7 +94,7 @@ def test_shipped_source_requires_package_provenance(package, version, missing, t
 
 
 def test_sdist_gitignore_must_match_repository_source(tmp_path):
-    name, module, version = "context-engineering-cli", "context_engineering", "2.6.0"
+    name, module, version = "context-engineering-cli", "context_engineering", "2.6.1"
     dist = tmp_path / "dist"
     result = subprocess.run(["uv", "build", str(ROOT / "packages/context-engineering"), "--out-dir", str(dist)], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
@@ -107,7 +107,7 @@ def test_sdist_gitignore_must_match_repository_source(tmp_path):
 
 
 def test_package_provenance_rejects_boolean_schema(tmp_path):
-    name, module, version = "context-engineering-cli", "context_engineering", "2.6.0"
+    name, module, version = "context-engineering-cli", "context_engineering", "2.6.1"
     dist = tmp_path / "dist"
     result = subprocess.run(["uv", "build", str(ROOT / "packages/context-engineering"), "--out-dir", str(dist)], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
@@ -121,7 +121,7 @@ def test_package_provenance_rejects_boolean_schema(tmp_path):
         publish.check_members(members, name, module, version, False)
 
 
-@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.0"), ("writing-check", "1.0.0")])
+@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.0")])
 def test_release_rejects_wrong_tag_ref_or_version(package, version):
     tag = f"{package}-v{version}"
     wrong = "writing-check" if package == "context-engineering" else "context-engineering"
@@ -177,7 +177,7 @@ def test_publish_workflows_are_scoped_to_release_or_guarded_recovery(package):
     assert "git fetch" not in build
 
 
-@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.0"), ("writing-check", "1.0.0")])
+@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.0")])
 def test_release_rejects_metadata_tampering(package, version, tmp_path):
     name, module = publish.PACKAGES[package]
     dist = tmp_path / "dist"
@@ -239,7 +239,7 @@ def test_writing_check_rejects_tampered_metadata_description(wheel, tmp_path):
         publish.check_artifacts(dist, name, module, "1.0.0")
 
 
-@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.0"), ("writing-check", "1.0.0")])
+@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.0")])
 def test_release_rejects_unsafe_sdist_directory(package, version, tmp_path):
     name, module = publish.PACKAGES[package]
     dist = tmp_path / "dist"
