@@ -58,6 +58,10 @@ A required qualifier can remain even when Vale flags it; the final source is che
 
 After the required sections, add `Decision needed`, `Migration`, or `Rollout` only for real unresolved choices, obligations, or rollout behavior. Do not add empty headings or generic reviewer questions.
 
+Whenever a change summary or file inventory is included, give each conceptual change group and each individual file entry, including supporting files, a TL;DR of at most one short sentence. Explain the group's behavioral change or purpose and the file's actual change from the diff; do not merely paraphrase its label or filename or repeat the surrounding prose.
+
+For helper-generated tables, add these owner-authored TL;DRs after `<br>` in the existing `Conceptual group` summary cells and individual `File` cells, escaping table delimiters. Keep mechanically sourced paths, classifications, group membership, counts, and columns unchanged; do not repeat group TL;DRs in file rows or add them to subtotal/total rows. The helper supplies mechanics, not semantic descriptions. Do not force a table for a trivial PR that otherwise permits simpler prose or a list.
+
 ## Large-diff composition
 
 For strictly more than 500 Git textual changed-line events, run the helper against the exact base and head through the repository-owned Python environment:
