@@ -30,6 +30,8 @@ Every ready-to-paste Draft or Improve body uses these exact headings in this ord
 
 **What changed** explains the behavioral before/after by concept, not file or commit. For a multi-component behavior, include the smallest useful happy path and one concrete example if it clarifies input, output, migration, failure, or authority. When a large flow would interrupt the path, use one collapsed `<details>` block and at most one eight-node GitHub-native Mermaid diagram; pair it with the example and omit it when prose is clearer. Do not add architecture decoration or a second review-guide surface.
 
+Explain material new or stricter preconditions on a write, install, or apply: which input or layout class is refused and what remains unchanged on failure. Use a compact boundary statement when it affects compatibility or recovery; do not enumerate internal checks or add failure boilerplate to unrelated changes.
+
 ````markdown
 <details>
 <summary>Happy path example</summary>
