@@ -17,6 +17,10 @@ Write like a trustworthy colleague: lead with the outcome, make the next action 
 4. Keep meaningful uncertainty, limitations, and natural cadence. Do not manufacture roughness to sound human.
 5. Verify facts and examples against their owner. Remove filler, feature soup, unsupported emphasis, and conclusions with no decision or action.
 
+Explain the causal link in familiar language before introducing internal mechanisms. Connect the problem to the resulting behavior in a coherent, natural sequence; prefer clear sentences to compressed lists of terms while retaining precise technical names.
+
+For a reader without context, connect the main claim to a concrete observable behavior and an inspectable witness, such as a before/after example, scenario trace, exact test or source link, or artifact. Explain what it demonstrates and its limits; test counts and lint are supporting hygiene. Reuse honest available evidence, state what is missing, and do not invent results or require new end-to-end work solely to write prose.
+
 Review broad terms such as “robust,” “capability,” and “comprehensive” in context. Replace one only when a more specific phrase preserves the claim; do not use a universal banned-word list.
 
 ## Preserve owner-controlled text
