@@ -95,3 +95,14 @@ def test_source_drift_failure_retains_known_cost(tmp_path):
     saved = replay.read(root / "receipts" / (data["trial_id"] + ".json"))
     assert saved["input_integrity"] == "changed_or_unavailable"
     assert saved["usage"]["input_tokens"] == 123
+
+
+def test_inline_fields_cannot_bypass_byte_digest_binding(tmp_path):
+    root, plan = fixture(tmp_path)
+    path = receipt(tmp_path, root, plan["schedule"][0]["id"])
+    data = replay.read(path)
+    data.pop("output_file")
+    data.update(output_text="Actual final text", output_sha256="wrong-digest")
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="requires an output file"):
+        replay.record(root, path)

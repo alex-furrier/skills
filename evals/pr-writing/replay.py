@@ -98,6 +98,7 @@ def record(root: Path, receipt: Path) -> None:
         require(all(v is None or (number(v) and isinstance(v, int)) for v in usage.values()), "Invalid token count")
         for subset, total in [("cached_input_tokens", "input_tokens"), ("reasoning_output_tokens", "output_tokens")]:
             require(usage.get(subset) is None or usage.get(total) is None or usage[subset] <= usage[total], "Token subset exceeds total")
+    require(r["status"] != "completed" or r.get("output_file"), "Completed outcome requires an output file")
     # Read exact bytes into the receipt; do not depend on mutable output files later.
     if r.get("output_file"):
         body = (receipt.parent / r.pop("output_file")).read_bytes()
