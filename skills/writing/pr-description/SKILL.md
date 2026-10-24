@@ -11,10 +11,20 @@ Help an unfamiliar reviewer understand the final change with the fewest useful w
 
 ## Happy path
 
-1. Select **Draft**, **Improve**, or **Audit**. Establish base and head, then read the complete final range and diff, linked issue/design context, repository instructions, and observed validation. For an existing PR, also verify its title, body, scope-changing comments, files, and patch.
+1. Select **Draft**, **Improve**, or **Audit**. Establish base and head and read the complete practical final diff first. Reuse relevant repository instructions and originating task, issue, implementation context, and actual validation already present; for an existing PR, include its title, body and scope-changing comments. Follow the source-first path below.
 2. Treat commits and existing copy as claims, not truth. Do not invent intent, impact, risk, results, rollout state, issue links, or metrics. Ask for author context when it materially changes the body.
 3. Draft or improve the required contract below. Keep it proportional: usually under 120 words for a local obvious change, 300 for medium behavior/workflow work, and 500 for cross-system or migration work. These are ceilings, not targets.
 4. Run Writing Check on the exact final candidate and separately verify this skill’s semantic duties. Return the body (or audit), not a Git/GitHub mutation.
+
+## Source-first acquisition
+
+Collect the complete practical diff, commit-range identity and available recorded Why and Evidence together when possible. Disable external diff/text conversion. Identify generated, binary, oversized or otherwise omitted material explicitly; never describe a truncated diff as complete. Inspect omitted material when needed for a material claim, or retain the coverage gap. Do not require an acquisition agent, separately authored fact sheet or per-claim database.
+
+Use the diff to establish What. Use the originating task/issue or implementation discussion to establish Why, and existing actual validation outputs or inspectable behavioral artifacts for Evidence. A test definition establishes intended coverage, not a passing run. Label inferred intent and keep unknown rationale or validation unknown; do not rerun a suite solely to write prose.
+
+After that first read, make targeted source lookups for material gaps: behavior across components, compatibility and refused inputs, failure/recovery, authentication or write authority, and contradictions between code, requirements and recorded claims. Explain an unresolved contradiction and its reader consequence instead of silently choosing the convenient account. Avoid repeated whole-repository onboarding or duplicate reads when the necessary source is already available. This is drafting, not an additional code review; the caller retains its required validation/review duties.
+
+Reuse evidence only while its relevant immutable inputs and validation scope still match. Check the base/head range and available source identities once, then invalidate affected claims when their inputs change. Do not wait on unrelated HEAD churn when the caller accepts a content-bound snapshot; honor an explicit exact-HEAD requirement when one applies. Keep historical results labeled with their tested revision. Run Writing Check again whenever the final body bytes change.
 
 ## Required public body
 
@@ -29,6 +39,8 @@ Every ready-to-paste Draft or Improve body uses these exact headings in this ord
 **Why** states the verified pre-change problem, why work was needed, and its important user or system consequence. Lead with behavior, not a title repeat or inventory.
 
 **What changed** explains the behavioral before/after by concept, not file or commit. For a multi-component behavior, include the smallest useful happy path and one concrete example if it clarifies input, output, migration, failure, or authority. When a large flow would interrupt the path, use one collapsed `<details>` block and at most one eight-node GitHub-native Mermaid diagram; pair it with the example and omit it when prose is clearer. Do not add architecture decoration or a second review-guide surface.
+
+Explain material new or stricter preconditions on a write, install, or apply: which input or layout class is refused and what remains unchanged on failure. Use a compact boundary statement when it affects compatibility or recovery; do not enumerate internal checks or add failure boilerplate to unrelated changes.
 
 ````markdown
 <details>
@@ -55,6 +67,10 @@ A required qualifier can remain even when Vale flags it; the final source is che
 ```
 
 After the required sections, add `Decision needed`, `Migration`, or `Rollout` only for real unresolved choices, obligations, or rollout behavior. Do not add empty headings or generic reviewer questions.
+
+Whenever a change summary or file inventory is included, give each conceptual change group and each individual file entry, including supporting files, a TL;DR of at most one short sentence. Explain the group's behavioral change or purpose and the file's actual change from the diff; do not merely paraphrase its label or filename or repeat the surrounding prose.
+
+For helper-generated tables, add these owner-authored TL;DRs after `<br>` in the existing `Conceptual group` summary cells and individual `File` cells, escaping table delimiters. Keep mechanically sourced paths, classifications, group membership, counts, and columns unchanged; do not repeat group TL;DRs in file rows or add them to subtotal/total rows. The helper supplies mechanics, not semantic descriptions. Do not force a table for a trivial PR that otherwise permits simpler prose or a list.
 
 ## Large-diff composition
 

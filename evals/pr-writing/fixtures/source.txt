@@ -1,0 +1,3 @@
+SYNTHETIC: A fictional CLI adds --dry-run. A rejected output directory is never written.
+The intended benefit is previewing changes before apply. A local synthetic scenario
+records dry-run leaving the directory unchanged. No real model, project or test result.

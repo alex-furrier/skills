@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "seed": 42,
+  "repeats": 2,
+  "model": "synthetic-offline-no-model",
+  "reasoning": "not-applicable",
+  "cache_conditions": "Synthetic receipts; no cache or latency evidence. Real runs must record exposed cache telemetry and unknowns.",
+  "timing_boundary": "Before per-run acquisition through final output/check and input verification; shared setup separately recorded.",
+  "quality_gates": [
+    "Ground factual behavior and rationale in source",
+    "Preserve refused inputs, unchanged-on-failure behavior and contradictions",
+    "Explain inspectable behavioral witness and its limits; no invented execution",
+    "Keep final source-bound WritingCheck; assess usefulness independently"
+  ],
+  "arms": {
+    "original": "Synthetic direct source lookup",
+    "candidate": "Synthetic full-diff/raw-context source-first delivery; same writer and gates"
+  },
+  "cases": [
+    {
+      "id": "synthetic-cli",
+      "kind": "synthetic",
+      "source": "Fictional dry-run change; not speed/quality evidence."
+    }
+  ],
+  "inputs": [
+    {
+      "path": "fixtures/source.txt",
+      "sha256": "05024228f1de2b410c191a6def3b6a8f6d90d1ad187fb5602ec1b03d2b93bea1"
+    }
+  ]
+}

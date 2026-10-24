@@ -190,6 +190,9 @@ def _segments(path: str) -> tuple[str, ...]:
 def _test_role(path: str) -> str | None:
     segments = _segments(path)
     name = PurePosixPath(path).name.lower()
+    # A Markdown correctness specification is documentation, not executable tests.
+    if name == "spec.md":
+        return "docs"
     if any(segment in {"test", "tests", "spec", "specs"} for segment in segments) or re.search(
         r"(?:^|[_.-])(test|spec)(?:[_.-]|$)", name
     ):
