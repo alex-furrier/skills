@@ -11,10 +11,20 @@ Help an unfamiliar reviewer understand the final change with the fewest useful w
 
 ## Happy path
 
-1. Select **Draft**, **Improve**, or **Audit**. Establish base and head, then read the complete final range and diff, linked issue/design context, repository instructions, and observed validation. For an existing PR, also verify its title, body, scope-changing comments, files, and patch.
+1. Select **Draft**, **Improve**, or **Audit**. Establish base and head and read the complete practical final diff first. Reuse relevant repository instructions and originating task, issue, implementation context, and actual validation already present; for an existing PR, include its title, body and scope-changing comments. Follow the source-first path below.
 2. Treat commits and existing copy as claims, not truth. Do not invent intent, impact, risk, results, rollout state, issue links, or metrics. Ask for author context when it materially changes the body.
 3. Draft or improve the required contract below. Keep it proportional: usually under 120 words for a local obvious change, 300 for medium behavior/workflow work, and 500 for cross-system or migration work. These are ceilings, not targets.
 4. Run Writing Check on the exact final candidate and separately verify this skill’s semantic duties. Return the body (or audit), not a Git/GitHub mutation.
+
+## Source-first acquisition
+
+Collect the complete practical diff, commit-range identity and available recorded Why and Evidence together when possible. Disable external diff/text conversion. Identify generated, binary, oversized or otherwise omitted material explicitly; never describe a truncated diff as complete. Inspect omitted material when needed for a material claim, or retain the coverage gap. Do not require an acquisition agent, separately authored fact sheet or per-claim database.
+
+Use the diff to establish What. Use the originating task/issue or implementation discussion to establish Why, and existing actual validation outputs or inspectable behavioral artifacts for Evidence. A test definition establishes intended coverage, not a passing run. Label inferred intent and keep unknown rationale or validation unknown; do not rerun a suite solely to write prose.
+
+After that first read, make targeted source lookups for material gaps: behavior across components, compatibility and refused inputs, failure/recovery, authentication or write authority, and contradictions between code, requirements and recorded claims. Explain an unresolved contradiction and its reader consequence instead of silently choosing the convenient account. Avoid repeated whole-repository onboarding or duplicate reads when the necessary source is already available. This is drafting, not an additional code review; the caller retains its required validation/review duties.
+
+Reuse evidence only while its relevant immutable inputs and validation scope still match. Check the base/head range and available source identities once, then invalidate affected claims when their inputs change. Do not wait on unrelated HEAD churn when the caller accepts a content-bound snapshot; honor an explicit exact-HEAD requirement when one applies. Keep historical results labeled with their tested revision. Run Writing Check again whenever the final body bytes change.
 
 ## Required public body
 

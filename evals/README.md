@@ -19,3 +19,7 @@ A coordinator selects a small fixed set of `model-forward-development` cases and
 Use the same baseline cases and fixture revision for candidate comparisons. Keep baseline and candidate development evidence separate from `held-out-adoption` evidence. Held-out adoption uses consented, de-identified real requests that were not used to change the skills; do not add those requests or outputs to this public catalog by default.
 
 Reviewers make the semantic judgment. Mission, reviewer, or checker status is evidence only; none is acceptance. In particular, an `unavailable` Writing Check result is missing evidence, and checker findings never authorize edits or establish readiness. This repository intentionally provides no model launcher, credentials, scoring framework, or automatic semantic judge.
+
+## Paired PR-writing process trials
+
+[pr-writing/README.md](pr-writing/README.md) adds an optional offline receipt ledger for an existing native harness: frozen schedules/inputs, retained failures, actual telemetry, exact blind pairs and locked preference joining. No model launcher or automatic quality judge. Only synthetic fixtures and sanitized aggregate evidence are shipped.
