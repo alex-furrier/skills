@@ -18,7 +18,7 @@ def fixture(tmp_path):
 
 
 def receipt(tmp_path, root, trial, status="completed"):
-    body = b"## Why\n\nSynthetic preview.\n\n## What changed\n\nNo write on rejection.\n\n## Evidence\n\nSynthetic fixture only.\n"
+    body = b"## Why\n\nSynthetic preview.\n\n## What changed\n\nNo write on rejection.\n\n## Risk\n\nRisk: Unassessed. No risk assessment was supplied.\n\n## Evidence\n\nSynthetic fixture only.\n"
     (tmp_path / "body.md").write_bytes(body)
     check = {"status": "no_findings", "source": {"sha256": replay.digest(body), "text": body.decode()}, "synthetic": True}
     (tmp_path / "check.json").write_text(json.dumps(check))

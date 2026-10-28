@@ -13,9 +13,10 @@ npx skills add alex-furrier/skills --skill writing-check
 
 Writing and Writing Check are one suite: install the `writing-check` skill and its CLI together. Context Engineering is an optional suite for deterministic repository analysis.
 
-PR descriptions include a compact advisory assessment from `pr-risk-note`. When
-copying `pr-description` individually, include its sibling `pr-risk-note` skill;
-the risk skill also works on its own without a CLI or hosted-service dependency.
+PR descriptions preserve the upstream `pr-risk-note` assessment in a compact
+`Risk` section, or report that it was not supplied. The risk skill works on its
+own without a CLI or hosted-service dependency; Writing Check does not classify
+PR risk from prose.
 
 Installing selected skills alone does not include their CLI packages. With explicit install consent, install the published CLIs you need from PyPI using `uv`:
 
