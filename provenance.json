@@ -10,6 +10,7 @@
     {"path_prefix":"plugins/context-engineering/.claude-plugin/", "origin":"independently authored plugin metadata", "license":"MIT"},
     {"path":"plugins/context-engineering/LICENSE", "origin":"standard MIT text retained with the independently copied plugin", "license":"MIT"},
     {"path":"plugins/context-engineering/provenance.json", "origin":"plugin-scoped inventory; authoritative for the independently copied plugin subtree", "license":"MIT"},
+    {"path_prefix":"skills/writing/pr-risk-note/", "origin":"same-author portable PR risk skill adopted from alex-furrier/dots@5286cc7d78e1cd1e22402cff1de407810ec7b403", "license":"MIT"},
     {"path_prefix":"skills/writing/", "origin":"same-author portable Writing skill source", "license":"MIT"},
     {"path_prefix":"packages/writing-check/", "origin":"same-author checker implementation and reviewed Google Vale v0.7.1 policy data", "license":"MIT"},
     {"path_prefix":"tests/", "origin":"independently authored public fixtures and behavioral tests", "license":"MIT"},

@@ -26,6 +26,18 @@ After that first read, make targeted source lookups for material gaps: behavior 
 
 Reuse evidence only while its relevant immutable inputs and validation scope still match. Check the base/head range and available source identities once, then invalidate affected claims when their inputs change. Do not wait on unrelated HEAD churn when the caller accepts a content-bound snapshot; honor an explicit exact-HEAD requirement when one applies. Keep historical results labeled with their tested revision. Run Writing Check again whenever the final body bytes change.
 
+## Compact risk note
+
+For Draft or Improve, use the catalog dependency [pr-risk-note](../pr-risk-note/SKILL.md)
+to include a compact risk label, advisory merge recommendation, and 1–2 explanatory
+sentences under `What changed`. Reuse a caller-supplied note when it still covers
+the candidate and material evidence; otherwise assess once using the diff,
+contracts, consumers, and existing validation/review evidence already gathered.
+Refresh only when those inputs change. Do not dispatch another full review merely
+to write the note. If this dependency is unavailable, state `Risk: Unassessed`
+with that limit and continue authoring. The note does not select reviewer lanes,
+waive requirements, grant merge authority, or add a publication gate.
+
 ## Required public body
 
 Every ready-to-paste Draft or Improve body uses these exact headings in this order:

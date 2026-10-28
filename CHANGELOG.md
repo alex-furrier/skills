@@ -2,6 +2,9 @@
 
 ## 0.1.0 — Unreleased
 
+- Add standalone `pr-risk-note` and reuse it during PR-description drafting and
+  improvement. Keep output to a risk label, advisory merge recommendation, and
+  1–2 sentences; preserve unknown evidence and existing approval authority.
 - Package Context skills and their shared CLI as one independently copyable Claude plugin, with plugin-local license and provenance records.
 - Keep Writing Check as one self-contained skill, remove its duplicate package tree, and document separate Claude plugin and Skills CLI installation paths.
 - Require `uv` and the catalog Context CLI for deterministic Context workflows; fail clearly when the complete package is absent.
