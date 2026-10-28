@@ -26,17 +26,20 @@ After that first read, make targeted source lookups for material gaps: behavior 
 
 Reuse evidence only while its relevant immutable inputs and validation scope still match. Check the base/head range and available source identities once, then invalidate affected claims when their inputs change. Do not wait on unrelated HEAD churn when the caller accepts a content-bound snapshot; honor an explicit exact-HEAD requirement when one applies. Keep historical results labeled with their tested revision. Run Writing Check again whenever the final body bytes change.
 
-## Compact risk note
+## Compact Risk section
 
-For Draft or Improve, use the catalog dependency [pr-risk-note](../pr-risk-note/SKILL.md)
-to include a compact risk label, advisory merge recommendation, and 1–2 explanatory
-sentences under `What changed`. Reuse a caller-supplied note when it still covers
-the candidate and material evidence; otherwise assess once using the diff,
-contracts, consumers, and existing validation/review evidence already gathered.
-Refresh only when those inputs change. Do not dispatch another full review merely
-to write the note. If this dependency is unavailable, state `Risk: Unassessed`
-with that limit and continue authoring. The note does not select reviewer lanes,
-waive requirements, grant merge authority, or add a publication gate.
+The calling review workflow owns the semantic assessment through
+[pr-risk-note](../pr-risk-note/SKILL.md). Consume its note from the supplied
+evidence pack; do not launch another assessment, inspect consumers, or reconstruct
+blast radius merely to fill the description's `Risk` section.
+
+Preserve the supplied label, advisory recommendation, decisive factors, and
+material uncertainty in 1–2 concise explanatory sentences. Do not silently upgrade
+confidence or turn the recommendation into approval. If the assessment is absent,
+stale for the described change, or missing material information, state
+`Risk: Unassessed` and name the missing input. For example: `Risk: Unassessed.
+No risk assessment was supplied.` Continue authoring without inventing a rating,
+expanding the evidence pack, or adding a publication gate.
 
 ## Required public body
 
@@ -45,6 +48,7 @@ Every ready-to-paste Draft or Improve body uses these exact headings in this ord
 ```markdown
 ## Why
 ## What changed
+## Risk
 ## Evidence
 ```
 
@@ -69,6 +73,10 @@ A required qualifier can remain even when Vale flags it; the final source is che
 
 </details>
 ````
+
+**Risk** contains the compact upstream assessment or the explicit missing-input
+statement above. Keep its recommendation advisory and preserve required checks
+and approval boundaries; do not repeat the explanation in other sections.
 
 **Evidence** connects each materially different claim to (1) observed validation or outcome, (2) the behavior or boundary exercised, and (3) why a developer or reviewer should care. Use a short bold headline with one or two indented bullets only when one sentence would be dense. Aggregate checks supporting the same claim; do not dump commands, check names, Harness Kit records, agents, bot status, or repetitive disclaimers. Add a remaining-gap note only when it prevents a likely overclaim.
 

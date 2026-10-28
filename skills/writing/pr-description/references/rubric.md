@@ -9,7 +9,7 @@ Use this fixed rubric for audits and dogfood comparisons. Score each dimension f
 | Factual grounding | Unsupported or contradicted claims | Mostly accurate, with ambiguity or unchecked claims | Important claims verified against the final diff and explicit context |
 | Problem and intent | Reason is absent or generic | Reason is implied or arrives late | Reviewer quickly understands the pre-change problem and why work was needed |
 | Conceptual change | Diff or file narration | Behavior is described but the mental model is incomplete | Important before/after behavior or architecture is clear without walking files |
-| Impact, risk, and limits | Missing, boilerplate, or overstated | Some material effects or limits appear | Material impact, constraints, rollout, compatibility, and deferred cases are honest and proportionate |
+| Impact, risk, and limits | Missing, boilerplate, or overstated | Some material effects or limits appear | The compact `Risk` section preserves the upstream assessment and uncertainty, or explicitly reports missing input; material impact and limits are honest and proportionate |
 | Evidence quality | Transcript, command inventory, or unsupported confidence | Relevant proof appears but dense prose hides why a developer cares | Scannable claim headlines connect observed outcomes to exercised behavior and developer confidence; one gap note covers material uncertainty |
 | Proportion and hierarchy | Size/structure obstructs review | Mostly scannable with repetition or misplaced detail | Depth matches complexity and high-value context comes first |
 | Preservation in Improve mode | Useful human context is lost | Main ideas survive but wording or nuance is needlessly replaced | Accurate, distinctive prose and required text stay intact; edits are surgical |
@@ -26,7 +26,8 @@ Mark the audit `Needs revision` regardless of total score when any of these occu
 - useful human-written context is removed in Improve mode without a factual or reviewability reason;
 - internal agent/Harness Kit activity or a raw validation transcript overwhelms the change;
 - the output mutates GitHub or becomes an automated review/onboarding artifact instead of PR copy;
-- the body omits `Why`, `What changed`, or `Evidence`;
+- the body omits `Why`, `What changed`, `Risk`, or `Evidence`;
+- the Risk section invents a rating, loses material upstream uncertainty, or turns an advisory recommendation into approval;
 - a triggered change-shape summary omits exact totals, folds core work into supporting changes, lacks mechanically sourced collapsed core/supporting file inventories with subtotals, or implies effort, risk, quality, or readiness;
 - evidence is a raw command/check inventory instead of observed behavior and developer relevance.
 

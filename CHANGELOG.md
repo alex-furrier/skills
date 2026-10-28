@@ -2,6 +2,10 @@
 
 ## 0.1.0 — Unreleased
 
+- Give PR descriptions an explicit compact `Risk` section. Preserve the upstream
+  assessment from the evidence pack, or report missing input as Unassessed;
+  authoring does not rerun risk research or invent approval. Writing Check's
+  lint profiles and the standalone risk skill are unchanged.
 - Add standalone `pr-risk-note` and reuse it during PR-description drafting and
   improvement. Keep output to a risk label, advisory merge recommendation, and
   1–2 sentences; preserve unknown evidence and existing approval authority.
