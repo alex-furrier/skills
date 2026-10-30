@@ -93,7 +93,7 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
             "writing_check/cli.py", "writing_check/sweep.py", "writing_check/vale/.vale.ini",
             "writing_check/vale/profiles.json", "writing_check/vale/upstream-lock.json",
             "writing_check/vale/vendor/Google-LICENSE",
-        }, "writing_check_cli-1.0.0"),
+        }, "writing_check_cli-1.0.1"),
     ],
 )
 def test_independent_wheel_install_from_unrelated_directory(
