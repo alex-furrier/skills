@@ -1,9 +1,12 @@
+import hashlib
 import json
 import os
 import pathlib
 import subprocess
 import sys
 import zipfile
+
+import pytest
 
 ROOT = pathlib.Path(__file__).parents[1]
 PACKAGE = ROOT / "packages/writing-check"
@@ -22,7 +25,7 @@ def test_writing_wheel_contains_cli_policy_and_license(tmp_path):
         "writing_check/vale/profiles.json",
         "writing_check/vale/vendor/Google-LICENSE",
         "provenance.json",
-        "writing_check_cli-1.0.0.dist-info/licenses/LICENSE",
+        "writing_check_cli-1.0.1.dist-info/licenses/LICENSE",
     } <= names
 
 
@@ -34,6 +37,45 @@ def install_wheel(tmp_path):
     wheel = next(dist.glob("*.whl"))
     assert subprocess.run(["uv", "pip", "install", "--python", str(environment / "bin/python"), str(wheel)]).returncode == 0
     return environment
+
+
+@pytest.fixture(scope="module")
+def packaged_runtime(tmp_path_factory):
+    return install_wheel(tmp_path_factory.mktemp("writing-runtime"))
+
+
+@pytest.mark.parametrize("mode", ["file", "stdin", "sweep"])
+@pytest.mark.parametrize("punctuation", ["!", "."], ids=["known-warning", "clean-control"])
+def test_packaged_runtime_checks_actual_candidate(packaged_runtime, tmp_path, mode, punctuation):
+    text = f"Open the settings panel{punctuation} Select the account, review its access, and save the changes.\n"
+    candidate = tmp_path / "candidate.md"
+    candidate.write_text(text, encoding="utf-8")
+    binary = packaged_runtime / "bin/writing-check"
+    if mode == "sweep":
+        pairs = tmp_path / "pairs.json"
+        pairs.write_text(json.dumps([{"source": str(candidate), "profile": "commit"}]))
+        argv = [str(packaged_runtime / "bin/writing-check-sweep"), "--candidates", str(pairs), "--jsonl"]
+    else:
+        argv = [str(binary), "--profile", "commit", "--json", "--", "-" if mode == "stdin" else str(candidate)]
+    result = subprocess.run(argv, input=text if mode == "stdin" else None, text=True, capture_output=True, cwd=tmp_path, timeout=60)
+    record = json.loads(result.stdout)
+    warning = punctuation == "!"
+    assert result.returncode == (1 if warning else 0), result.stderr
+    assert record["status"] == ("findings" if warning else "no_findings")
+    assert record["source"]["text"] == text
+    assert record["source"]["sha256"] == hashlib.sha256(text.encode("utf-8")).hexdigest()
+    assert record["source"]["kind"] == ("stdin" if mode == "stdin" else "file")
+    assert record["source"]["identifier"] == ("stdin" if mode == "stdin" else str(candidate.resolve()))
+    assert record["vale"]["status"] == "ran"
+    assert record["vale"]["lint"]["exit"] == 0
+    if warning:
+        assert [(a["rule"], a["line"], a["span"], a["severity"]) for a in record["alerts"]] == [
+            ("GoogleDocs.Exclamation", 1, [19, 25], "suggestion")
+        ]
+        raw = json.loads(record["vale"]["lint"]["stdout"])
+        assert [a["Match"] for items in raw.values() for a in items] == ["panel! "]
+    else:
+        assert record["alerts"] == []
 
 
 def test_documented_tool_install_finds_its_own_vale_dependency(tmp_path):

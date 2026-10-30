@@ -7,6 +7,23 @@ Both independently versioned distributions are published: [`context-engineering-
 | `context-engineering-cli` | `packages/context-engineering` | context-engineering-v2.6.0 | publish-context-engineering.yml | Leave blank |
 | `writing-check-cli` | `packages/writing-check` | writing-check-v1.0.0 | publish-writing-check.yml | Leave blank |
 
+## Prepared Writing Check 1.0.1 (unreleased)
+
+The patch corrects Vale stdin forwarding and adds real-runtime warning/clean
+controls for file, stdin, and sweep inputs. In 1.0.0, the forwarded hyphen can
+produce empty alerts without checking the candidate. Stored source identity and
+readability do not establish that Vale linted it.
+
+No tag, release, registry upload, or installed-tool upgrade is implied by this
+preparation. Keep published installation pins at 1.0.0 until the new distribution
+is available. After separate merge/release approval, use the proposed tag writing-check-v1.0.1
+at the reviewed full commit SHA and the existing Writing Check release workflow.
+Apply all controls below, verify the registry artifacts and clean installation,
+then update install guidance and deliberately upgrade the CLI. Context Engineering
+needs no package release for this fix.
+
+## Release controls
+
 Publishing a GitHub Release on an exact matching tag triggers the corresponding job; push, PR, and draft releases do not publish. The one manual recovery dispatch for the existing Context release checks its published tag and approved commit before running the same build and upload gates. The tag must identify the same version as that package's `pyproject.toml`, and the release must target the reviewed full commit SHA (not a branch name). The workflow checks release identity, tag target, full repository fast check, and built wheel/sdist in a job without OIDC. A separate minimal-permission OIDC upload job verifies the artifact digest before the trusted-publisher upload. Each release uploads exactly one distribution. Do not use an unreviewed tag, release, or artifact.
 
 For subsequent releases, retain these controls from the first-release preparation:
