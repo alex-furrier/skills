@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "decision": "Generated projection of canonical skills/thinking in alex-furrier/skills. Per-skill provenance records Dots input revisions and hashes; current skill ownership is this catalog. No CLI, private corpus, historical eval or Product Bet Shaping is bundled.",
+  "entries": [
+    {
+      "path_prefix": "skills/",
+      "origin": "exact projection of canonical Thinking skills with their licenses and source provenance",
+      "license": "MIT"
+    },
+    {
+      "path_prefix": ".claude-plugin/",
+      "origin": "generated plugin metadata",
+      "license": "MIT"
+    },
+    {
+      "path": "README.md",
+      "origin": "generated usage guide",
+      "license": "MIT"
+    },
+    {
+      "path": "LICENSE",
+      "origin": "catalog MIT license",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "generated plugin-scoped inventory",
+      "license": "MIT"
+    }
+  ]
+}

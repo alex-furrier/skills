@@ -2,6 +2,10 @@
 
 The portable engineering catalog is the product. Keep the complete catalog self-contained, and declare any catalog-level package dependency directly in each affected skill. Keep skills read-only unless their contract names an explicit apply step and free of account, machine, credential, and private-corpus assumptions.
 
+Thinking sources live in `skills/thinking/`; regenerate `plugins/thinking/` with
+`python scripts/project_thinking_plugin.py`. Product Bet Shaping is standalone
+under `skills/product/`, outside that projection.
+
 ## Fast check
 
 ```bash

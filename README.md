@@ -1,6 +1,6 @@
 # skills
 
-A portable catalog of engineering Agent Skills. Root `skills/` is canonical; the Claude plugin is a tested projection of its Context skills.
+A portable catalog of engineering Agent Skills. Root `skills/` is canonical; Claude plugins are tested projections of their canonical skills.
 
 ## Install
 
@@ -37,6 +37,12 @@ For Claude users, install the Context projection from this repository's marketpl
 ```
 
 ## Catalog
+
+[Thinking](docs/thinking.md) contains independent `blindspot`, `research` and
+`goalify` skills under `skills/thinking/`, with a generated `plugins/thinking/`
+distribution. `product-bet-shaping` lives separately under `skills/product/` and
+is installed on its own. Plan is not bundled. Thinking requires no CLI package.
+
 
 Writing skills, including Writing Check, are in `skills/writing/`. Optional Context Engineering skills are in `skills/context-engineering/`. The Claude plugin at `plugins/context-engineering/` is generated from the canonical Context skills and CLI package. Update it with:
 

@@ -54,6 +54,9 @@ def main() -> int:
     result = subprocess.run([sys.executable, "scripts/project_context_plugin.py", "--check"], cwd=ROOT, capture_output=True, text=True)
     if result.returncode:
         errors.append(result.stdout.strip())
+    result = subprocess.run([sys.executable, "scripts/project_thinking_plugin.py", "--check"], cwd=ROOT, capture_output=True, text=True)
+    if result.returncode:
+        errors.append(result.stdout.strip())
     print("\n".join(errors) if errors else "validation passed")
     return int(bool(errors))
 
