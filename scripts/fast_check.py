@@ -16,6 +16,7 @@ def run(*command: str, allowed_returncodes: tuple[int, ...] = (0,)) -> None:
 
 def main() -> None:
     run("python", "scripts/project_context_plugin.py", "--check")
+    run("python", "scripts/project_thinking_plugin.py", "--check")
     run("uv", "lock", "--no-config", "--project", "packages/context-engineering", "--check", "--offline")
     run("uv", "lock", "--no-config", "--project", "packages/writing-check", "--check", "--offline")
     run("uv", "run", "--python", "3.11", "--with", "pytest", "--with", "mkdocs", "pytest", "-q")

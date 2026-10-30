@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-30 — Portable Thinking and standalone Product Bet Shaping
+
+- Adopt canonical Blindspot, Research and Goalify under `skills/thinking/`, each
+  independently usable. Generate the three-skill `thinking` Claude plugin from
+  those sources with copied-artifact, provenance and parity checks.
+- Adopt Product Bet Shaping separately under `skills/product/`; keep Plan outside
+  the bundle. Preserve original attribution and source hashes without private eval
+  corpora, model selection, CLI dependencies or automatic activation.
+
 ## 0.1.0 — Unreleased
 
 - Make Writing Check's review order explicit: meaning, structure, and contextual

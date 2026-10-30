@@ -3,6 +3,9 @@
   "source_revision": "safurrier/dots@e8dd297c82db68e1fe6fcdc51d2c661e5081aa76",
   "decision": "Public contracts are same-author adaptations reconciled through efa69e113 and f100a3b28. This root inventory governs the complete catalog; plugins/context-engineering/provenance.json is the exhaustive legal and provenance contract for the independently copied Context plugin. Writing Check vendors reviewed Google Vale v0.7.1 rules under MIT. Personal paths, owners, accounts, private corpora, and organization overlays are excluded.",
   "entries": [
+    {"path_prefix":"skills/thinking/","origin":"same-author portable Thinking skills adopted from alex-furrier/dots@0fa846087184c2fa548be9df589565ace256dd32; per-skill provenance records exact input hashes","license":"MIT"},
+    {"path_prefix":"skills/product/","origin":"same-author portable Product Bet Shaping adopted from alex-furrier/dots@0fa846087184c2fa548be9df589565ace256dd32; separate from Thinking","license":"MIT"},
+    {"path_prefix":"plugins/thinking/","origin":"generated Thinking distribution; plugin-scoped provenance governs independent copies","license":"MIT"},
     {"path_prefix":"skills/context-engineering/", "origin":"same-author portable Context skill source", "license":"MIT"},
     {"path_prefix":"plugins/context-engineering/skills/", "origin":"generated Claude projection of canonical Context skills", "license":"MIT"},
     {"path_prefix":"packages/context-engineering/", "origin":"same-author portable Context CLI source", "license":"MIT"},

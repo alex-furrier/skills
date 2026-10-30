@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "source_repository": "https://github.com/alex-furrier/dots",
+  "source_commit": "0fa846087184c2fa548be9df589565ace256dd32",
+  "source_path": "config/ai-config/plugins/alex-ai/skills/product-bet-shaping",
+  "source_files_sha256": {
+    "SKILL.md": "9ce30c4fd00c4a921bafcc94c0fc43ec239880668f84d5240cd7aa61b7f15598"
+  },
+  "decision": "Same-author portable adaptation, now canonical in alex-furrier/skills. Preserve attribution; historical private evaluations are excluded. LICENSE is the catalog MIT license, not a grant over linked third-party material.",
+  "entries": [
+    {
+      "path_prefix": "references/",
+      "origin": "same-author research references and attribution, adapted from recorded source",
+      "license": "MIT"
+    },
+    {
+      "path": "SKILL.md",
+      "origin": "same-author portable skill adaptation",
+      "license": "MIT"
+    },
+    {
+      "path": "LICENSE",
+      "origin": "catalog MIT license",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "independently authored skill-scoped provenance",
+      "license": "MIT"
+    }
+  ]
+}

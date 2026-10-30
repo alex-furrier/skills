@@ -1,11 +1,18 @@
 {
   "name": "safurrier-skills",
-  "owner": {"name": "safurrier"},
+  "owner": {
+    "name": "safurrier"
+  },
   "plugins": [
     {
       "name": "context-engineering",
       "source": "./plugins/context-engineering",
       "description": "Portable deterministic Context engineering skills"
+    },
+    {
+      "name": "thinking",
+      "source": "./plugins/thinking",
+      "description": "Independent Blindspot, Research and Goalify skills"
     }
   ]
 }
