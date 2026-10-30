@@ -1,12 +1,8 @@
 # Contextual style review
 
 Use these principles to review docs and PR copy, especially titles and lists
-that readers scan together. They draw on Shreya Shankar's
-[Five Principles for Generating Readable AI Text in Bulk](https://fsdatalab.github.io/blog/agent-text-at-scale/)
-(October 29, 2026; [shared on X](https://x.com/sh_reya/status/2115860470175612997)).
-The article focuses on feeds and dashboards. Using these ideas across complete
-documents is our extrapolation. The guidance and examples below are original
-prose.
+that readers scan together. Apply them where they help the reader; preserve
+the different purposes of narrative, reference material, and comparable items.
 
 1. **Make the actor and action clear.** Use a clear subject and verb, or start
    with the action when the actor is understood. Match tense to actual status;
@@ -22,14 +18,12 @@ prose.
 4. **Make variation mean something.** Check whether extra length, emphasis, or
    detail in one item signals a real difference. Keep needed warnings, doubt,
    and exceptions. Do not force equal lengths or trim a unique risk for balance.
-5. **Match verb connotations to purpose.** The article recommends clearly
-   positive or negative verbs to distinguish praise from complaints in
-   dashboards. For docs and PRs, we adapt this to verbs that help readers spot
-   failures, requests, and results. Keep neutral technical language when it
-   fits; do not force praise or blame.
+5. **Match verbs to purpose.** In feedback summaries, make praise and complaints
+   easy to distinguish. In docs and PRs, use precise verbs that help readers
+   spot failures, requests, and results. Keep neutral technical language when
+   it fits; do not force praise or blame.
 
-Evidence fidelity and avoiding inflated test claims come from the existing
-writing guidance. They are distinct from the article's fifth principle.
+Preserve evidence and qualifications. A limited test cannot prove broad success.
 
 For a useful finding, cite the passage, its effect on the reader, and the
 principle. Otherwise leave the text alone. These judgments add no CLI matches,
@@ -49,8 +43,7 @@ problem without a rewrite. The edits below show authorized Draft/Improve work.
   (principle 3). Keep both terms if the system actually distinguishes them.
 - **Hidden failure:** “Validation improved; malformed input still crashes.”
   → “Malformed input still crashes after the validation change.” The failure
-  is clear without adding a claim about what tests proved (principle 2;
-  technical adaptation of principle 5).
+  is clear without adding a claim about what tests proved (principles 2 and 5).
 - **Meaningful exception:** Keep a longer migration bullet that explains data
   loss, even beside short setup bullets (principle 4).
 - **Useful passive voice:** Keep “The signing key was revoked” when the key's
