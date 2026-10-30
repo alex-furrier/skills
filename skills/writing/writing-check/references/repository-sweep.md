@@ -37,6 +37,7 @@ Use another existing profile when the destination clearly owns it. State ambiguo
 4. Treat unavailable or execution-error records as missing evidence, not clean results.
 5. Keep dispositions bound to the exact `source.sha256`; discard them after any edit and rerun the changed candidate.
 6. Inspect each checked document against current repository truth. Verify links to repository files, documented command surfaces, source-of-truth claims, and current ownership boundaries with safe local evidence. Report factual or structural drift separately from Vale and readability observations; a clean checker result cannot establish documentation health.
+7. Apply [the contextual style review](style-review.md) within each document and across comparable titles or summaries when readers encounter them together. Keep findings separate from CLI records; do not impose one template across documents with different purposes.
 
 ## Apply repository updates
 
