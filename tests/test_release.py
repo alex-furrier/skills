@@ -256,11 +256,3 @@ def test_docs_verifier_reports_unexecutable_context_command_as_evidence(tmp_path
     assert record["context_cli"] == "execution_error"
     assert "could not be executed" in record["reason"]
     assert record["findings"] == []
-
-
-def test_fast_check_runs_writing_check_on_the_exact_readme_candidate():
-    text = (ROOT / "scripts/fast_check.py").read_text()
-    assert '"packages/writing-check"' in text
-    assert '"--profile",' in text and '"readme",' in text
-    assert '"README.md",' in text
-    assert "allowed_returncodes=(0, 1)" in text

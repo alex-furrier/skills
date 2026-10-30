@@ -19,6 +19,10 @@
 
 ## 0.1.0 — Unreleased
 
+- Require a usable, source-bound README checker record in repository validation.
+  Findings remain advisory; import crashes, empty output, stale source identity,
+  and error records can no longer pass merely by exiting 1.
+
 - Review canonical documentation with the corrected Writing Check runtime. Clarify
   installation conditions, isolated validation, and historical evidence without
   changing authority boundaries or forcing advisory findings to disappear.
