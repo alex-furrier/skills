@@ -3,6 +3,9 @@
 Use these principles to review docs and PR copy, especially titles and lists
 that readers scan together. Apply them where they help the reader; preserve
 the different purposes of narrative, reference material, and comparable items.
+Review meaning, structure, and these principles before automated diagnostics,
+then recheck them after any suggested revisions. Vale and readability cannot
+override a justified choice or a necessary qualification.
 
 1. **Make the actor and action clear.** Use a clear subject and verb, or start
    with the action when the actor is understood. Match tense to actual status;
