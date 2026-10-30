@@ -15,14 +15,19 @@ uv build packages/context-engineering
 uv build packages/writing-check
 ```
 
-Test clean-wheel command surfaces in temporary environments:
+Test built-wheel commands in a temporary environment so validation leaves installed tools untouched:
 
 ```bash
-uv tool install packages/context-engineering/dist/context_engineering_cli-*.whl
-context-engineering --help
-uv tool install packages/writing-check/dist/writing_check_cli-*.whl
-writing-check --help
+validation_dir="$(mktemp -d)"
+uv venv "$validation_dir/venv"
+uv pip install --python "$validation_dir/venv/bin/python" \
+  packages/context-engineering/dist/context_engineering_cli-*.whl \
+  packages/writing-check/dist/writing_check_cli-*.whl
+"$validation_dir/venv/bin/context-engineering" --help
+"$validation_dir/venv/bin/writing-check" --help
 ```
+
+The repository tests also require a known Vale warning and a clean control through file, stdin, and sweep inputs. Successful startup or an empty alert list alone does not show that Vale checked the candidate.
 
 The Writing Check package fetches its pinned Vale executable on first use through the pinned PyPI dependency. The repository does not provide a second setup command.
 

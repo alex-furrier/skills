@@ -9,9 +9,13 @@ python3 evals/pr-writing/replay.py plan evals/pr-writing/example-manifest.json /
 cat /tmp/pr-trials/plan.json
 ```
 
-For real trials, keep a manifest and inputs in a private ignored directory outside the repository. Replace synthetic settings, pin source snapshots/prompts/skill dependencies by SHA-256 under `inputs`, and predeclare exact model/reasoning, cache conditions, task, arm definitions, quality gates, timing boundary, repeats and budget. Cases should record immutable base/head, source provenance, diff size and omitted/generated/binary material. Give both arms equivalent source/rationale/validation access. Preserve contradictions. Keep development separate from unseen outputs; observed cases are no longer holdouts after tuning.
+For real trials, keep a manifest and inputs in a private ignored directory outside the repository. Replace synthetic settings, pin source snapshots/prompts/skill dependencies by SHA-256 under `inputs`, and predeclare exact model/reasoning, cache conditions, task, arm definitions, quality gates, timing boundary, repeats and budget.
 
-Execute schedule entries sequentially through the **same supported native harness**, identical model/reasoning and drafting/check/repair policy. Even repeats reverse each pair's first arm. Avoid concurrent writers, heavy background work and grading while timing. Record UTC/monotonic clocks, load timestamps, tool/runtime versions, native commands, actual token/cache counters and private raw evidence. Unknown server settings, queue/inference timing or usage remain unknown. Fresh historical replay is not a genuine warm implementation continuation.
+Cases should record immutable base/head, source provenance, diff size and omitted/generated/binary material. Give both arms equivalent source/rationale/validation access. Preserve contradictions. Keep development separate from unseen outputs; observed cases are no longer holdouts after tuning.
+
+Execute schedule entries sequentially through the **same supported native harness**, identical model/reasoning and drafting/check/repair policy.
+
+Even repeats reverse each pair's first arm. Avoid concurrent writers, heavy background work and grading while timing. Record UTC/monotonic clocks, load timestamps, tool/runtime versions, native commands, actual token/cache counters and private raw evidence. Unknown server settings, queue/inference timing or usage remain unknown. Fresh historical replay is not a genuine warm implementation continuation.
 
 Time from before per-run acquisition/verification through delivered final bytes, checks, necessary repairs and final source verification. Include candidate preparation/retries. Keep shared remote acquisition, setup, review and evaluation overhead separately visible. Phase intervals may overlap or nest; do not sum them as a critical path. The ledger imports measurements, and cannot independently attest supplied durations, telemetry, commands or check execution.
 
@@ -32,7 +36,11 @@ Write one local receipt per actual attempt:
 }
 ```
 
-These numbers illustrate schema, **not observed evidence**. File paths resolve relative to the receipt. Use actual native usage only; `null` means unavailable. Cached input is a subset of input; reasoning a subset of output. Do not double count them, estimate tokens from bytes or infer money from subscription counters. Keep raw events, prompts, checks, tool-roundtrip and load/clock records privately; optional extra receipt fields retain references. For `failed`/`interrupted`, retain `failure_reason`, exposed partial usage and known duration. Unknown terminal time is `null`, not zero. A missing draft is neither a quality failure nor a successful fast outcome.
+These numbers illustrate schema, **not observed evidence**. File paths resolve relative to the receipt. Use actual native usage only; `null` means unavailable. Cached input is a subset of input; reasoning a subset of output.
+
+Do not double count them, estimate tokens from bytes or infer money from subscription counters. Keep raw events, prompts, checks, tool-roundtrip and load/clock records privately; optional extra receipt fields retain references. For `failed`/`interrupted`, retain `failure_reason`, exposed partial usage and known duration. Unknown terminal time is `null`, not zero.
+
+A missing draft is neither a quality failure nor a successful fast outcome.
 
 ```sh
 python3 evals/pr-writing/replay.py record /tmp/pr-trials /path/to/private/receipt.json

@@ -1,34 +1,50 @@
 # PyPI publishing
 
-Both independently versioned distributions are published: [`context-engineering-cli` 2.6.1](https://pypi.org/project/context-engineering-cli/2.6.1/) ([release run](https://github.com/alex-furrier/skills/actions/runs/36173696116), [tag context-engineering-v2.6.1](https://github.com/alex-furrier/skills/releases/tag/context-engineering-v2.6.1) at commit `fda3af779a399f7b3b5f586e7dcf119d2be3638c`) and [`writing-check-cli` 1.0.0](https://pypi.org/project/writing-check-cli/) ([release run](https://github.com/alex-furrier/skills/actions/runs/36072533222)). Fresh Python 3.11 registry installs and CLI checks passed; Writing Check also ran Vale, and Context Engineering 2.6.1 passed synthetic sessions checks. The original Context 2.6.0 publication used a [recovery run](https://github.com/alex-furrier/skills/actions/runs/36072208510). See [installation](installation.md) for public installs. The first-release tags and publisher configuration are:
+The independently versioned distributions are published:
+
+- [Writing Check CLI 1.0.1](https://pypi.org/project/writing-check-cli/1.0.1/): [release run](https://github.com/alex-furrier/skills/actions/runs/41083408841), [writing-check-v1.0.1](https://github.com/alex-furrier/skills/releases/tag/writing-check-v1.0.1), source commit `378c2355076a38ca16399a055ed87249e1c79dc9`.
+- [Context Engineering CLI 2.6.1](https://pypi.org/project/context-engineering-cli/2.6.1/): [release run](https://github.com/alex-furrier/skills/actions/runs/36173696116), [context-engineering-v2.6.1](https://github.com/alex-furrier/skills/releases/tag/context-engineering-v2.6.1), source commit `fda3af779a399f7b3b5f586e7dcf119d2be3638c`.
+
+Fresh Python 3.11 registry installs passed. Writing Check 1.0.1 produced the expected real Vale warning and clean control results, with exact source identities. Context Engineering 2.6.1 passed synthetic sessions checks. See [installation](installation.md) for public installs.
+
+The first Writing Check 1.0.0 publication used [this release run](https://github.com/alex-furrier/skills/actions/runs/36072533222). The original Context 2.6.0 publication used a [recovery run](https://github.com/alex-furrier/skills/actions/runs/36072208510). The first-release tags and publisher configuration remain:
 
 | Distribution | Project directory | First release tag | PyPI trusted publisher workflow filename | PyPI environment field |
 | --- | --- | --- | --- | --- |
 | `context-engineering-cli` | `packages/context-engineering` | context-engineering-v2.6.0 | publish-context-engineering.yml | Leave blank |
 | `writing-check-cli` | `packages/writing-check` | writing-check-v1.0.0 | publish-writing-check.yml | Leave blank |
 
-## Prepared Writing Check 1.0.1 (unreleased)
+## Writing Check 1.0.1 correction
 
 The patch corrects Vale stdin forwarding and adds real-runtime warning/clean
 controls for file, stdin, and sweep inputs. In 1.0.0, the forwarded hyphen can
 produce empty alerts without checking the candidate. Stored source identity and
-readability do not establish that Vale linted it.
+readability do not establish that Vale linted it. Rerun needed lint checks with
+1.0.1 on the exact candidate; existing semantic judgments remain separate.
 
-No tag, release, registry upload, or installed-tool upgrade is implied by this
-preparation. Keep published installation pins at 1.0.0 until the new distribution
-is available. After separate merge/release approval, use the proposed tag writing-check-v1.0.1
-at the reviewed full commit SHA and the existing Writing Check release workflow.
-Apply all controls below, verify the registry artifacts and clean installation,
-then update install guidance and deliberately upgrade the CLI. Context Engineering
-needs no package release for this fix.
+The published 1.0.1 wheel and source archive passed digest and payload checks
+against the reviewed source. Installation guidance now pins that release.
+Context Engineering needs no package release for this fix. An installed-tool
+upgrade remains a deliberate action; updating skill instructions alone does not
+replace the Python CLI.
 
 ## Release controls
 
-Publishing a GitHub Release on an exact matching tag triggers the corresponding job; push, PR, and draft releases do not publish. The one manual recovery dispatch for the existing Context release checks its published tag and approved commit before running the same build and upload gates. The tag must identify the same version as that package's `pyproject.toml`, and the release must target the reviewed full commit SHA (not a branch name). The workflow checks release identity, tag target, full repository fast check, and built wheel/sdist in a job without OIDC. A separate minimal-permission OIDC upload job verifies the artifact digest before the trusted-publisher upload. Each release uploads exactly one distribution. Do not use an unreviewed tag, release, or artifact.
+Publishing a GitHub Release on an exact matching tag triggers the corresponding job; push, PR, and draft releases do not publish. The one manual recovery dispatch for the existing Context release checks its published tag and approved commit before running the same build and upload gates.
+
+The tag must identify the same version as that package's `pyproject.toml`, and the release must target the reviewed full commit SHA (not a branch name). The workflow checks release identity, tag target, full repository fast check, and built wheel/sdist in a job without OIDC.
+
+A separate minimal-permission OIDC upload job verifies the artifact digest before the trusted-publisher upload. Each release uploads exactly one distribution. Do not use an unreviewed tag, release, or artifact.
 
 For subsequent releases, retain these controls from the first-release preparation:
 
-1. Confirm ownership/availability and existing versions of **each** exact PyPI project name, release authority, and permitted first version; never overwrite an existing version. Confirm the packaged portable source and the vendored Google Vale policy/license/provenance are cleared for public redistribution, including no private corpus, credentials, or machine-specific material.
-2. The repository stays private on the current GitHub Free plan. This first-release path has **no enforced environment reviewer gate or release-tag protection rules**: anyone with sufficient repository release/tag or workflow authority could trigger publication. Before any tag or GitHub Release, the account owner must manually approve the proposed source commit and tag target, prior CI results, locally built artifacts, and public redistribution. Review release CI and its artifacts after the workflow runs; there is no pause for approval before its upload. Manual review is a procedure, not a GitHub-enforced safeguard. The existing projects use the trusted-publisher identity shown above: GitHub owner `alex-furrier`, repository `skills`, exact workflow filename, and no environment. Verify that account-side configuration before changing publisher settings; do not add a PyPI API token or repository secret.
+1. Confirm ownership/availability and existing versions of **each** exact PyPI project name, release authority, and permitted first version; never overwrite an existing version.
+
+   Confirm the packaged portable source and the vendored Google Vale policy/license/provenance are cleared for public redistribution, including no private corpus, credentials, or machine-specific material.
+2. The repository stays private on the current GitHub Free plan. This first-release path has **no enforced environment reviewer gate or release-tag protection rules**: anyone with sufficient repository release/tag or workflow authority could trigger publication.
+
+   Before any tag or GitHub Release, the account owner must manually approve the proposed source commit and tag target, prior CI results, locally built artifacts, and public redistribution. Review release CI and its artifacts after the workflow runs; there is no pause for approval before its upload. Manual review is a procedure, not a GitHub-enforced safeguard.
+
+   The existing projects use the trusted-publisher identity shown above: GitHub owner `alex-furrier`, repository `skills`, exact workflow filename, and no environment. Verify that account-side configuration before changing publisher settings; do not add a PyPI API token or repository secret.
 3. Review the source at the release tag, its changelog and metadata, run `python scripts/fast_check.py`, and build each intended package in an empty output directory. Run `python scripts/check_publish.py <package-key> refs/tags/<tag> <tag> --dist <dist-directory>`; inspect the wheel/sdist, notices and provenance. For Writing Check, verify the pinned `vale` dependency's first-use executable download behavior and network/prerequisite expectations in a clean environment. CI cannot establish private-source rights or PyPI namespace ownership.
 4. Only after review and approval, create the corresponding tag and publish its GitHub Release. The release workflow must be present on the default branch. Observe the workflow, verify the uploaded project/version and clean installation before changing installation guidance.

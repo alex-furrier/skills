@@ -160,7 +160,7 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
     for text in (readme, installation):
         assert "uv tool install context-engineering-cli==2.6.1" in text
         assert "context-engineering-cli==2.6.0" not in text
-        assert "uv tool install writing-check-cli==1.0.0" in text
+        assert "uv tool install writing-check-cli==1.0.1" in text
         assert "explicit" in text and "consent" in text
         assert "writing-check --help" in text
         assert "runtime install" not in text and "writing-check doctor" not in text
@@ -185,7 +185,7 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
 def test_all_canonical_cli_skills_pin_registry_installs():
     for directory, package, version in (
         ("context-engineering", "context-engineering-cli", "2.6.1"),
-        ("writing", "writing-check-cli", "1.0.0"),
+        ("writing", "writing-check-cli", "1.0.1"),
     ):
         for skill in (ROOT / "skills" / directory).glob("*/SKILL.md"):
             text = skill.read_text()
@@ -200,7 +200,7 @@ def test_all_canonical_cli_skills_pin_registry_installs():
 @pytest.mark.parametrize(
     ("skill", "package", "command", "version"),
     [("context-engineering/context-review", "context-engineering", "context-engineering", "2.6.1"),
-     ("writing/writing-check", "writing-check", "writing-check", "1.0.0")],
+     ("writing/writing-check", "writing-check", "writing-check", "1.0.1")],
 )
 def test_selected_skill_alone_documents_registry_and_optional_source_route(tmp_path, skill, package, command, version):
     copied = tmp_path / "selected-skill"
