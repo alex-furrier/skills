@@ -227,7 +227,8 @@ def main() -> int:
         record.update(status="execution_error", vale={"status": "execution_error", "version": version, "error": f"Vale version exited {version_run.returncode}"})
         print_record(record)
         return EXIT_EXECUTION
-    lint_argv = [vale, "--no-global", f"--config={ROOT / 'vale' / '.vale.ini'}", "--no-exit", "--output=JSON", "--ext=.md", "-"]
+    # Vale reads stdin with no positional argument; "-" would be literal prose.
+    lint_argv = [vale, "--no-global", f"--config={ROOT / 'vale' / '.vale.ini'}", "--no-exit", "--output=JSON", "--ext=.md"]
     lint: dict[str, Any] = {"argv": lint_argv}
     record["vale"] = {"status": "ran", "version": version, "lint": lint}
     try:
