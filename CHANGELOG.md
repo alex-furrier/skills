@@ -9,15 +9,19 @@
   the bundle. Preserve original attribution and source hashes without private eval
   corpora, model selection, CLI dependencies or automatic activation.
 
-## Writing Check CLI 1.0.1 — Unreleased
+## Writing Check CLI 1.0.1 — 2026-10-30
 
 - Fix Vale stdin forwarding so it checks the retained candidate rather than a
   literal hyphen. Restore advisory warnings for file, stdin, and sweep inputs;
   preserve source identity, readability, policy, schema, and exit conventions.
 - Require known-warning and clean controls through the packaged CLI's real
-  pinned Vale runtime. Published install pins remain at 1.0.0 until release.
+  pinned Vale runtime. Published install guidance now pins the verified 1.0.1 release.
 
 ## 0.1.0 — Unreleased
+
+- Review canonical documentation with the corrected Writing Check runtime. Clarify
+  installation conditions, isolated validation, and historical evidence without
+  changing authority boundaries or forcing advisory findings to disappear.
 
 - Make Writing Check's review order explicit: meaning, structure, and contextual
   style first, then automated diagnostics, justified revisions, semantic/style
