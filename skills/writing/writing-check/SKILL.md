@@ -18,7 +18,14 @@ The `writing-check-cli` package bundles the reviewed Google Vale v0.7.1 rules, t
 
 ## Check one exact candidate
 
-Alongside the CLI check, apply [the contextual style review](references/style-review.md) to docs, PR descriptions, and comparable titles or list items. Judge the reader's task and neighboring items; report only concrete improvements. Keep these advisory judgments separate from Vale records and readability. This skill's review guidance does not add CLI rules, profiles, scores, or publication gates. Audit mode still returns findings without replacement prose.
+Use this order for docs, PR descriptions, and comparable titles or list items:
+
+1. Review meaning, structure, and [contextual style](references/style-review.md) with the destination owner first. Consider the reader's task and neighboring items. In an authorized edit workflow, draft or revise for those needs before running diagnostics. Audit mode records findings without replacement prose.
+2. Run the CLI on that exact candidate for Vale findings and readability observations. These are diagnostics, not instructions to rewrite every match or meet a score.
+3. Judge suggested changes against meaning and contextual style. Make only justified revisions; retain exact terms, necessary qualifications, deliberate voice, and useful wording when a suggestion would harm them.
+4. Recheck meaning, structure, and style after revisions. If any text changed, discard stale records and rerun the CLI on the final bytes. A justified residual finding can remain; do not alternate blind rewrites between style and lint.
+
+An early CLI run may establish a baseline, but it does not replace the initial contextual review or authorize edits. Keep semantic judgments separate from Vale records and readability. The CLI itself does not apply this sequence or edit text; its behavior, profiles, and exit statuses are unchanged. This review adds no scores or publication gates.
 
 Inspect `writing-check --help`, then run:
 

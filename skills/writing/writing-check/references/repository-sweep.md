@@ -31,13 +31,13 @@ Use another existing profile when the destination clearly owns it. State ambiguo
 
 ## Check each candidate
 
-1. Inspect the checker help once. After discovery has produced explicit exact source/profile pairs, either run `writing-check` per candidate or use the bounded caller-side path: `writing-check-sweep --candidates pairs.json --jsonl`, where `pairs.json` is a non-empty JSON array of objects containing exactly `source` and `profile`. It performs no discovery and accepts no stdin candidate.
-2. Retain each schema-v3 JSON Lines record independently. The caller validates the bundled policy for each candidate and shares only the in-process Vale version probe; source bytes, policy digest, findings, readability state, raw tool evidence, and status remain candidate-specific.
-3. Do not combine records into a score, quality verdict, readiness gate, or new aggregate schema.
-4. Treat unavailable or execution-error records as missing evidence, not clean results.
-5. Keep dispositions bound to the exact `source.sha256`; discard them after any edit and rerun the changed candidate.
-6. Inspect each checked document against current repository truth. Verify links to repository files, documented command surfaces, source-of-truth claims, and current ownership boundaries with safe local evidence. Report factual or structural drift separately from Vale and readability observations; a clean checker result cannot establish documentation health.
-7. Apply [the contextual style review](style-review.md) within each document and across comparable titles or summaries when readers encounter them together. Keep findings separate from CLI records; do not impose one template across documents with different purposes.
+1. Inspect meaning and structure against current repository truth. Verify links to repository files, documented command surfaces, source-of-truth claims, and ownership boundaries with safe local evidence.
+2. Apply [the contextual style review](style-review.md) within each document and across comparable titles or summaries when readers encounter them together. In update mode, make justified initial revisions through the destination owner before diagnostics; audit mode reports without edits. Do not impose one template across different purposes.
+3. Inspect the checker help once. After discovery has produced explicit exact source/profile pairs, either run `writing-check` per candidate or use the bounded caller-side path: `writing-check-sweep --candidates pairs.json --jsonl`, where `pairs.json` is a non-empty JSON array of objects containing exactly `source` and `profile`. It performs no discovery and accepts no stdin candidate.
+4. Retain each schema-v3 JSON Lines record independently. The caller validates the bundled policy for each candidate and shares only the in-process Vale version probe; source bytes, policy digest, findings, readability state, raw tool evidence, and status remain candidate-specific.
+5. Keep semantic and style judgments separate from CLI records. Do not combine them into a score, quality verdict, readiness gate, or new aggregate schema. A clean checker result cannot establish documentation health.
+6. Treat unavailable or execution-error records as missing evidence, not clean results.
+7. Keep dispositions bound to the exact `source.sha256`. After any diagnostic-driven edit, recheck meaning and contextual style, discard stale records, and rerun the CLI on the changed candidate. Keep justified residual findings rather than undoing useful prose to satisfy them.
 
 ## Apply repository updates
 
@@ -53,12 +53,12 @@ In repository update mode:
 
 ### Run a bounded rewrite loop
 
-For every changed candidate, aim for `no_findings` and, when readability is `normal`, both FRE 55 or higher and FK 10 or lower. Use one shared budget of no more than three rewrite passes after the initial check:
+Use one shared budget of no more than three rewrite passes after the initial check. Stop when no justified edits remain, even if Vale findings or readability shortfalls remain. `no_findings` and normal-sample FRE 55 / FK 10 are advisory observations, not acceptance criteria:
 
-1. Fix every finding that repository truth and the destination owner judge actionable. Rewrite paragraphs or sections coherently, and remove obsolete detail, instead of applying a sequence of local substitutions.
-2. For a `normal` sample below either readability target, improve ordering, sentence length, paragraph size, and useful list structure during the same pass.
-3. On every pass, compare the revision with the destination owner's technical and authority constraints from step 2, including ADR decisions and executable commands.
-4. Rerun writing-check on the exact rewritten candidate after each pass and discard every stale record and disposition. Stop early when no actionable findings remain and every applicable readability target is met.
+1. Revisit meaning, structure, and contextual style before choosing which diagnostic findings to act on. Rewrite coherently when useful rather than applying a sequence of local substitutions.
+2. Use a `normal` sample's readability shortfall to locate dense prose. Improve ordering, sentence length, paragraph size, or list structure only when it helps the reader and preserves the intended content.
+3. On every pass, recheck contextual style and the destination owner's technical and authority constraints from step 2, including ADR decisions and executable commands.
+4. Rerun writing-check on the exact rewritten candidate after each pass and discard every stale record and disposition. Stop early when no justified revisions remain; retained observations need a specific reason, not another blind rewrite pass.
 5. Never apply a blind punctuation or substitution sweep. Splitting a sentence must produce two grammatical, correctly capitalized sentences; changing dashes, colons, contractions, or passive voice must preserve the surrounding meaning. Do not chase `no_findings` by changing exact terms, required text, quotes, deliberate voice, or known false positives. Do not game either formula or expand familiar technical terms merely to change a score.
 6. After the third pass, separate actionable findings from justified required-text residuals. Disposition each residual against the final source with one concrete category and reason. Do not bulk-disposition a large queue with a generic fidelity claim when coherent compression or rewriting can still remove it. Report unmet normal-sample metrics, attempted improvements, and the specific precision or authority boundary that blocks further rewriting.
 

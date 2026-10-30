@@ -2,6 +2,10 @@
 
 ## 0.1.0 — Unreleased
 
+- Make Writing Check's review order explicit: meaning, structure, and contextual
+  style first, then automated diagnostics, justified revisions, semantic/style
+  recheck, and a fresh check after text changes. Preserve justified residual
+  findings without a blind rewrite loop; the CLI is unchanged.
 - Add a contextual style pass to Writing Check reviews for docs,
   PR descriptions, and comparable text items. Keep semantic observations
   separate from the CLI's existing Vale and readability records.
