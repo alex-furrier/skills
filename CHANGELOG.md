@@ -2,6 +2,9 @@
 
 ## 0.1.0 — Unreleased
 
+- Add a contextual style pass to Writing Check reviews for docs,
+  PR descriptions, and comparable text items. Keep semantic observations
+  separate from the CLI's existing Vale and readability records.
 - Give PR descriptions an explicit compact `Risk` section. Preserve the upstream
   assessment from the evidence pack, or report missing input as Unassessed;
   authoring does not rerun risk research or invent approval. Writing Check's

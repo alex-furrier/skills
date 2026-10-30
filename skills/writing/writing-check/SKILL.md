@@ -1,13 +1,13 @@
 ---
 name: writing-check
-description: Run source-bound Vale checks and qualified readability sampling for exact writing candidates or repository-wide documentation sweeps. Use when auditing drafted prose or applying explicitly requested conservative repository writing updates.
+description: Review writing with contextual style principles, source-bound Vale checks, and qualified readability sampling for exact candidates or repository-wide documentation sweeps. Use when auditing drafted prose or applying explicitly requested conservative repository writing updates.
 ---
 
 # Writing Check
 
 ## Purpose and boundary
 
-Collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the source bytes, normalized findings, raw Vale output, and source identity. Results do not establish meaning, factuality, safety, usefulness, writing quality, acceptance, or readiness.
+Review style in context and collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the source bytes, normalized findings, raw Vale output, and source identity. Results do not establish meaning, factuality, safety, usefulness, writing quality, acceptance, or readiness.
 
 - Keep the installed `writing-check` command read-only. It remains single-candidate; do not add repository discovery or an auto-fix path. On first use, its pinned PyPI Vale wrapper may download the Vale executable from the Vale GitHub release; later checks use that installed executable.
 - A single-candidate check or repository audit never edits prose, source files, Git, or GitHub. Enter repository update mode only after an explicit request to update prose; the destination owner applies edits outside the checker.
@@ -17,6 +17,8 @@ Collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the s
 The `writing-check-cli` package bundles the reviewed Google Vale v0.7.1 rules, their MIT license, upstream lock, and a pinned Vale runtime dependency. If the CLI is missing, request explicit install consent. With consent and `uv`, run `uv tool install writing-check-cli==1.0.0` (published on PyPI), then `writing-check --help`. As an optional source fallback, with authenticated `gh` access to the private `alex-furrier/skills` repository, set `checkout="$(mktemp -d)"`, run `gh repo clone alex-furrier/skills "$checkout/skills"`, inspect and trust the checkout, then run `uv tool install "$checkout/skills/packages/writing-check"` and `writing-check --help`. From an existing trusted checkout, `uv tool install ./packages/writing-check` works. Never install automatically. If `uv`, network, install, or help fails (or `gh` or access fails on the source route), or a check returns `unavailable` or `execution_error`, report that state rather than running a substitute checker. All severities are normalized to `suggestion`.
 
 ## Check one exact candidate
+
+Alongside the CLI check, apply [the contextual style review](references/style-review.md) to docs, PR descriptions, and comparable titles or list items. Judge the reader's task and neighboring items; report only concrete improvements. Keep these advisory judgments separate from Vale records and readability. This skill's review guidance does not add CLI rules, profiles, scores, or publication gates. Audit mode still returns findings without replacement prose.
 
 Inspect `writing-check --help`, then run:
 
