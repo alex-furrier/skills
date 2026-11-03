@@ -16,16 +16,15 @@ CLI, account, private source or delegated agent is required.
 
 ## Install or try Thinking
 
-This repository is private. These routes require existing repository access;
-sharing a link does not grant access or change repository visibility.
-
-Install an individual skill with the host-compatible Skills installer:
+Install the suite with Node.js 22.20 or newer:
 
 ```bash
-npx skills add alex-furrier/skills --skill blindspot
-npx skills add alex-furrier/skills --skill research
-npx skills add alex-furrier/skills --skill goalify
+npx skills@1.7.4 install alex-furrier/skills/skills/thinking --skill '*'
 ```
+
+Choose your agent and scope at the installer prompts. For one skill, replace
+`'*'` with `goalify`, `research`, or `blindspot`. See
+[installation](installation.md) for agent-specific paths and invocation syntax.
 
 Or use the Claude marketplace plugin:
 
@@ -34,7 +33,7 @@ Or use the Claude marketplace plugin:
 /plugin install thinking@safurrier-skills
 ```
 
-From an authorized checkout or a copy of `plugins/thinking`, try it without a
+From a source checkout or a copy of `plugins/thinking`, try it without a
 persistent install:
 
 ```bash
@@ -43,8 +42,8 @@ pi --skill /absolute/path/to/thinking/skills/research
 ```
 
 For a source checkout, replace `/absolute/path/to/thinking` with its
-`plugins/thinking` directory. Select a named skill in the session. Other hosts
-can import each canonical SKILL.md with its adjacent references, LICENSE and
+`plugins/thinking` directory. In Claude, use `/thinking:goalify`; in Pi, use
+`/skill:research`. Other hosts can import each canonical SKILL.md with its adjacent references, LICENSE and
 provenance.json through their supported skill mechanism. Installation is an
 explicit action, not part of running a skill. The plugin does not set a default
 profile or install a CLI. No PyPI release is needed for this instruction-only
@@ -58,7 +57,7 @@ alternatives, opportunity cost and outcome checks. It does not change approved
 priorities or authorize implementation.
 
 ```bash
-npx skills add alex-furrier/skills --skill product-bet-shaping
+npx skills@1.7.4 install alex-furrier/skills --skill product-bet-shaping
 ```
 
 This skill and Plan are outside the Thinking plugin. Product Bet Shaping can be

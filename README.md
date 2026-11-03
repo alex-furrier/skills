@@ -1,62 +1,60 @@
 # Skills
 
-A portable catalog of engineering Agent Skills. Root `skills/` is canonical. Claude plugins are tested projections of their canonical skills.
+Agent Skills for thinking, writing, and keeping useful context.
 
-## Install
+The aim is to keep good habits useful as agents get more capable: clarify the
+problem, verify the evidence, explain it clearly, and retain what the next
+session needs. These skills support engineering work, including code, through
+reasoning and communication.
 
-Install individual catalog skills with Vercel Skills if you have access to this private repository:
+## What to install
 
-```bash
-npx skills add alex-furrier/skills --skill context-docs
-npx skills add alex-furrier/skills --skill writing-check
-```
+| Suite | Use it when you need to… |
+| --- | --- |
+| [Thinking](docs/thinking.md) | Clarify a scattered request with Goalify, verify a claim with Research, or find missing domain expertise with experimental Blindspot. Each works independently. |
+| [Writing](skills/writing/) | Draft or improve a README, PR description, or other prose, with advisory style checks. |
+| [Context Engineering](skills/context-engineering/) | Keep AGENTS.md, docs, specifications, and decision records accurate; capture useful session knowledge. |
 
-Writing and Writing Check are one suite: install the `writing-check` skill and its CLI together. Context Engineering is an optional suite for deterministic repository analysis.
+[Product Bet Shaping](skills/product/product-bet-shaping/SKILL.md) is a separate
+skill for deciding whether an idea is worth pursuing and what to try first.
 
-PR descriptions preserve the upstream `pr-risk-note` assessment in a compact
-`Risk` section, or report that it was not supplied. The risk skill works on its
-own without a CLI or hosted-service dependency; Writing Check does not classify
-PR risk from prose.
+## Quick start
 
-Installing selected skills alone does not include their CLI packages. With explicit install consent, install the published CLIs you need from PyPI using `uv`:
-
-```bash
-uv tool install writing-check-cli==1.0.1
-writing-check --help
-uv tool install context-engineering-cli==2.6.1
-context-engineering --help
-```
-
-Writing Check 1.0.1 and Context Engineering 2.6.1 are [published on PyPI](docs/installation.md). A [trusted source checkout](docs/installation.md#trusted-source-checkout-fallback) remains an optional fallback.
-
-- Never install automatically.
-- If installation or the CLI check fails, report the dependency unavailable rather than claiming analysis ran.
-- Writing Check's pinned `vale` Python dependency downloads Vale on first use, so no second setup command is required.
-
-For Claude users, install the Context projection from this repository's marketplace:
-
-```text
-/plugin marketplace add alex-furrier/skills
-/plugin install context-engineering@safurrier-skills
-```
-
-## Catalog
-
-[Thinking](docs/thinking.md) contains independent `blindspot`, `research` and
-`goalify` skills under `skills/thinking/`, with a generated `plugins/thinking/`
-distribution. `product-bet-shaping` lives separately under `skills/product/` and
-is installed on its own. Plan is not bundled. Thinking requires no CLI package.
-
-Writing skills, including Writing Check, are in `skills/writing/`. Optional Context Engineering skills are in `skills/context-engineering/`. The Claude plugin at `plugins/context-engineering/` is generated from the canonical Context skills and CLI package. Update it with:
+With Node.js 22.20 or newer, choose a suite:
 
 ```bash
+npx skills@1.7.4 install alex-furrier/skills/skills/thinking --skill '*'
+npx skills@1.7.4 install alex-furrier/skills/skills/writing --skill '*'
+npx skills@1.7.4 install alex-furrier/skills/skills/context-engineering --skill '*'
+```
+
+Select your agent and installation scope at the prompts. Choose **Project** to
+keep the install local to the current project. Each command selects every skill
+in that suite. To install one skill instead, replace `'*'` with its name, such as
+`goalify`. Avoid adding a second copy through another plugin.
+
+Invocation depends on your agent: Codex uses `$goalify`, Claude Code uses
+`/goalify`, and Pi uses `/skill:goalify`. Claude marketplace plugins namespace
+the command, such as `/thinking:goalify`.
+
+Thinking needs no companion CLI. Writing Check and Context Engineering workflows
+also need their [companion CLIs](docs/installation.md). Installing the skills does
+not install those packages. Style findings are advisory, not proof of factuality
+or readiness.
+
+See [installation](docs/installation.md) for agent paths, CLI setup, and the
+Thinking and Context Engineering Claude plugins.
+
+## Contribute
+
+Root `skills/` is canonical. Update the sources, regenerate the affected plugin,
+and run the checks:
+
+```bash
+python scripts/project_thinking_plugin.py
 python scripts/project_context_plugin.py
-```
-
-## Validate
-
-```bash
 python scripts/fast_check.py
 ```
 
-The catalog is self-contained and makes no default account, credential, private-corpus, or hosted-service assumption. Writing Check findings are source-bound advisory observations, not proof of factuality or readiness.
+See [architecture](docs/architecture.md) and [validation](docs/validation.md) for
+ownership, provenance, and distribution checks.
