@@ -33,9 +33,10 @@ keep the install local to the current project. Each command selects every skill
 in that suite. To install one skill instead, replace `'*'` with its name, such as
 `goalify`. Avoid adding a second copy through another plugin.
 
-Invocation depends on your agent: Codex uses `$goalify`, Claude Code uses
-`/goalify`, and Pi uses `/skill:goalify`. Claude marketplace plugins namespace
-the command, such as `/thinking:goalify`.
+Invocation depends on the agent: Codex uses `$write`, Claude Code uses `/write`,
+and Pi uses `/skill:write` for the Writing router. Claude marketplace plugins
+namespace their commands, such as `/thinking:goalify`. Writing is a catalog suite,
+not a Claude marketplace plugin.
 
 Thinking needs no companion CLI. Writing Check and Context Engineering workflows
 also need their [companion CLIs](docs/installation.md). Installing the skills does
@@ -44,6 +45,41 @@ or readiness.
 
 See [installation](docs/installation.md) for agent paths, CLI setup, and the
 Thinking and Context Engineering Claude plugins.
+
+## Use it
+
+After installing the Writing suite and its [companion CLI](docs/installation.md#writing-suite),
+start with [write](skills/writing/write/SKILL.md): “Clean up this explanation without changing its meaning.”
+The router selects the destination skill and checks the final candidate. It can
+offer an optional Anti-LLM Writer pass when the draft reads synthetic.
+
+For a specific destination, use its skill directly:
+
+- PR description → [pr-description](skills/writing/pr-description/SKILL.md).
+- PR risk assessment → [pr-risk-note](skills/writing/pr-risk-note/SKILL.md).
+- README → [readme-improver](skills/writing/readme-improver/SKILL.md).
+- Explanation or handoff → [user-facing-response](skills/writing/user-facing-response/SKILL.md).
+- General drafting → [writing-core](skills/writing/writing-core/SKILL.md).
+
+The router and these examples describe the skill contracts, not end-to-end agent
+tests. Check findings remain advisory. Installing skills grants no permission to
+publish, post, or merge.
+
+### Optional automatic checks
+
+Only if the project wants checks after material prose edits, copy this guidance
+into its `AGENTS.md` or `CLAUDE.md` after installing the Writing suite and CLI:
+
+```markdown
+After material prose changes, follow the installed Writing Check skill.
+Skip typo-only edits and generated or vendored text.
+Check the exact final candidate with its destination profile; recheck edits.
+Fix worthwhile findings; keep justified wording. Scores are advisory.
+Report missing tools instead of claiming a check ran.
+```
+
+This guidance is optional. It sets no hook or enforcement gate. Installing the
+suite never adds it to project instructions.
 
 ## Contribute
 
