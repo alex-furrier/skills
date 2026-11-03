@@ -19,13 +19,18 @@ CLI, account, private source or delegated agent is required.
 This repository is private. These routes require existing repository access;
 sharing a link does not grant access or change repository visibility.
 
-Install an individual skill with the host-compatible Skills installer:
+Install one skill into the current Codex project (requires Node.js 22.20 or newer
+and existing GitHub SSH access):
 
 ```bash
-npx skills add alex-furrier/skills --skill blindspot
-npx skills add alex-furrier/skills --skill research
-npx skills add alex-furrier/skills --skill goalify
+DISABLE_TELEMETRY=1 npx skills@1.7.4 add git@github.com:alex-furrier/skills.git \
+  --skill goalify --agent codex --copy
 ```
+
+Replace `goalify` with `research` or `blindspot`, or select all three with
+`--skill goalify research blindspot`. Each is independent. This writes project
+skills under `.agents/skills/`; no `--global` flag is used. See
+[installation](installation.md) for access options, discovery and other agents.
 
 Or use the Claude marketplace plugin:
 

@@ -2,14 +2,46 @@
 
 ## Agent Skills
 
-Install any canonical root skill with Vercel Skills:
+This repository is private; installation requires existing GitHub access.
+The portable skills themselves need no particular account, but fetching this
+repository does. Sharing an install command does not grant access.
+
+With Node.js 22.20 or newer, install selected skills into the current project:
 
 ```bash
-npx skills add alex-furrier/skills --skill context-docs
-npx skills add alex-furrier/skills --skill writing-check
+DISABLE_TELEMETRY=1 npx skills@1.7.4 add git@github.com:alex-furrier/skills.git \
+  --skill goalify research blindspot --agent codex --copy
 ```
 
-Installing a skill copies its instructions only, not the sibling CLI package. Install its documented CLI when the workflow needs deterministic analysis.
+Use `--skill goalify` for one skill. Blindspot remains experimental; it is not
+required by Research or Goalify. For Writing or Context, select a catalog name
+such as `writing-check` or `context-docs` instead. Avoid duplicate installations
+when your agent already receives the same skill through a managed plugin.
+
+The command uses existing SSH authentication, prompts before installation, and
+copies each skill with its adjacent resources into `.agents/skills/<name>/`.
+It also writes project installer metadata in a skills-lock.json file. Without `--global`, it does not
+install skills into your user profile. `--agent claude-code` selects Claude's
+project scope instead. See the [Skills CLI reference](https://github.com/vercel-labs/skills/blob/main/docs/commands.md)
+for other supported agents and their paths. `DISABLE_TELEMETRY=1` disables the
+CLI's telemetry and security-audit requests; it is appropriate for this private source.
+
+If GitHub HTTPS access is already configured, the source can instead be
+the GitHub shorthand alex-furrier/skills. An authorized local checkout is another source:
+
+```bash
+DISABLE_TELEMETRY=1 npx skills@1.7.4 add /absolute/path/to/skills \
+  --skill goalify --agent codex --copy
+```
+
+Run `npx skills@1.7.4 list --agent codex` from the project to inspect installed
+skills, then select the named skill in your agent. Installing skills includes
+instructions and adjacent resources, not their sibling CLI packages.
+
+For public installation later, an explicitly authorized public distribution
+must contain the intended skills, references, licenses and provenance. The
+current private repository is accessible only to authorized users. Neither
+these instructions nor the marketplace entry changes that boundary.
 
 ## Writing suite
 
