@@ -157,19 +157,20 @@ def test_docs_recommend_published_registry_installs_with_source_fallback():
     readme = (ROOT / "README.md").read_text()
     installation = (ROOT / "docs/installation.md").read_text()
     publishing = (ROOT / "docs/publishing.md").read_text()
-    for text in (readme, installation):
-        assert "uv tool install context-engineering-cli==2.6.1" in text
-        assert "context-engineering-cli==2.6.0" not in text
-        assert "uv tool install writing-check-cli==1.0.1" in text
-        assert "explicit" in text and "consent" in text
-        assert "writing-check --help" in text
-        assert "runtime install" not in text and "writing-check doctor" not in text
+    assert "[companion CLIs](docs/installation.md)" in readme
+    assert "uv tool install context-engineering-cli==2.6.1" in installation
+    assert "context-engineering-cli==2.6.0" not in installation
+    assert "uv tool install writing-check-cli==1.0.1" in installation
+    assert "explicit" in installation and "consent" in installation
+    assert "writing-check --help" in installation
+    assert "runtime install" not in installation and "writing-check doctor" not in installation
     assert "Writing and Writing Check are one suite" in installation
     assert "optional suite" in installation
     assert 'uv tool install "$checkout/skills/packages/context-engineering"' in installation
     assert 'uv tool install "$checkout/skills/packages/writing-check"' in installation
-    assert "gh repo clone alex-furrier/skills" in installation
-    assert "private" in installation and "authenticated" in installation
+    assert "git clone https://github.com/alex-furrier/skills.git" in installation
+    assert "private GitHub repository" not in installation
+    assert "repository is private" not in readme
     assert "published Context Engineering CLI 2.6.1" in installation
     assert "https://pypi.org/project/context-engineering-cli/" in installation
     assert "https://pypi.org/project/context-engineering-cli/2.6.1/" in publishing

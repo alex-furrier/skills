@@ -41,7 +41,7 @@ For subsequent releases, retain these controls from the first-release preparatio
 1. Confirm ownership/availability and existing versions of **each** exact PyPI project name, release authority, and permitted first version; never overwrite an existing version.
 
    Confirm the packaged portable source and the vendored Google Vale policy/license/provenance are cleared for public redistribution, including no private corpus, credentials, or machine-specific material.
-2. The repository stays private on the current GitHub Free plan. This first-release path has **no enforced environment reviewer gate or release-tag protection rules**: anyone with sufficient repository release/tag or workflow authority could trigger publication.
+2. The first-release path was configured with **no enforced environment reviewer gate or release-tag protection rules**: anyone with sufficient repository release/tag or workflow authority could trigger publication. Verify the current controls before a subsequent release.
 
    Before any tag or GitHub Release, the account owner must manually approve the proposed source commit and tag target, prior CI results, locally built artifacts, and public redistribution. Review release CI and its artifacts after the workflow runs; there is no pause for approval before its upload. Manual review is a procedure, not a GitHub-enforced safeguard.
 
