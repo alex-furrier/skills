@@ -1,5 +1,12 @@
 # Changelog
 
+## Claude marketplace — Code Quality and Writing
+
+- Add generated `code-quality` and `writing` plugins at version 0.1.0 to the
+  marketplace, with copied canonical skills, licenses and provenance.
+- Check projection parity in fast check. Keep companion CLIs separate: Code
+  Health Review retains its installed-command or trusted-checkout fallback.
+
 ## 2026-11-12 — Portable Code Quality suite and code-health CLI
 
 - Adopt Code Review, Code Health Review, Architecture Polish Review, Avoiding AI

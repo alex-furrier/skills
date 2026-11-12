@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "source_repository": "https://github.com/alex-furrier/dots",
+  "source_commit": "d631e4e320a61034d3641d234d6f31df198140ca",
+  "source_path": "config/ai-config/plugins/alex-ai/skills/architecture-polish-review",
+  "source_files_sha256": {
+    "SKILL.md": "2e5faac7f594e1aebaa44c76ee576ab81bb078b8b864b72ec753b897c77ded27",
+    "references/architecture-language.md": "6feca2140439c54a774749e8367f18350899ff69c777144ed2248cd4407949fa",
+    "references/architecture-review-process.md": "b6e380363919dd18a10e5c27272e328f11faf3f84f302dbaaf9d8880ee9e6f82",
+    "references/problem-and-design.md": "fa3deaf17bd4712f5259535b8126e88f79ed2683fee8b2c32398ecd84cf704d1",
+    "references/review-checklists.md": "958c645a52767f3218bdf68ce50e584d318d98033e466a5b081fb91a3a3e0be7",
+    "references/severity-rubric.md": "797b78337138c5d213ddd4cf7c9393c8c3ca54075be3ecd57d463357017ae2ea"
+  },
+  "entries": [
+    {
+      "path": "LICENSE",
+      "origin": "independently authored portable metadata",
+      "license": "MIT"
+    },
+    {
+      "path": "SKILL.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/architecture-polish-review/SKILL.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/architecture-language.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/architecture-polish-review/references/architecture-language.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/architecture-review-process.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/architecture-polish-review/references/architecture-review-process.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/problem-and-design.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/architecture-polish-review/references/problem-and-design.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/review-checklists.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/architecture-polish-review/references/review-checklists.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/severity-rubric.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/architecture-polish-review/references/severity-rubric.md",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "independently authored scoped provenance",
+      "license": "MIT"
+    }
+  ],
+  "upstream": {
+    "repository": "https://github.com/mattpocock/skills",
+    "revision": "b843cb5ea74b1fe5e58a0fc23cddef9e66076fb8",
+    "path": "skills/engineering/improve-codebase-architecture"
+  }
+}

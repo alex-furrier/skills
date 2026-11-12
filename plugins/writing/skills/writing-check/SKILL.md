@@ -1,0 +1,80 @@
+---
+name: writing-check
+description: Review writing with contextual style principles, source-bound Vale checks, and qualified readability sampling for exact candidates or repository-wide documentation sweeps. Use when auditing drafted prose or applying explicitly requested conservative repository writing updates.
+---
+
+# Writing Check
+
+## Purpose and boundary
+
+Review style in context and collect deterministic, source-bound evidence for exact UTF-8 prose. Retain the source bytes, normalized findings, raw Vale output, and source identity. Results do not establish meaning, factuality, safety, usefulness, writing quality, acceptance, or readiness.
+
+- Keep the installed `writing-check` command read-only. It remains single-candidate; do not add repository discovery or an auto-fix path. On first use, its pinned PyPI Vale wrapper may download the Vale executable from the Vale GitHub release; later checks use that installed executable.
+- A single-candidate check or repository audit never edits prose, source files, Git, or GitHub. Enter repository update mode only after an explicit request to update prose; the destination owner applies edits outside the checker.
+- Never run `vale sync`, fetch policy or rule packages, or use a substitute network service during a normal check. Vale is required: when absent, retain source identity and return `unavailable`, never a substitute linter or clean result.
+- Findings, readability, sample size, and counts are advisory observations, never scores or gates. Vale line and span values are Vale coordinates, not byte offsets.
+
+The `writing-check-cli` package bundles the reviewed Google Vale v0.7.1 rules, their MIT license, upstream lock, and a pinned Vale runtime dependency.
+
+If the CLI is missing, request explicit install consent. With consent and `uv`, run `uv tool install writing-check-cli==1.0.1` (published on PyPI), then `writing-check --help`.
+
+As an optional source fallback, with authenticated `gh` access to the private `alex-furrier/skills` repository, set `checkout="$(mktemp -d)"`, run `gh repo clone alex-furrier/skills "$checkout/skills"`, inspect and trust the checkout, then run `uv tool install "$checkout/skills/packages/writing-check"` and `writing-check --help`.
+
+From an existing trusted checkout, `uv tool install ./packages/writing-check` works.
+
+Never install automatically. If `uv`, network, install, or help fails (or `gh` or access fails on the source route), or a check returns `unavailable` or `execution_error`, report that state rather than running a substitute checker. All severities are normalized to `suggestion`.
+
+## Check one exact candidate
+
+Use this order for docs, PR descriptions, and comparable titles or list items:
+
+1. Review meaning, structure, and [contextual style](references/style-review.md) with the destination owner first. Consider the reader's task and neighboring items. In an authorized edit workflow, draft or revise for those needs before running diagnostics. Audit mode records findings without replacement prose.
+2. Run the CLI on that exact candidate for Vale findings and readability observations. These are diagnostics, not instructions to rewrite every match or meet a score.
+3. Judge suggested changes against meaning and contextual style. Make only justified revisions; retain exact terms, necessary qualifications, deliberate voice, and useful wording when a suggestion would harm them.
+4. Recheck meaning, structure, and style after revisions. If any text changed, discard stale records and rerun the CLI on the final bytes. A justified residual finding can remain; do not alternate blind rewrites between style and lint.
+
+An early CLI run may establish a baseline, but it does not replace the initial contextual review or authorize edits. Keep semantic judgments separate from Vale records and readability. The CLI itself does not apply this sequence or edit text; its behavior, profiles, and exit statuses are unchanged. This review adds no scores or publication gates.
+
+Inspect `writing-check --help`, then run:
+
+```bash
+writing-check --profile pr-description --json pr-body.md
+```
+
+Pass a UTF-8 file or `-` for stdin. The public checker has no personal-voice option or bundled voice policy. A separately configured external overlay may run outside it; if unavailable, return portable evidence unchanged and use neutral prose rather than imitating a voice.
+
+Choose a profile by purpose, not by the easiest readability outcome:
+
+| Profile | Readability observation |
+| --- | --- |
+| `commit` | Disabled |
+| `pr-description`, `user-facing-response` | Under 100 prose words or 5 sentences: insufficient; below 200 words or 8 sentences: small; otherwise advisory FRE 55 / FK 10 |
+| `readme` | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
+| `technical-doc`, `technical-doc-explanatory` | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10 |
+| `technical-doc-reference` | Normal at 300 words and 8 sentences; advisory FRE 55 / FK 10, or composition-limited |
+
+All profiles use the reviewed Google Vale v0.7.1 observations. For every normal long-form sample, FRE 55 minimum and FK 10 maximum are advisory only. Reserve `user-facing-response` for its owner’s explicit plain-English rewrite; normal conversational drafting does not invoke Vale by default.
+
+Readability includes paragraphs and blockquotes, link labels, and sentence-like list items with at least five words. It excludes headings, code, inline code, destinations and URLs, comments, raw HTML, frontmatter, table cells, images, and list fragments. README and reference profiles report `composition_limited` with no target when excluded table and fragment words outnumber prose. A table-dominated PR below 100 words or five sentences remains `insufficient_sample`. Do not publish targets by default.
+
+## Interpret the record
+
+The schema-v3 record retains decoded text, raw-byte length and SHA-256, selected public policy name and digest, sample state, raw stdout/stderr/argv/exits, and normalized alerts. It intentionally has no quality verdict, protected-span authorization, persistent exception, or aggregate score.
+
+- `0` / `no_findings`: Vale ran and no configured pattern matched.
+- `1` / `findings`: Vale ran and found one or more advisory patterns.
+- `2` / `input_error`: source reading, UTF-8 decoding, or usage failed.
+- `3` / `unavailable`: Vale could not be resolved.
+- `4` / `execution_error`: version, execution, timeout, or JSON evidence failed.
+
+Report `input_error`, `unavailable`, and `execution_error` explicitly; never convert them to `no_findings` or claim that a checker ran when it was unavailable.
+
+The checked candidate's bytes and `source.sha256` identify the evidence; after any change, old findings no longer apply. Policy, rule, config, and license assets retain their integrity requirements. In an edit workflow, preserve meaning, qualifications, and safety, authentication, authority, factual, and contractual constraints; a checker suggestion alone never authorizes a factual or constraint-changing edit. The destination owner binds each fresh finding to the exact `source.sha256` and finding key as `fix`, `keep_exact_term`, `keep_quote`, `keep_required_text`, `keep_voice`, or `defer`. Discard it after any candidate change. This traceability is not a quality, readiness, or publication gate.
+
+## Repository requests and policy maintenance
+
+For a repository-wide request, load [repository-sweep.md](references/repository-sweep.md). Default to its read-only audit. A caller may run explicitly selected `{ "source": "…", "profile": "…" }` pairs in one process with `writing-check-sweep --candidates pairs.json --jsonl`; it emits independent unchanged schema-v3 JSON Lines records and never discovers candidates. Its update mode uses a shared three-pass rewrite budget and routes material edits to the named destination owners; unavailable owners permit only clear semantics-preserving fixes.
+
+Normal checks are offline. Upgrade or calibrate vendored rules only in a reviewed change: fetch the named release to a temporary directory, verify the archive digest, show rule-by-rule diffs, update provenance and attribution, normalize severities, rerun `evals/rule-calibration.json`, and run the shared aggregate corpus once with complete expected-check reporting. Give contextual rules focused positive, negative, limitation/exact-term, and natural-prose fixtures, and record each imported rule’s known limitation.
+
+Use retained evidence for audits. Produce replacement prose only when the user or destination owner requests it.

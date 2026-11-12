@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "decision": "Generated exact projection of skills/code-quality in alex-furrier/skills. Per-skill licenses and provenance travel with the bundle. Companion CLIs are not bundled.",
+  "entries": [
+    {
+      "path_prefix": "skills/",
+      "origin": "canonical skills/code-quality, including source provenance",
+      "license": "MIT"
+    },
+    {
+      "path_prefix": ".claude-plugin/",
+      "origin": "generated plugin metadata",
+      "license": "MIT"
+    },
+    {
+      "path": "LICENSE",
+      "origin": "catalog MIT license",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "generated plugin inventory",
+      "license": "MIT"
+    }
+  ]
+}

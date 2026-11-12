@@ -1,0 +1,15 @@
+{
+  "name": "writing",
+  "version": "0.1.0",
+  "description": "Destination-aware writing, editing and advisory style checks",
+  "skills": [
+    "./skills/anti-llm-writer",
+    "./skills/pr-description",
+    "./skills/pr-risk-note",
+    "./skills/readme-improver",
+    "./skills/user-facing-response",
+    "./skills/write",
+    "./skills/writing-check",
+    "./skills/writing-core"
+  ]
+}

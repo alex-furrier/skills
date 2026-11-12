@@ -1,0 +1,12 @@
+{
+  "name": "code-quality",
+  "version": "0.1.0",
+  "description": "Proportional code review, architecture, code health and test audits",
+  "skills": [
+    "./skills/architecture-polish-review",
+    "./skills/avoiding-ai-antipatterns",
+    "./skills/code-health-review",
+    "./skills/code-review",
+    "./skills/test-audit"
+  ]
+}
