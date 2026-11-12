@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -48,12 +49,33 @@ def run_readme_check() -> None:
         raise SystemExit(f"README Writing Check evidence failed validation: {error}") from error
 
 
+def check_code_quality_portability() -> None:
+    """Reject private execution plumbing, not provenance or legal attribution."""
+    forbidden = re.compile(
+        r"\bDots\b|\bPi\s+(?:subagent\w*|tools?)\b|native-pi|codemode|"
+        r"ai[-_]runtime|Groundskeeper|Harness Kit|~[/]\.agent|"
+        r"alex-ai(?:-experimental)?|[/]Users[/]|[/]home[/][^/]+[/]",
+        re.IGNORECASE,
+    )
+    for directory in ("skills/code-quality", "packages/code-health"):
+        for path in (ROOT / directory).rglob("*"):
+            if not path.is_file() or any(part in {".venv", "__pycache__", ".pytest_cache", "dist"} for part in path.parts):
+                continue
+            if path.name in {"provenance.json", "LICENSE", "THIRD_PARTY_NOTICES.md", "uv.lock"}:
+                continue
+            if path.suffix in {".md", ".py", ".toml"} and forbidden.search(path.read_text()):
+                raise SystemExit(f"removed execution plumbing in {path.relative_to(ROOT)}")
+
+
 def main() -> None:
+    check_code_quality_portability()
+    run("uv", "lock", "--no-config", "--project", "packages/code-health", "--check", "--offline")
+    run("uv", "run", "--frozen", "--python", "3.11", "--project", "packages/code-health", "pytest", "-q", "packages/code-health/tests")
     run("python", "scripts/project_context_plugin.py", "--check")
     run("python", "scripts/project_thinking_plugin.py", "--check")
     run("uv", "lock", "--no-config", "--project", "packages/context-engineering", "--check", "--offline")
     run("uv", "lock", "--no-config", "--project", "packages/writing-check", "--check", "--offline")
-    run("uv", "run", "--python", "3.11", "--with", "pytest", "--with", "mkdocs", "pytest", "-q")
+    run("uv", "run", "--python", "3.11", "--with", "pytest", "--with", "mkdocs", "pytest", "-q", "tests")
     run("uv", "run", "--python", "3.11", "--with", "mkdocs", "mkdocs", "build", "--strict")
     run_readme_check()
     run("python", "scripts/validate.py")
