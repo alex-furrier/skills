@@ -1,9 +1,9 @@
 # Proportional Generic Review Selector
 
-The caller or, when invoked directly, this skill selects proportional review. Consume an existing caller selection without weakening
+The selecting owner (the caller, or this skill when invoked directly) selects proportional review. Consume an existing caller selection without weakening
 it. Record the fixed request and approved intent when generic review is selected.
 Do not require a separate planning workflow merely to choose no independent review.
-The caller or, when invoked directly, this skill retains question-driven specialist selection. Never
+The selecting owner also retains question-driven specialist selection. Never
 select a specialist solely from a path, diff size, risk label, or reviewer priority.
 
 ## Inputs and output
@@ -35,7 +35,7 @@ product-review request at any size. Otherwise skip mechanical/internal-only
 changes, cosmetic edits that preserve the experience, and repairs that merely
 restore settled behavior without changing an experience choice.
 
-The caller or, when invoked directly, this skill runs the pass before handoff,
+The selecting owner runs the pass before handoff,
 or reuses an existing review that covers the same journey and candidate behavior. Consolidate with an already-selected domain reviewer when it can apply the
 full product skill to this distinct question. Keep the pass separate from the
 generic profile and ordered lanes; it is not a fifth code-review lane, a required

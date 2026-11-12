@@ -39,15 +39,17 @@ and can't replace tests or correctness review.
 
 ## Run the analyzer
 
-Use the installed `code-health` command, or from a trusted catalog checkout:
+Use the installed `code-health` command. Without it, run the CLI from a trusted
+catalog checkout at `CATALOG`, with the repository under review as the current
+directory:
 
 ```bash
-uv run --frozen --no-dev --project packages/code-health code-health diff . --base main --format json
+uv run --frozen --no-dev --project "$CATALOG/packages/code-health" code-health diff . --base main --format json
 ```
 
 The catalog package dependency is `packages/code-health` (Python 3.11+).
-With explicit install consent, `uv tool install ./packages/code-health` installs
-it locally. Never install automatically; if unavailable, report the deterministic
+With explicit install consent, `uv tool install "$CATALOG/packages/code-health"`
+installs the `code-health` command. Never install automatically; if unavailable, report the deterministic
 evidence gap and continue the qualitative review.
 
 Use `scan` for a requested repository-wide snapshot without a baseline. Use

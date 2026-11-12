@@ -9,7 +9,7 @@ Review proposed or working code for architecture, ownership, lifecycle, seams, m
 
 This skill adapts the `improve-codebase-architecture` workflow into a branch/PR
 polish process. Preserve its architecture vocabulary and deepening-opportunity
-lens; provenance records the source revision.
+lens. `provenance.json` records the source revision.
 
 ## Modes
 

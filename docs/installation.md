@@ -8,6 +8,7 @@ Use Node.js 22.20 or newer. Each command selects all skills in one canonical sui
 npx skills@1.7.4 install alex-furrier/skills/skills/thinking --skill '*'
 npx skills@1.7.4 install alex-furrier/skills/skills/writing --skill '*'
 npx skills@1.7.4 install alex-furrier/skills/skills/context-engineering --skill '*'
+npx skills@1.7.4 install alex-furrier/skills/skills/code-quality --skill '*'
 ```
 
 `install` is an alias for `add` in Skills CLI 1.7.4. The repository subdirectory
@@ -83,6 +84,19 @@ context-engineering --help
 
 A Context skill reports its deterministic analysis as unavailable when this command is missing or incompatible; it does not search for another checkout or substitute manual analysis.
 
+## Code Quality suite
+
+Code Quality has five skills: `code-review`, `code-health-review`, `architecture-polish-review`, `avoiding-ai-antipatterns`, and `test-audit`. Only Code Health Review uses a companion CLI, `code-health`, for metric deltas from Ruff, Clippy, ESLint, and golangci-lint.
+
+The `code-health-review-cli` package is **not published to PyPI yet**. Run it from a trusted source checkout instead (see [the fallback below](#trusted-source-checkout-fallback)). From the repository you want to review, point `uv run` at the checkout's package:
+
+```bash
+uv run --frozen --no-dev --project "$checkout/skills/packages/code-health" code-health --help
+uv run --frozen --no-dev --project "$checkout/skills/packages/code-health" code-health diff . --base main --format json
+```
+
+The first run creates the package's `.venv` inside the checkout. The CLI needs Python 3.11 or newer and installs no analyzers. It reports a missing analyzer as an evidence gap for that language. Without the CLI, Code Health Review continues as a qualitative review and reports that metrics are unavailable.
+
 ## Trusted source checkout fallback
 
 For a source install, you need Git and `uv` installed. Explicitly approve installing code from a trusted checkout before running these commands. Use a directory you control; inspect the checkout before installation. Do not run them automatically as part of a skill check.
@@ -90,11 +104,13 @@ For a source install, you need Git and `uv` installed. Explicitly approve instal
 ```bash
 checkout="$(mktemp -d)"
 git clone https://github.com/alex-furrier/skills.git "$checkout/skills"
-# Inspect and trust "$checkout/skills" before installing either package.
+# Inspect and trust "$checkout/skills" before installing a package.
 uv tool install "$checkout/skills/packages/writing-check"       # if Writing Check is needed
 writing-check --help
 uv tool install "$checkout/skills/packages/context-engineering" # if Context Engineering is needed
 context-engineering --help
+uv tool install "$checkout/skills/packages/code-health"         # if Code Health Review is needed
+code-health --help
 ```
 
 Run only the install and help commands for the CLI you need. If `uv` is absent, the registry install fails, or help fails, report the dependency unavailable; do not claim its analysis ran.
@@ -114,7 +130,7 @@ Thinking and Context Engineering also have projected plugins:
 ```
 
 Choose the plugin you need. These are projections of canonical sources, not their
-source of truth. Writing is available as catalog skills, not a marketplace plugin.
+source of truth. Writing and Code Quality are available as catalog skills, not marketplace plugins.
 
 PR descriptions preserve the upstream `pr-risk-note` assessment in a compact
 `Risk` section, or report that it was not supplied. Writing Check does not infer

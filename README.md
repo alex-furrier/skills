@@ -1,6 +1,6 @@
 # Skills
 
-Agent Skills for thinking, writing, and keeping useful context.
+Agent Skills for thinking, writing, reviewing code, and keeping useful context.
 
 The aim is to keep good habits useful as agents get more capable: clarify the
 problem, verify the evidence, explain it clearly, and retain what the next
@@ -14,6 +14,7 @@ reasoning and communication.
 | [Thinking](docs/thinking.md) | Clarify a scattered request with Goalify, verify a claim with Research, or find missing domain expertise with experimental Blindspot. Each works independently. |
 | [Writing](skills/writing/) | Draft or improve a README, PR description, or other prose, with advisory style checks. |
 | [Context Engineering](skills/context-engineering/) | Keep AGENTS.md, docs, specifications, and decision records accurate; capture useful session knowledge. |
+| [Code Quality](skills/code-quality/) | Review a branch or PR with lanes chosen for its risk, check maintainability and architecture, flag AI-generated code smells, or audit low-value tests. |
 
 [Product Bet Shaping](skills/product/product-bet-shaping/SKILL.md) is a separate
 skill for deciding whether an idea is worth pursuing and what to try first.
@@ -26,6 +27,7 @@ With Node.js 22.20 or newer, choose a suite:
 npx skills@1.7.4 install alex-furrier/skills/skills/thinking --skill '*'
 npx skills@1.7.4 install alex-furrier/skills/skills/writing --skill '*'
 npx skills@1.7.4 install alex-furrier/skills/skills/context-engineering --skill '*'
+npx skills@1.7.4 install alex-furrier/skills/skills/code-quality --skill '*'
 ```
 
 Select your agent and installation scope at the prompts. Choose **Project** to
@@ -35,13 +37,15 @@ in that suite. To install one skill instead, replace `'*'` with its name, such a
 
 Invocation depends on the agent: Codex uses `$write`, Claude Code uses `/write`,
 and Pi uses `/skill:write` for the Writing router. Claude marketplace plugins
-namespace their commands, such as `/thinking:goalify`. Writing is a catalog suite,
-not a Claude marketplace plugin.
+namespace their commands, such as `/thinking:goalify`. Writing and Code Quality
+are catalog suites, not Claude marketplace plugins.
 
 Thinking needs no companion CLI. Writing Check and Context Engineering workflows
 also need their [companion CLIs](docs/installation.md). Installing the skills does
 not install those packages. Style findings are advisory, not proof of factuality
-or readiness.
+or readiness. Code Health Review can use the `code-health` CLI, which is not on
+PyPI yet and runs from a source checkout. Without it, the review stays
+qualitative and reports the missing metrics.
 
 See [installation](docs/installation.md) for agent paths, CLI setup, and the
 Thinking and Context Engineering Claude plugins.
