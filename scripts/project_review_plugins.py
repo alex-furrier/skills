@@ -38,6 +38,8 @@ def build(root: Path, suite: str) -> dict[str, bytes]:
         }),
     }
     for path in sorted(source.rglob("*")):
+        if "__pycache__" in path.parts or path.suffix == ".pyc":
+            continue
         if path.is_symlink():
             raise ValueError(f"Symlink in canonical suite: {path}")
         if path.is_file():
