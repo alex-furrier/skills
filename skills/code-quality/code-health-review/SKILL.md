@@ -39,13 +39,18 @@ and can't replace tests or correctness review.
 
 ## Run the analyzer
 
-Use the installed `code-health` command. Without it, run the CLI from a trusted
-catalog checkout at `CATALOG`, with the repository under review as the current
-directory:
+Prefer the installed `code-health` command. Otherwise, define `CATALOG` as the
+absolute path to a trusted checkout of this catalog repository. Obtain one with
+`git clone https://github.com/alex-furrier/skills`, then set `CATALOG` to that
+checkout. Run with the repository under review as the current directory:
 
 ```bash
-uv run --frozen --no-dev --project "$CATALOG/packages/code-health" code-health diff . --base main --format json
+uv run --frozen --no-dev --project "$CATALOG/packages/code-health" code-health diff . --base "$(git merge-base origin/main HEAD)" --format json
 ```
+
+Pass the change's merge base, not a branch name that may already contain the
+candidate. For one commit, pass `<sha>^`. Equal baseline and candidate revisions
+produce a warning and `partial` status; they do not prove a clean committed diff.
 
 The catalog package dependency is `packages/code-health` (Python 3.11+).
 With explicit install consent, `uv tool install "$CATALOG/packages/code-health"`

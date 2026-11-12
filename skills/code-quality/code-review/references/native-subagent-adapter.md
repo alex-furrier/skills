@@ -5,6 +5,9 @@ owner-selected request. It is not a selector, repairer, acceptance owner, PR
 owner, raw-provider wrapper, or coordinator beyond collecting the ordered lane
 outputs below.
 
+`prompt_contract_version`: `native-subagent-adapter-v1`. Record this value in
+the request and lane prompts; bump it whenever the fixed prompt changes.
+
 ## Contents
 
 - [Preconditions and unavailable result](#preconditions-and-unavailable-result)
@@ -32,6 +35,13 @@ The caller must treat `unavailable`/`blocked` as pre-mutation states. This
 adapter never pushes, creates or edits a PR, posts a comment, or invokes an
 unmanaged provider.
 
+Use the caller-selected review directory, or for direct invocation default to
+`${TMPDIR:-/tmp}/code-review/<repo>-<short-head>/` outside the repository.
+For an unavailable or blocked run, write `<review-dir>/completion.json` with
+`status: unavailable`, the reason, `started_at` if known (otherwise null), and
+null `lanes_completed_at`, `aggregation_completed_at`, and `completed_at`.
+This marker is not completed lane evidence.
+
 Before launching children, record `started_at`. Completion must be observable
 from artifacts rather than inferred from an interactive process. Do not treat a
 TUI's age as execution time.
@@ -52,11 +62,16 @@ For each lane in the supplied order, launch exactly one fresh native child with
 read-only tools or an explicit read-only instruction boundary and this fixed prompt, replacing bracketed values literally:
 
 ```text
+Prompt contract: native-subagent-adapter-v1.
 You are the [LANE] lane of one independent code review. Read only the candidate
-repository at [REPOSITORY] for [MERGE_BASE]...[HEAD]. Do not write, select other
+repository at [REPOSITORY]. Review [CHANGE_SOURCE]: either [MERGE_BASE]...[HEAD]
+or supplied diff and changed-files paths for that exact range when git is unavailable. Do not write, select other
 lanes, repair, accept, publish, use network providers, or infer work outside
 this lane. Read [INTENT_PACKET] only as approved intent.
 
+Use this lane JSON contract instead of any host reviewer's default output format.
+Every finding requires `type`, `deduplication_key`, `lane`, `severity` (P0-P3),
+`verified`, `path`, `line_range`, `title`, `body`, `evidence`, and `confidence` (0-1).
 Return exactly one JSON object with `lane`, `execution_id`, `status`, and either
 `artifact` or `result`, plus `findings` and `correctness`. `lane` must be [LANE];
 `execution_id` must identify this child; `status` must be `completed`; use
@@ -133,8 +148,8 @@ After aggregate validation, record `aggregation_completed_at`; after durable
 persistence and exact-reuse verification, record `completed_at`. Atomically
 rename a temporary file to `<review-dir>/completion.json` containing those four
 timestamps, status, durable bundle and output paths, model-call count, and
-structured usage totals or explicit `unavailable` values. Write this marker
-only after every named artifact validates. The supervising owner monitors the
+structured usage totals or explicit `unavailable` values. Write a completed marker
+only after every named artifact validates; unavailable markers follow the rule above. The supervising owner monitors the
 marker or a completion event, captures the outputs, and closes any idle
 interactive process; it never substitutes session age for elapsed execution.
 

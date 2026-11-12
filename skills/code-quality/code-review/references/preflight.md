@@ -7,7 +7,9 @@ review, approve the plan, or create a completed evidence record.
 
 ## Check the execution route first
 
-Use the host's subagent or parallel-review facility when available; otherwise review inline.
+Use the host's subagent or parallel-review facility. If it cannot launch the
+selected independent lanes, return `unavailable`. Inline observations are
+supplemental only and never satisfy a lane.
 Record the available route and whether it can satisfy requested independence,
 read-only access, model and effort requirements. If independence is required but
 unavailable, return that unmet prerequisite; continue independent authorized work

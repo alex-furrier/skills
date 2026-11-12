@@ -41,10 +41,10 @@ full product skill to this distinct question. Keep the pass separate from the
 generic profile and ordered lanes; it is not a fifth code-review lane, a required
 external workflow review, or a new CI check. Record a concise run/reuse/skip/unavailable reason.
 
-If `product-door-policy` is unavailable, optionally use `skill-search` against
-the installed catalog. If discovery or the skill is absent, report a non-blocking
-limitation and continue without installing tools or bypassing access boundaries.
-Resolve optional `product-experience-brief` the same way when needed.
+Treat `product-door-policy`, `product-experience-brief`, and `skill-search` as
+optional external integrations, not catalog dependencies. If an integration is
+absent, record the question as unanswered and continue without installing tools
+or bypassing access boundaries; do not require another missing skill as fallback.
 
 Use the existing experience brief or let the skill recover intent. For unresolved
 intent, state assumptions and conditional suggestions without turning this

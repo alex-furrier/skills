@@ -15,8 +15,9 @@ acceptance, create a PR, or publish.
 
 When no caller supplies a profile, select exactly one with the
 [proportional review selector](references/proportional-review-selector.md).
-Record selected and skipped lanes and their reason, then execute that fixed
-request using the same preflight and evidence contract below. Gather repository,
+Record selected and skipped lanes and their reason. Run
+[preflight.md](references/preflight.md) before executing that fixed request,
+using the evidence contract below. Gather repository,
 merge base, committed HEAD and approved intent from the request and repository;
 report missing material intent rather than inventing it. Record the prompt
 contract used. A `deterministic-only` selection has no reviewer lanes: return its
@@ -72,9 +73,22 @@ returns evidence to that owner before publication. Missing required review is
 still a blocker. `github-open-pr` owns CI, GitHub review, repairs, and PR readiness;
 it does not convert readiness into formal implementation acceptance.
 
+## Specialist questions
+
+Select siblings only for a named question. Run each as a separate named-question
+pass and read its artifact as the owner; these passes are not reviewer lanes.
+
+- `code-health-review`: What raises maintenance and future change cost?
+- `architecture-polish-review`: Are ownership and integration coherent?
+- `avoiding-ai-antipatterns`: Does an abstraction or workflow add unearned complexity?
+- `test-audit`: Which tests add little behavioral evidence or couple to implementation?
+
 ## Optional integrations
 
-`github-open-pr` and `implementation-acceptance` may own publication and acceptance
-when installed and selected by the caller. If absent, return evidence to the
-repository's owner without publishing or claiming acceptance. Use local files for
+Treat `product-door-policy`, `product-experience-brief`, `skill-search`,
+`github-open-pr`, and `implementation-acceptance` as optional external integrations
+that may be absent from this catalog. If absent, record the question as unanswered;
+do not require another missing skill as a fallback. When installed and selected,
+publication and acceptance integrations may own those steps. Otherwise return
+evidence to the repository owner without publishing or claiming acceptance. Use local files for
 review evidence; no external evidence service is required.

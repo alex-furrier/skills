@@ -55,6 +55,23 @@ def write_executable(path: Path, source: str) -> None:
     path.chmod(0o755)
 
 
+@pytest.mark.parametrize("output_format", ["json", "markdown"])
+def test_diff_warns_when_baseline_equals_candidate(tmp_path: Path, output_format: str) -> None:
+    repo = make_repo(tmp_path)
+
+    result = run_cli(repo, "diff", str(repo), "--base", "HEAD", "--format", output_format)
+
+    assert result.returncode == 0, result.stderr
+    assert "baseline equals candidate" in result.stdout
+    if output_format == "json":
+        payload = json.loads(result.stdout)
+        assert payload["baseline_revision"] == payload["revision"]
+        assert payload["status"] == "partial"
+        assert any(tool["tool"] == "baseline-comparison" for tool in payload["tools"])
+    else:
+        assert "partial" in result.stdout
+
+
 def test_packaged_cli_version_matches_release_watermark(tmp_path: Path) -> None:
     repo = make_repo(tmp_path)
     cli_root = Path(__file__).resolve().parents[1]
@@ -121,7 +138,7 @@ def test_diff_reports_new_complexity_without_gating(tmp_path: Path) -> None:
 
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
-    assert payload["status"] == "ok"
+    assert payload["status"] == "partial"  # Equal revisions; dirty deltas remain valid.
     assert payload["working_tree_paths"] == ["app.py"]
     assert payload["summary"]["new"] >= 1
     assert any(

@@ -324,6 +324,16 @@ def analyze(
             ToolStatus(f"{tool.tool}-baseline", tool.status, tool.detail, tool.command)
             for tool in baseline_tools
         )
+    if mode == "diff" and baseline_revision == revision(root):
+        tools.append(
+            ToolStatus(
+                "baseline-comparison",
+                "unavailable",
+                "Warning: baseline equals candidate; committed-change evidence is missing. "
+                "Pass the change merge base or the parent of a single commit. "
+                "Working-tree deltas, if any, remain available.",
+            )
+        )
     summary = {
         "findings": len(decorated),
         "changed_findings": sum(finding.changed for finding in decorated),
