@@ -1,14 +1,27 @@
 ---
 name: code-review
-description: This skill checks prerequisites and executes an already selected proportional code-review profile through independent native reviewers. Use when an owning lifecycle needs early review preflight or execution without delegating selection, repair, acceptance, or publication.
+description: This skill reviews a branch or PR with proportionally selected review lanes, or checks prerequisites and executes a caller-selected profile. Use for direct review requests or when an owning lifecycle needs review execution without delegating repair, acceptance, or publication.
 ---
 
 # Code Review execution facade
 
-Execute one fixed review request. Receive the repository, merge base, committed
+Execute one fixed review request after direct selection or caller handoff. Receive the repository, merge base, committed
 candidate HEAD, selected profile, ordered lanes, approved-intent packet/digest,
-and `prompt_contract_version` from the owning lifecycle. Do not select a profile
-or specialist, modify code, calculate acceptance, create a PR, or publish.
+and `prompt_contract_version` from the owning lifecycle. For caller-selected
+requests, do not reselect the profile or specialist. Never modify code, calculate
+acceptance, create a PR, or publish.
+
+## Direct invocation
+
+When no caller supplies a profile, select exactly one with the
+[proportional review selector](references/proportional-review-selector.md).
+Record selected and skipped lanes and their reason, then execute that fixed
+request using the same preflight and evidence contract below. Gather repository,
+merge base, committed HEAD and approved intent from the request and repository;
+report missing material intent rather than inventing it. Record the prompt
+contract used. A `deterministic-only` selection has no reviewer lanes: return its
+proof and selection rationale without fabricating completed reviewer evidence.
+When a caller supplies a profile, consume it unchanged.
 
 ## Early preflight
 
