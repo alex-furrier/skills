@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "source_repository": "https://github.com/alex-furrier/dots",
+  "source_commit": "d631e4e320a61034d3641d234d6f31df198140ca",
+  "source_path": "config/ai-config/plugins/alex-ai/skills/test-audit",
+  "source_files_sha256": {
+    "CAMPAIGN.md": "b969ab32eb025b9d0ba061cdb62cb842ad3163b882c61d8533a7089319b1d280",
+    "LICENSE": "73571b25326281d369087f469842c02444fe39faaecebda4d82ed21ff3a1c29d",
+    "SKILL.md": "befd618e479fc97d48779db273a2f77dbb6687238c19dfce9c7dc0cc83b76bdf",
+    "THIRD_PARTY_NOTICES.md": "c1d1bbc550feee74853eba104e347341569cbbbe37a9f77659993ca0766277d5"
+  },
+  "entries": [
+    {
+      "path": "CAMPAIGN.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/test-audit/CAMPAIGN.md",
+      "license": "MIT"
+    },
+    {
+      "path": "LICENSE",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/test-audit/LICENSE",
+      "license": "MIT"
+    },
+    {
+      "path": "SKILL.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/test-audit/SKILL.md",
+      "license": "MIT"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/test-audit/THIRD_PARTY_NOTICES.md",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "independently authored scoped provenance",
+      "license": "MIT"
+    }
+  ]
+}

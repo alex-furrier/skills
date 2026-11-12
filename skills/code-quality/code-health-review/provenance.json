@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "source_repository": "https://github.com/alex-furrier/dots",
+  "source_commit": "d631e4e320a61034d3641d234d6f31df198140ca",
+  "source_path": "config/ai-config/plugins/alex-ai/skills/code-health-review",
+  "source_files_sha256": {
+    "SKILL.md": "583a3133fdee85c8a69a0716546b0871fdf33f5c736f76daacd56a03bbe24b36",
+    "references/qualitative-rubric.md": "652854ad55b24ec193896d439101cd9a1b93c856aae791ab215d5ff9607a09e0"
+  },
+  "entries": [
+    {
+      "path": "LICENSE",
+      "origin": "independently authored portable metadata",
+      "license": "MIT"
+    },
+    {
+      "path": "SKILL.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/SKILL.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/qualitative-rubric.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/references/qualitative-rubric.md",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "independently authored scoped provenance",
+      "license": "MIT"
+    }
+  ]
+}

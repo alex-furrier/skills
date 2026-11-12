@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "source_repository": "https://github.com/alex-furrier/dots",
+  "source_commit": "d631e4e320a61034d3641d234d6f31df198140ca",
+  "source_path": "config/ai-config/plugins/alex-ai/skills/code-health-review/cli",
+  "source_files_sha256": {
+    "evals/real_repository_validation.py": "fa71d9cc1e3e8ddfcb606840879ef5c11c0ddf37c5b34d43d62f7fc072ff5ab8",
+    "pyproject.toml": "f0405dfd1d5f02db853b5fcf2b240710cbd7e01ca48428b107473daa8fe39e4c",
+    "src/code_health/__init__.py": "720fd7e6560a8294461fde104fe5d7b2eb08e8ae86b2f6ec858a0e872bbfd482",
+    "src/code_health/__main__.py": "4b4a88d493a2a0982a0403365c52b0e6488db317a62fe048c5358f1393dbe804",
+    "src/code_health/analyzers/__init__.py": "45e91d3d85b4bf112a873c97138844e076d03468c22de62453e1ba03d83cdd95",
+    "src/code_health/analyzers/go.py": "ea10105e23c56b242e6bbc365782811927923b664466c189edc68c4e82f0281d",
+    "src/code_health/analyzers/python.py": "5c321f7e3ca61f25c6934441ee37091df2b78381eb26733f996a2ab41ee5ab42",
+    "src/code_health/analyzers/rust.py": "2534d552d8ef27301415bc1feff4ce1d6ac869805be553ea6c6d380a1a93c55a",
+    "src/code_health/analyzers/typescript.py": "39347c98b9543c05ae7c429ce4957edfc5e2b4c0e00ed39b193ec40010d34fde",
+    "src/code_health/cli.py": "088c428bb5968510988f91087cb7f7b4692d713e751b3c6635e6d500df8bf683",
+    "src/code_health/core.py": "a0c1b81fa5fd3f7b43b5ae2eec495f84ac26653581fd4737c339b974fcf84fb6",
+    "src/code_health/models.py": "c5f06b0987247b444a05e42cc322e12f1a1d9f67133bc132101bc5657389350b",
+    "src/code_health/output.py": "c4828181c2e5fca21e3a90796a53cfa22e089c66ce821f5f5b2483dff8df4381",
+    "src/code_health/process.py": "59d11b4a2a43b5011efea92c7850f463eb48ec1827e3269ccb0f03cce96a8f9c",
+    "src/code_health/repository.py": "5de3bb9726be9999ef8941e8fef745c3647c4c05f2138c2c376821db89887944",
+    "tests/test_analyzers.py": "e229569b576b6abae95b1bf57c31548cb94549ade8ba1e3281611571b348d34f",
+    "tests/test_cli_e2e.py": "02935004302ebc6eb1ca31b5e44d10701536bff06d674a1589f2ea7a5f79bb79",
+    "tests/test_core.py": "309b6190941326d50578fc27cd7d9620137c1ceacfc9a41010749e3df6059667",
+    "tests/test_real_repository_validation.py": "28462975b843a9d59407ef308e15b9b8a40d130513d53941b428adfe65fc382a",
+    "tests/test_typescript_go_adapters.py": "18695fe588c77c74fdc73094e974070cb43724d2c63157641ef2b297c11b3c93",
+    "uv.lock": "f3f6265284f131b6007aca097338bb2f11f3892776f59422920f6a51b55bf171"
+  },
+  "entries": [
+    {
+      "path": "LICENSE",
+      "origin": "independently authored portable metadata",
+      "license": "MIT"
+    },
+    {
+      "path": "evals/real_repository_validation.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/evals/real_repository_validation.py",
+      "license": "MIT"
+    },
+    {
+      "path": "pyproject.toml",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/pyproject.toml",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/__init__.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/__init__.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/__main__.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/__main__.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/analyzers/__init__.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/analyzers/__init__.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/analyzers/go.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/analyzers/go.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/analyzers/python.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/analyzers/python.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/analyzers/rust.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/analyzers/rust.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/analyzers/typescript.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/analyzers/typescript.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/cli.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/cli.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/core.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/core.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/models.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/models.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/output.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/output.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/process.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/process.py",
+      "license": "MIT"
+    },
+    {
+      "path": "src/code_health/repository.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/src/code_health/repository.py",
+      "license": "MIT"
+    },
+    {
+      "path": "tests/test_analyzers.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/tests/test_analyzers.py",
+      "license": "MIT"
+    },
+    {
+      "path": "tests/test_cli_e2e.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/tests/test_cli_e2e.py",
+      "license": "MIT"
+    },
+    {
+      "path": "tests/test_core.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/tests/test_core.py",
+      "license": "MIT"
+    },
+    {
+      "path": "tests/test_real_repository_validation.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/tests/test_real_repository_validation.py",
+      "license": "MIT"
+    },
+    {
+      "path": "tests/test_typescript_go_adapters.py",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/tests/test_typescript_go_adapters.py",
+      "license": "MIT"
+    },
+    {
+      "path": "uv.lock",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-health-review/cli/uv.lock",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "independently authored scoped provenance",
+      "license": "MIT"
+    },
+    {
+      "path": ".gitignore",
+      "origin": "independently authored package build exclusions",
+      "license": "MIT"
+    }
+  ]
+}

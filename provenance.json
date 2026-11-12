@@ -3,6 +3,8 @@
   "source_revision": "safurrier/dots@e8dd297c82db68e1fe6fcdc51d2c661e5081aa76",
   "decision": "Public contracts are same-author adaptations reconciled through efa69e113 and f100a3b28. This root inventory governs the complete catalog; plugins/context-engineering/provenance.json is the exhaustive legal and provenance contract for the independently copied Context plugin. Writing Check vendors reviewed Google Vale v0.7.1 rules under MIT. Personal paths, owners, accounts, private corpora, and organization overlays are excluded.",
   "entries": [
+    {"path_prefix":"skills/code-quality/","origin":"portable adaptation from alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca; scoped inventories record exact source paths and hashes","license":"MIT"},
+    {"path_prefix":"packages/code-health/","origin":"portable CLI from alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca; package-scoped inventory records exact source paths and hashes","license":"MIT"},
     {"path_prefix":"skills/thinking/","origin":"same-author portable Thinking skills adopted from alex-furrier/dots@0fa846087184c2fa548be9df589565ace256dd32; per-skill provenance records exact input hashes","license":"MIT"},
     {"path_prefix":"skills/product/","origin":"same-author portable Product Bet Shaping adopted from alex-furrier/dots@0fa846087184c2fa548be9df589565ace256dd32; separate from Thinking","license":"MIT"},
     {"path_prefix":"plugins/thinking/","origin":"generated Thinking distribution; plugin-scoped provenance governs independent copies","license":"MIT"},

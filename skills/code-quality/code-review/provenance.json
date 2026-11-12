@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "source_repository": "https://github.com/alex-furrier/dots",
+  "source_commit": "d631e4e320a61034d3641d234d6f31df198140ca",
+  "source_path": "config/ai-config/plugins/alex-ai/skills/code-review",
+  "source_files_sha256": {
+    "SKILL.md": "d2878c3c75048d12545e47456c860bfe59e5a7ba0c9777f96f4de3baa3bf8e2f",
+    "references/native-subagent-adapter.md": "7680dfee0ee61ff67b7493f2cc482ecf95405e61b7633a3d09755a8fc469a993",
+    "references/preflight.md": "677d960c28d9b40e118decb786e40d83abc7eda07b88fe8674a94b2ad27724ba"
+  },
+  "entries": [
+    {
+      "path": "LICENSE",
+      "origin": "independently authored portable metadata",
+      "license": "MIT"
+    },
+    {
+      "path": "SKILL.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-review/SKILL.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/native-subagent-adapter.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-review/references/native-subagent-adapter.md",
+      "license": "MIT"
+    },
+    {
+      "path": "references/preflight.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/code-review/references/preflight.md",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "independently authored scoped provenance",
+      "license": "MIT"
+    }
+  ]
+}
