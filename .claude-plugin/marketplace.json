@@ -13,6 +13,16 @@
       "name": "thinking",
       "source": "./plugins/thinking",
       "description": "Independent Blindspot, Research and Goalify skills"
+    },
+    {
+      "name": "code-quality",
+      "source": "./plugins/code-quality",
+      "description": "Proportional code review, architecture, code health and test audits"
+    },
+    {
+      "name": "writing",
+      "source": "./plugins/writing",
+      "description": "Destination-aware writing, editing and advisory style checks"
     }
   ]
 }

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "source_repository": "https://github.com/alex-furrier/dots",
+  "source_commit": "d631e4e320a61034d3641d234d6f31df198140ca",
+  "source_path": "config/ai-config/plugins/alex-ai/skills/avoiding-ai-antipatterns",
+  "source_files_sha256": {
+    "SKILL.md": "7e0ce465df9015aef3997c8f47e7d02d066fe22fd23557f326eaf1cd707cbc15",
+    "resources/01-anti-patterns-core-universal-do-not-do-list.md": "748762e19ba264d6df2fece904748dbcba373b7bdde9f86d7663904a314464e5",
+    "resources/heuristic-authority.md": "e5f29102f59832ad2f0e4f233fa34c0a4515c5af52d3f12dc771de3f0e068769",
+    "resources/premature-assurance.md": "06bb2e0859b6dc7e05c266bba73f18d4578ef41453d7cda8993be33dc093e605",
+    "resources/reference.md": "2e80c552899c5e66fbd2eac47cfcbd0925fde017f8e5536fb407c2d08e895a08"
+  },
+  "entries": [
+    {
+      "path": "LICENSE",
+      "origin": "independently authored portable metadata",
+      "license": "MIT"
+    },
+    {
+      "path": "SKILL.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/avoiding-ai-antipatterns/SKILL.md",
+      "license": "MIT"
+    },
+    {
+      "path": "resources/01-anti-patterns-core-universal-do-not-do-list.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/avoiding-ai-antipatterns/resources/01-anti-patterns-core-universal-do-not-do-list.md",
+      "license": "MIT"
+    },
+    {
+      "path": "resources/heuristic-authority.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/avoiding-ai-antipatterns/resources/heuristic-authority.md",
+      "license": "MIT"
+    },
+    {
+      "path": "resources/premature-assurance.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/avoiding-ai-antipatterns/resources/premature-assurance.md",
+      "license": "MIT"
+    },
+    {
+      "path": "resources/reference.md",
+      "origin": "alex-furrier/dots@d631e4e320a61034d3641d234d6f31df198140ca:config/ai-config/plugins/alex-ai/skills/avoiding-ai-antipatterns/resources/reference.md",
+      "license": "MIT"
+    },
+    {
+      "path": "provenance.json",
+      "origin": "independently authored scoped provenance",
+      "license": "MIT"
+    }
+  ]
+}

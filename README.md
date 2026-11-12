@@ -37,8 +37,8 @@ in that suite. To install one skill instead, replace `'*'` with its name, such a
 
 Invocation depends on the agent: Codex uses `$write`, Claude Code uses `/write`,
 and Pi uses `/skill:write` for the Writing router. Claude marketplace plugins
-namespace their commands, such as `/thinking:goalify`. Writing and Code Quality
-are catalog suites, not Claude marketplace plugins.
+namespace their commands, such as `/thinking:goalify`, `/writing:write`, and
+`/code-quality:code-review`. All four suites have Claude marketplace plugins.
 
 Thinking needs no companion CLI. Writing Check and Context Engineering workflows
 also need their [companion CLIs](docs/installation.md). Installing the skills does
@@ -48,7 +48,7 @@ PyPI yet and runs from a source checkout. Without it, the review stays
 qualitative and reports the missing metrics.
 
 See [installation](docs/installation.md) for agent paths, CLI setup, and the
-Thinking and Context Engineering Claude plugins.
+Claude marketplace plugins for all four suites.
 
 ## Use it
 

@@ -121,16 +121,27 @@ Installing Writing Check's Python dependency can fetch Vale from its GitHub rele
 
 ## Claude marketplace plugins
 
-Thinking and Context Engineering also have projected plugins:
+All four suites also have projected plugins:
 
 ```text
 /plugin marketplace add alex-furrier/skills
 /plugin install thinking@safurrier-skills
 /plugin install context-engineering@safurrier-skills
+/plugin install code-quality@safurrier-skills
+/plugin install writing@safurrier-skills
 ```
 
 Choose the plugin you need. These are projections of canonical sources, not their
-source of truth. Writing and Code Quality are available as catalog skills, not marketplace plugins.
+source of truth. Invoke the new plugins with `/code-quality:code-review` or
+`/writing:write`. Installing either plugin copies skills and adjacent resources,
+not companion CLI packages. Writing Check uses the CLI described above.
+Code Health Review prefers an installed `code-health`, otherwise its existing
+trusted-checkout fallback uses `packages/code-health`; without it, review stays
+qualitative and reports missing metrics. This keeps plugin installation independent
+of CLI installation and avoids a second copy of the analyzer source.
+
+Regenerate these two bundles with `python scripts/project_review_plugins.py`.
+Fast check verifies exact parity, including plugin metadata and provenance.
 
 PR descriptions preserve the upstream `pr-risk-note` assessment in a compact
 `Risk` section, or report that it was not supplied. Writing Check does not infer

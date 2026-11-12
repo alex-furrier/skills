@@ -73,6 +73,7 @@ def main() -> None:
     run("uv", "run", "--frozen", "--python", "3.11", "--project", "packages/code-health", "pytest", "-q", "packages/code-health/tests")
     run("python", "scripts/project_context_plugin.py", "--check")
     run("python", "scripts/project_thinking_plugin.py", "--check")
+    run("python", "scripts/project_review_plugins.py", "--check")
     run("uv", "lock", "--no-config", "--project", "packages/context-engineering", "--check", "--offline")
     run("uv", "lock", "--no-config", "--project", "packages/writing-check", "--check", "--offline")
     run("uv", "run", "--python", "3.11", "--with", "pytest", "--with", "mkdocs", "pytest", "-q", "tests")
