@@ -1,11 +1,70 @@
 from __future__ import annotations
 
 import json
+import os
+
+import pytest
 from pathlib import Path
 
 from code_health.analyzers import python as analyzers
 from code_health.analyzers import rust
 from code_health.process import ProcessResult
+
+
+@pytest.mark.parametrize("failure", [None, "exit", "json", "syntax", "spawn"])
+def test_ruff_batches_merge_findings_and_reject_failed_batch(
+    tmp_path: Path, monkeypatch, failure: str | None
+) -> None:
+    # Exercise real Ruff output; the wrapper only models subprocess failures.
+    for index in range(5):
+        (tmp_path / f"module_{index}_é.py").write_text(
+            "def route(a, b, c, d, e, f):\n    return a\n"
+        )
+    real_run = analyzers.run
+    single_commands: list[tuple[str, ...]] = []
+
+    def capture_run(command, **kwargs):
+        single_commands.append(tuple(command))
+        return real_run(command, **kwargs)
+
+    monkeypatch.setattr(analyzers, "run", capture_run)
+    single_findings, single_status = analyzers.run_ruff(tmp_path, tmp_path)
+    assert single_status.status == "ok"
+    assert len(single_findings) == 5
+    calls: list[tuple[str, ...]] = []
+
+    def bounded_run(command, **kwargs):
+        calls.append(tuple(command))
+        if len(calls) == 2:
+            if failure == "exit":
+                return ProcessResult(2, "", "batch failed")
+            if failure == "json":
+                return ProcessResult(0, "not JSON", "")
+            if failure == "syntax":
+                return ProcessResult(0, '[{"code":"invalid-syntax"}]', "")
+            if failure == "spawn":
+                raise RuntimeError("batch spawn failed")
+        return real_run(command, **kwargs)
+
+    monkeypatch.setattr(analyzers, "run", bounded_run)
+    # Enough for exactly two source paths, regardless of temporary-root length.
+    fixed = [arg for arg in single_commands[0] if not arg.endswith(".py")]
+    paths = [arg for arg in single_commands[0] if arg.endswith(".py")]
+    budget = sum(len(os.fsencode(arg)) + 9 for arg in [*fixed, *paths[:2]]) + 8
+    monkeypatch.setattr(analyzers, "RUFF_ARGV_BYTES", budget, raising=False)
+    findings, status = analyzers.run_ruff(tmp_path, tmp_path)
+    assert len(calls) >= 2
+    assert all(
+        sum(len(os.fsencode(arg)) + 9 for arg in call) + 8 <= budget
+        for call in calls
+    )
+    if failure is None:
+        assert len(calls) >= 3
+        assert status.status == "ok"
+        assert findings == single_findings
+    else:
+        assert status.status == "error"
+        assert findings == []
 
 
 def test_ruff_preserves_raw_metric_and_ignores_tests(tmp_path: Path, monkeypatch) -> None:

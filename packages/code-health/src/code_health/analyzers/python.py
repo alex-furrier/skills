@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import re
 import shutil
 from pathlib import Path
@@ -11,6 +12,10 @@ from pathlib import Path
 from code_health.models import Finding, ToolStatus
 from code_health.process import run
 from code_health.repository import IGNORED_PARTS, is_test_path
+
+# Leave ample room for the inherited environment on macOS and Linux. Include
+# NUL terminators and 64-bit argv pointers, not just characters, in this budget.
+RUFF_ARGV_BYTES = 32 * 1024
 
 RUFF_RULES = ("C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915")
 RUFF_METRICS = {
@@ -102,7 +107,6 @@ def run_ruff(target: Path, repository_root: Path) -> tuple[list[Finding], ToolSt
     command = (
         "ruff",
         "check",
-        *(str(path) for path in sources),
         "--no-respect-gitignore",
         "--force-exclude",
         "--select",
@@ -116,17 +120,33 @@ def run_ruff(target: Path, repository_root: Path) -> tuple[list[Finding], ToolSt
         return [], ToolStatus("ruff", "unavailable", "ruff is not installed", command)
     if not sources:
         return [], ToolStatus("ruff", "ok", "0 active tracked Python files", command)
-    try:
-        result = run(command, cwd=repository_root)
-    except RuntimeError as error:
-        return [], ToolStatus("ruff", "error", str(error), command)
-    if result.returncode != 0:
-        detail = result.stderr.strip() or f"ruff exited {result.returncode}"
-        return [], ToolStatus("ruff", "error", detail, command)
-    try:
-        payload = json.loads(result.stdout)
-    except json.JSONDecodeError as error:
-        return [], ToolStatus("ruff", "error", f"invalid Ruff JSON: {error}", command)
+    fixed_bytes = sum(len(os.fsencode(arg)) + 1 + 8 for arg in command) + 8
+    batches: list[list[str]] = [[]]
+    batch_bytes = fixed_bytes
+    for path in sources:
+        argument = str(path)
+        argument_bytes = len(os.fsencode(argument)) + 1 + 8
+        if fixed_bytes + argument_bytes > RUFF_ARGV_BYTES:
+            return [], ToolStatus("ruff", "error", "Python path exceeds Ruff argv budget", command)
+        if batch_bytes + argument_bytes > RUFF_ARGV_BYTES:
+            batches.append([])
+            batch_bytes = fixed_bytes
+        batches[-1].append(argument)
+        batch_bytes += argument_bytes
+    payload: list[dict] = []
+    for batch in batches:
+        batch_command = (*command[:2], *batch, *command[2:])
+        try:
+            result = run(batch_command, cwd=repository_root)
+        except RuntimeError as error:
+            return [], ToolStatus("ruff", "error", str(error), batch_command)
+        if result.returncode != 0:
+            detail = result.stderr.strip() or f"ruff exited {result.returncode}"
+            return [], ToolStatus("ruff", "error", detail, batch_command)
+        try:
+            payload.extend(json.loads(result.stdout))
+        except json.JSONDecodeError as error:
+            return [], ToolStatus("ruff", "error", f"invalid Ruff JSON: {error}", batch_command)
     for item in payload:
         if item.get("code") in {"invalid-syntax", "E999", "syntax-error"}:
             return [], ToolStatus(
