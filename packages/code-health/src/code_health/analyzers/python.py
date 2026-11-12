@@ -104,6 +104,15 @@ def run_ruff(target: Path, repository_root: Path) -> tuple[list[Finding], ToolSt
         payload = json.loads(result.stdout)
     except json.JSONDecodeError as error:
         return [], ToolStatus("ruff", "error", f"invalid Ruff JSON: {error}", command)
+    for item in payload:
+        if item.get("code") in {"invalid-syntax", "E999", "syntax-error"}:
+            return [], ToolStatus(
+                "ruff",
+                "error",
+                "Ruff syntax diagnostic prevents advisory evidence: "
+                + str(item.get("message", "invalid Python syntax")),
+                command,
+            )
     findings: list[Finding] = []
     for item in payload:
         code = item.get("code")

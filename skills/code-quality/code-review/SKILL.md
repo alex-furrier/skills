@@ -46,9 +46,11 @@ Persist one semantic result containing:
 
 ## Execution
 
-Use the host's subagent or parallel-review facility when available; otherwise review inline.
-Keep each selected lane read-only and report whether execution was independent
-or inline; inline review does not establish independent fresh-context evidence. Give reviewers the committed diff,
+Require a fresh-context, read-only reviewer for every selected lane, launched
+through the host's subagent or parallel-agent facility. If the full set cannot
+launch, return `unavailable` with no completed lane evidence. Inline observations
+may be offered as supplemental notes, labeled as such; they never satisfy a lane.
+Give reviewers the committed diff,
 approved intent, and repository rules, not the implementer's conversation or
 self-assessment. Reviewers report findings; the owner verifies them and owns
 repairs, acceptance, and publication.
@@ -58,8 +60,6 @@ for the existing ordered-lane evidence contract. Use an exposed native harness
 route and record its actual executor identity and contract. Return the exact completion marker and
 durable bundle; read that marker and its durable bundle rather than inferring completion from process age or a
 digest lookup. Keep ancestor evidence labeled with its original HEAD and executor.
-If the request requires independence that inline review cannot provide, return
-`blocked` or `unavailable` for that requirement, alongside any inline observations.
 
 ## Lifecycle boundary
 

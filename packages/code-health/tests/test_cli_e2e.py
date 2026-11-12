@@ -133,6 +133,40 @@ def test_diff_reports_new_complexity_without_gating(tmp_path: Path) -> None:
     assert delta["after_finding"]["threshold"] == 10
 
 
+def test_diff_does_not_resolve_hotspots_when_python_has_syntax_errors(tmp_path: Path) -> None:
+    repo = make_repo(tmp_path)
+    branches = "\n".join(f"    if value == {index}:\n        value += 1" for index in range(15))
+    (repo / "app.py").write_text("def route(value):\n" + branches + "\n    return value\n")
+    git(repo, "commit", "-am", "baseline hotspots")
+    baseline = json.loads(run_cli(repo, "scan", str(repo), "--format", "json").stdout)
+    assert any(finding["rule"] == "C901" for finding in baseline["findings"])
+    (repo / "app.py").write_text("def route(value:\n    return value\n")
+
+    result = run_cli(repo, "diff", str(repo), "--base", "main", "--format", "json")
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "partial"
+    assert any(tool["tool"] == "ruff" and tool["status"] == "error" for tool in payload["tools"])
+    assert payload["deltas"] == []
+
+
+def test_diff_conditional_python_definitions_report_identity_gap(tmp_path: Path) -> None:
+    repo = make_repo(tmp_path)
+    branches = "\n".join(f"        if value == {index}:\n            value += 1" for index in range(15))
+    definition = "    def route(value):\n" + branches + "\n        return value\n"
+    (repo / "app.py").write_text("if enabled:\n" + definition + "else:\n" + definition)
+    git(repo, "commit", "-am", "conditional definitions")
+
+    result = run_cli(repo, "diff", str(repo), "--base", "main", "--format", "json")
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "partial"
+    assert payload["deltas"] == []
+    assert any("duplicate" in tool["detail"] for tool in payload["tools"])
+
+
 def test_diff_uses_merge_base_when_main_advances(tmp_path: Path) -> None:
     repo = make_repo(tmp_path)
     merge_base = git_output(repo, "rev-parse", "HEAD")

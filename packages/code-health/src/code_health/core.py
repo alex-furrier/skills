@@ -132,7 +132,8 @@ def _deltas(current: list[Finding], baseline: list[Finding]) -> list[MetricDelta
         indexed: dict[tuple[str, str, str, str], Finding] = {}
         for finding in findings:
             if finding.key in indexed:
-                raise RuntimeError(
+                raise DeltaEvidenceGap(
+                    finding.tool,
                     f"duplicate {label} finding identity {finding.key!r}; "
                     "analyzer symbols must be collision-safe"
                 )

@@ -21,11 +21,12 @@ ordered selected lanes, intent digest, and `prompt_contract_version`. Verify the
 candidate HEAD before launch. Read committed files at that HEAD, not dirty
 working-tree or mutable submodule contents; stop on candidate drift. Snapshot
 nonempty approved intent once: approved behavior, deliberate tradeoffs, explicit
-non-goals, and policy, never worker self-assessment. Keep independent reviewers separate from implementation context. Use the host's
-subagent or parallel-review facility when available; otherwise review inline.
-Label inline observations honestly. If the selected request requires fresh,
-independent execution, return `status: unavailable` for that requirement rather
-than presenting inline observations as independent evidence.
+non-goals, and policy, never worker self-assessment. Require a fresh-context,
+read-only reviewer for every selected lane, launched through the host's subagent
+or parallel-agent facility. Keep reviewers separate from implementation context.
+If the full set cannot launch, return `status: unavailable` with no completed
+lane evidence. Inline observations may be offered as supplemental notes, labeled
+as such; they never satisfy a lane.
 
 The caller must treat `unavailable`/`blocked` as pre-mutation states. This
 adapter never pushes, creates or edits a PR, posts a comment, or invokes an
@@ -38,7 +39,8 @@ TUI's age as execution time.
 ## Native harness bindings
 
 Use the available host delegation interface. Record actual executor and contract
-identity, or `inline` when unavailable. Preserve requested role, model, effort,
+identity for each launched reviewer; return `unavailable` when the full set
+cannot launch. Preserve requested role, model, effort,
 access boundaries and read-only execution. Unsatisfied explicit requirements
 remain blocked. Use tool-enforced read-only access when available; otherwise
 instruct reviewers explicitly and reject results that violate the boundary.
