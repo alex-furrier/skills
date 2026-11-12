@@ -189,6 +189,49 @@ def test_diff_uses_merge_base_when_main_advances(tmp_path: Path) -> None:
     assert payload["deltas"] == []
 
 
+@pytest.mark.parametrize("ancestor", ["build", "target", "archive"])
+def test_diff_under_ignored_ancestor_preserves_hotspots(tmp_path: Path, ancestor: str) -> None:
+    parent = tmp_path / ancestor
+    parent.mkdir()
+    repo = make_repo(parent)
+    branches = "\n".join(f"    if value == {index}:\n        value += 1" for index in range(12))
+    (repo / "app.py").write_text("def route(value):\n" + branches + "\n    return value\n")
+    git(repo, "commit", "-am", "baseline hotspot")
+
+    result = run_cli(repo, "diff", str(repo), "--base", "main", "--format", "json")
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["languages"] == ["python"]
+    assert payload["size"]["non_test_files"] == 1
+    assert payload["summary"]["resolved"] == 0
+    assert any(finding["rule"] == "C901" for finding in payload["findings"])
+
+
+def test_diff_tracked_gitignored_hotspot_stays_unchanged(tmp_path: Path) -> None:
+    repo = make_repo(tmp_path)
+    branches = "\n".join(f"    if value == {index}:\n        value += 1" for index in range(12))
+    source = "def route(value):\n" + branches + "\n    return value\n"
+    (repo / "tracked.py").write_text(source)
+    (repo / ".gitignore").write_text("tracked.py\ngenerated.py\n")
+    git(repo, "add", ".gitignore")
+    git(repo, "add", "-f", "tracked.py")
+    git(repo, "commit", "-m", "tracked gitignored hotspot")
+    (repo / "generated.py").write_text(source)
+    (repo / "untracked.py").write_text(source)
+    (repo / ".venv").mkdir()
+    (repo / ".venv" / "dependency.py").write_text(source)
+
+    result = run_cli(repo, "diff", str(repo), "--base", "main", "--format", "json")
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["summary"]["resolved"] == 0
+    assert payload["summary"]["new"] == 0
+    assert {finding["path"] for finding in payload["findings"]} == {"tracked.py"}
+    assert any(delta["status"] == "unchanged" for delta in payload["deltas"])
+
+
 def test_diff_baseline_includes_export_ignored_source(tmp_path: Path) -> None:
     repo = make_repo(tmp_path)
     branches = "\n".join(f"    if value == {index}:\n        value += 1" for index in range(12))

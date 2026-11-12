@@ -97,7 +97,7 @@ def _cargo_manifest(target: Path, repository_root: Path) -> Path | None:
     manifests = [
         path
         for path in target.rglob("Cargo.toml")
-        if not any(part in IGNORED_PARTS for part in path.parts)
+        if not any(part in IGNORED_PARTS for part in path.relative_to(repository_root).parts)
     ]
     return manifests[0] if len(manifests) == 1 else None
 

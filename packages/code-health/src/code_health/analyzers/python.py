@@ -80,10 +80,31 @@ def _python_symbol(root: Path, path: str, line: int) -> str:
 
 def run_ruff(target: Path, repository_root: Path) -> tuple[list[Finding], ToolStatus]:
     """Run Ruff's selected maintainability rules."""
+    # Exports contain only tracked paths. Match that boundary in live checkouts,
+    # regardless of Git ignore rules; never feed untracked output to Ruff.
+    if (repository_root / ".git").exists():
+        tracked = run(["git", "ls-files", "--cached", "-z"], cwd=repository_root)
+        if tracked.returncode != 0:
+            return [], ToolStatus("ruff", "error", tracked.stderr.strip())
+        candidates = (repository_root / name for name in tracked.stdout.split("\0") if name)
+    else:
+        candidates = target.rglob("*.py") if target.is_dir() else iter([target])
+    sources = sorted(
+        {
+            path
+            for path in candidates
+            if path.suffix == ".py"
+            and path.is_file()
+            and (path == target or target in path.parents)
+            and _active(path.relative_to(repository_root).as_posix())
+        }
+    )
     command = (
         "ruff",
         "check",
-        str(target),
+        *(str(path) for path in sources),
+        "--no-respect-gitignore",
+        "--force-exclude",
         "--select",
         ",".join(RUFF_RULES),
         "--output-format",
@@ -93,6 +114,8 @@ def run_ruff(target: Path, repository_root: Path) -> tuple[list[Finding], ToolSt
     )
     if shutil.which("ruff") is None:
         return [], ToolStatus("ruff", "unavailable", "ruff is not installed", command)
+    if not sources:
+        return [], ToolStatus("ruff", "ok", "0 active tracked Python files", command)
     try:
         result = run(command, cwd=repository_root)
     except RuntimeError as error:

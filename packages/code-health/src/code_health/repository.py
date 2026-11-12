@@ -130,7 +130,9 @@ def churn_by_path(root: Path, days: int) -> dict[str, int]:
 
 def _source_files(root: Path) -> Iterator[Path]:
     for path in root.rglob("*"):
-        if not path.is_file() or any(part in IGNORED_PARTS for part in path.parts):
+        if not path.is_file() or any(
+            part in IGNORED_PARTS for part in path.relative_to(root).parts
+        ):
             continue
         if path.suffix in {".py", ".rs", ".ts", ".tsx", ".js", ".jsx", ".mts", ".cts", ".go"}:
             yield path
