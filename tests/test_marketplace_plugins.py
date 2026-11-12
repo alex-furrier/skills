@@ -38,13 +38,28 @@ def test_independently_copied_plugin(tmp_path: Path, suite: str) -> None:
     assert not check(expected, copied)
 
 
-def test_python_cache_is_not_shipped(tmp_path: Path) -> None:
+def test_local_artifacts_are_not_shipped(tmp_path: Path) -> None:
     shutil.copytree(ROOT / "skills/writing", tmp_path / "skills/writing")
     shutil.copy2(ROOT / "LICENSE", tmp_path / "LICENSE")
-    cache = tmp_path / "skills/writing/pr-description/scripts/__pycache__"
-    cache.mkdir(exist_ok=True)
-    (cache / "helper.cpython-311.pyc").write_bytes(b"runtime cache")
-    assert not any("__pycache__" in path or path.endswith(".pyc") for path in build(tmp_path, "writing"))
+    expected = build(tmp_path, "writing")
+    source = tmp_path / "skills/writing"
+    for relative in (
+        "pr-description/scripts/__pycache__/helper.cpython-311.pyc",
+        "pr-description/scripts/helper.pyc",
+        "pr-description/.venv/lib/site-packages/example.py",
+        "pr-description/venv/lib/site-packages/example.py",
+        "pr-description/.pytest_cache/v/cache/nodeids",
+        "pr-description/.mypy_cache/cache.json",
+        "pr-description/.ruff_cache/cache.bin",
+        "pr-description/node_modules/example/index.js",
+        "pr-description/.DS_Store",
+        ".pytest_cache/README.md",
+        ".venv/lib/site-packages/example.py",
+    ):
+        artifact = source / relative
+        artifact.parent.mkdir(parents=True, exist_ok=True)
+        artifact.write_bytes(b"local artifact")
+    assert build(tmp_path, "writing") == expected
 
 
 def test_regeneration_check() -> None:

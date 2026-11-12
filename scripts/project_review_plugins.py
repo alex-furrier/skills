@@ -13,13 +13,26 @@ SUITES = {
     "writing": "Destination-aware writing, editing and advisory style checks",
 }
 VERSION = "0.1.0"
+LOCAL_ARTIFACT_NAMES = frozenset({
+    ".venv", "venv", "__pycache__", ".pytest_cache", ".mypy_cache",
+    ".ruff_cache", "node_modules", ".DS_Store", ".cache", ".tox", ".nox",
+    ".hypothesis", ".git", ".coverage", "htmlcov",
+})
+
+
+def excluded(path: Path) -> bool:
+    """Identify local environments and generated caches in a suite-relative path."""
+    return any(part in LOCAL_ARTIFACT_NAMES for part in path.parts) or path.suffix in {".pyc", ".pyo"}
 
 
 def build(root: Path, suite: str) -> dict[str, bytes]:
     source = root / "skills" / suite
     if source.is_symlink():
         raise ValueError(f"Symlinked canonical suite: {source}")
-    names = sorted(path.name for path in source.iterdir() if path.is_dir())
+    names = sorted(
+        path.name for path in source.iterdir()
+        if not excluded(path.relative_to(source)) and path.is_dir()
+    )
     files = {
         ".claude-plugin/plugin.json": encoded({
             "name": suite, "version": VERSION, "description": SUITES[suite],
@@ -38,7 +51,7 @@ def build(root: Path, suite: str) -> dict[str, bytes]:
         }),
     }
     for path in sorted(source.rglob("*")):
-        if "__pycache__" in path.parts or path.suffix == ".pyc":
+        if excluded(path.relative_to(source)):
             continue
         if path.is_symlink():
             raise ValueError(f"Symlink in canonical suite: {path}")
