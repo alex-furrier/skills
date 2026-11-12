@@ -20,7 +20,8 @@ spec.loader.exec_module(publish)
 @pytest.mark.parametrize(
     "package,version,distribution",
     [("context-engineering", "2.6.1", "context-engineering-cli"),
-     ("writing-check", "1.0.1", "writing-check-cli")],
+     ("writing-check", "1.0.1", "writing-check-cli"),
+     ("code-health", "0.2.0", "code-health-review-cli")],
 )
 def test_release_routing_and_artifacts(package, version, distribution, tmp_path):
     tag = f"{package}-v{version}"
@@ -70,6 +71,8 @@ def test_release_routing_and_artifacts(package, version, distribution, tmp_path)
         ("writing-check", "1.0.1", "provenance.json"),
         ("context-engineering", "2.6.1", "src/context_engineering/"),
         ("writing-check", "1.0.1", "src/writing_check/"),
+        ("code-health", "0.2.0", "README.md"),
+        ("code-health", "0.2.0", "src/code_health/cli.py"),
     ],
 )
 def test_shipped_source_requires_package_provenance(package, version, missing, tmp_path):
@@ -121,7 +124,7 @@ def test_package_provenance_rejects_boolean_schema(tmp_path):
         publish.check_members(members, name, module, version, False)
 
 
-@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.1")])
+@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.1"), ("code-health", "0.2.0")])
 def test_release_rejects_wrong_tag_ref_or_version(package, version):
     tag = f"{package}-v{version}"
     wrong = "writing-check" if package == "context-engineering" else "context-engineering"
@@ -135,7 +138,7 @@ def test_release_rejects_wrong_tag_ref_or_version(package, version):
             publish.release_identity(package, ref, candidate)
 
 
-@pytest.mark.parametrize("package", ["context-engineering", "writing-check"])
+@pytest.mark.parametrize("package", ["context-engineering", "writing-check", "code-health"])
 def test_publish_workflows_are_scoped_to_release_or_guarded_recovery(package):
     workflow = (ROOT / ".github/workflows" / f"publish-{package}.yml").read_text()
     assert "  release:\n    types: [published]" in workflow
@@ -177,7 +180,7 @@ def test_publish_workflows_are_scoped_to_release_or_guarded_recovery(package):
     assert "git fetch" not in build
 
 
-@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.1")])
+@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.1"), ("code-health", "0.2.0")])
 def test_release_rejects_metadata_tampering(package, version, tmp_path):
     name, module = publish.PACKAGES[package]
     dist = tmp_path / "dist"
@@ -239,7 +242,7 @@ def test_writing_check_rejects_tampered_metadata_description(wheel, tmp_path):
         publish.check_artifacts(dist, name, module, "1.0.1")
 
 
-@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.1")])
+@pytest.mark.parametrize("package,version", [("context-engineering", "2.6.1"), ("writing-check", "1.0.1"), ("code-health", "0.2.0")])
 def test_release_rejects_unsafe_sdist_directory(package, version, tmp_path):
     name, module = publish.PACKAGES[package]
     dist = tmp_path / "dist"

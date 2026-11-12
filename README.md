@@ -16,6 +16,8 @@ reasoning and communication.
 | [Context Engineering](skills/context-engineering/) | Keep AGENTS.md, docs, specifications, and decision records accurate; capture useful session knowledge. |
 | [Code Quality](skills/code-quality/) | Review a branch or PR with lanes chosen for its risk, check maintainability and architecture, flag AI-generated code smells, or audit low-value tests. |
 
+Models will likely improve at code review over time, but today they are weak at architecture and maintainability judgment, which Code Quality emphasizes. Treat its findings as prompts for a human reviewer's judgment, not verdicts.
+
 [Product Bet Shaping](skills/product/product-bet-shaping/SKILL.md) is a separate
 skill for deciding whether an idea is worth pursuing and what to try first.
 
@@ -93,6 +95,7 @@ and run the checks:
 ```bash
 python scripts/project_thinking_plugin.py
 python scripts/project_context_plugin.py
+python scripts/project_review_plugins.py
 python scripts/fast_check.py
 ```
 

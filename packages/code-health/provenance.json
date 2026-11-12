@@ -28,6 +28,11 @@
   },
   "entries": [
     {
+      "path": "README.md",
+      "origin": "independently authored package documentation",
+      "license": "MIT"
+    },
+    {
       "path": "LICENSE",
       "origin": "independently authored portable metadata",
       "license": "MIT"

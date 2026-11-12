@@ -16,6 +16,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 PACKAGES = {
     "context-engineering": ("context-engineering-cli", "context_engineering"),
     "writing-check": ("writing-check-cli", "writing_check"),
+    "code-health": ("code-health-review-cli", "code_health"),
 }
 VERSION = re.compile(r"[0-9]+\.[0-9]+\.[0-9]+")
 def release_identity(package: str, ref: str, tag: str) -> tuple[str, str, str]:
@@ -56,15 +57,17 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
     }
     if wheel:
         required.add(f"{dist_info}entry_points.txt")
+    if module in ("writing_check", "code_health") and not wheel:
+        required.add(f"{base}README.md")
     if module == "writing_check":
-        if not wheel:
-            required.add(f"{base}README.md")
         required |= {f"{package_root}vale/{item}" for item in (".vale.ini", "profiles.json", "upstream-lock.json", "vendor/Google-LICENSE", "vendor/Google-NOTICE.md")}
         if not any(path.startswith(f"{package_root}vale/styles/GoogleDocs/") and path.endswith(".yml") for path in members):
             raise ValueError("Vale rules missing")
     if required - members.keys():
         raise ValueError(f"required archive members missing: {sorted(required - members.keys())}")
-    source = ROOT / "packages" / ("context-engineering" if module == "context_engineering" else "writing-check") / "src" / module
+    package = next(key for key, value in PACKAGES.items() if value == (name, module))
+    project = ROOT / "packages" / package
+    source = project / "src" / module
     expected = {
         f"{package_root}{path.relative_to(source).as_posix()}"
         for path in source.rglob("*")
@@ -76,7 +79,6 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
     for path in actual:
         if members[path] != (source / path.removeprefix(package_root)).read_bytes():
             raise ValueError(f"package payload differs from source: {path}")
-    project = ROOT / "packages" / ("context-engineering" if module == "context_engineering" else "writing-check")
     # Check the independently shipped source paths, not build-generated metadata.
     authored_paths = {f"src/{module}/{path.removeprefix(package_root)}" for path in actual}
     authored_paths.update({"LICENSE", "provenance.json"})
@@ -113,7 +115,8 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
             raise ValueError(f"archive notice differs from source: {archive_path}")
     if not wheel and members[f"{base}pyproject.toml"] != (project / "pyproject.toml").read_bytes():
         raise ValueError("sdist project metadata differs from source")
-    if not wheel and f"{base}.gitignore" in members and members[f"{base}.gitignore"] != (ROOT / ".gitignore").read_bytes():
+    gitignore = project / ".gitignore" if (project / ".gitignore").is_file() else ROOT / ".gitignore"
+    if not wheel and f"{base}.gitignore" in members and members[f"{base}.gitignore"] != gitignore.read_bytes():
         raise ValueError("sdist .gitignore differs from source")
     if not wheel and f"{base}README.md" in members and (
         not (project / "README.md").is_file() or members[f"{base}README.md"] != (project / "README.md").read_bytes()
@@ -125,7 +128,7 @@ def check_members(members: dict[str, bytes], name: str, module: str, version: st
         raise ValueError("archive metadata name/version mismatch")
     if sorted(parsed.get_all("Requires-Dist", [])) != sorted(project_metadata.get("dependencies", [])):
         raise ValueError("archive dependencies differ from project metadata")
-    if module == "writing_check" and parsed.get_payload(decode=True) != (project / "README.md").read_bytes():
+    if module in ("writing_check", "code_health") and parsed.get_payload(decode=True) != (project / "README.md").read_bytes():
         raise ValueError("archive description differs from source README")
     if wheel:
         entries = ConfigParser(interpolation=None)
