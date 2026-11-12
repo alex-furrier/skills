@@ -1,0 +1,30 @@
+[project]
+name = "code-health-review-cli"
+version = "0.2.0"
+description = "Deterministic repository evidence for the code-health-review skill."
+requires-python = ">=3.11"
+dependencies = []
+license = {file = "LICENSE"}
+
+[project.scripts]
+code-health = "code_health.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/code_health"]
+force-include = {"provenance.json" = "provenance.json"}
+
+[tool.hatch.build]
+include = ["src/code_health/**", "LICENSE", "provenance.json"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.12",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

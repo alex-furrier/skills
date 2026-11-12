@@ -89,6 +89,7 @@ def test_context_wheel_contains_cli_and_installs_from_an_arbitrary_path(tmp_path
     ("package", "command", "expected_files", "distribution"),
     [
         (CONTEXT, "context-engineering", {"context_engineering/cli/dispatch.py"}, "context_engineering_cli-2.6.1"),
+        (ROOT / "packages/code-health", "code-health", {"code_health/cli.py"}, "code_health_review_cli-0.2.0"),
         (WRITING, "writing-check", {
             "writing_check/cli.py", "writing_check/sweep.py", "writing_check/vale/.vale.ini",
             "writing_check/vale/profiles.json", "writing_check/vale/upstream-lock.json",
@@ -129,6 +130,9 @@ def test_independent_wheel_install_from_unrelated_directory(
         assert checked.returncode == 3, checked.stderr
         assert record["status"] == record["vale"]["status"] == "unavailable"
         assert record["source"]["sha256"] == hashlib.sha256(candidate.read_bytes()).hexdigest()
+    elif command == "code-health":
+        checked = run(binary, "scan", str(ROOT), "--format", "json", cwd=tmp_path)
+        assert checked.returncode == 0 and json.loads(checked.stdout)["mode"] == "scan", checked.stderr
     else:
         checked = run(binary, "references", ".", "--json", cwd=tmp_path)
         assert checked.returncode == 0 and checked.stdout.startswith("{"), checked.stderr

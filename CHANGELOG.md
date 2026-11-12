@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-12 — Portable Code Quality suite and code-health CLI
+
+- Adopt Code Review, Code Health Review, Architecture Polish Review, Avoiding AI
+  Antipatterns and Test Audit under `skills/code-quality/`, with source hashes
+  and without host-specific reviewer bindings, managed evidence services or
+  private paths. Review judgments, profiles, lanes and finding rules are unchanged.
+- Let Code Review select one proportional review profile itself when invoked
+  directly; a caller-selected profile is still consumed unchanged.
+- Add the `code-health` CLI (`code-health-review-cli` 0.2.0) under
+  `packages/code-health/`. It is not published to PyPI; run it from a source
+  checkout. Fast check runs its tests, lock check and independent wheel install.
+
 ## 2026-10-30 — Portable Thinking and standalone Product Bet Shaping
 
 - Adopt canonical Blindspot, Research and Goalify under `skills/thinking/`, each
