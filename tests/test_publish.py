@@ -132,6 +132,7 @@ def test_release_rejects_wrong_tag_ref_or_version(package, version):
         (f"refs/tags/{tag}", f"{wrong}-v{version}"),
         ("refs/heads/main", tag),
         (f"refs/tags/{tag}", f"{package}-v999.0.0"),
+        (f"refs/tags/{package}-v999.0.0", f"{package}-v999.0.0"),
         (f"refs/tags/{tag}", f"{tag}-extra"),
     ]:
         with pytest.raises(ValueError):
