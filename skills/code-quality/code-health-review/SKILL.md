@@ -53,8 +53,10 @@ candidate. For one commit, pass `<sha>^`. Equal baseline and candidate revisions
 produce a warning and `partial` status; they do not prove a clean committed diff.
 
 The catalog package dependency is `packages/code-health` (Python 3.11+).
+With explicit consent, install the [published Code Health Review CLI 0.2.0](https://pypi.org/project/code-health-review-cli/0.2.0/)
+with `uv tool install code-health-review-cli==0.2.0`, then run `code-health --help`.
 With explicit install consent, `uv tool install "$CATALOG/packages/code-health"`
-installs the `code-health` command. Never install automatically; if unavailable, report the deterministic
+remains a trusted source-checkout fallback. Never install automatically; if unavailable, report the deterministic
 evidence gap and continue the qualitative review.
 
 Use `scan` for a requested repository-wide snapshot without a baseline. Use

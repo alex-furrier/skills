@@ -1,5 +1,13 @@
 # Changelog
 
+## Code Health Review CLI 0.2.0 — published install guidance
+
+- Pin the published `code-health-review-cli==0.2.0` install in the README,
+  installation guide, and Code Health Review skill; retain explicit consent,
+  the trusted source-checkout fallback, and the no-automatic-install rule.
+- Record the release and successful clean install, update architecture guidance,
+  and regenerate the Code Quality plugin from the canonical skill.
+
 ## Code Health Review publishing preparation
 
 - Add a release-triggered trusted-publishing workflow for `code-health-review-cli`
@@ -24,8 +32,8 @@
 - Let Code Review select one proportional review profile itself when invoked
   directly; a caller-selected profile is still consumed unchanged.
 - Add the `code-health` CLI (`code-health-review-cli` 0.2.0) under
-  `packages/code-health/`. It is not published to PyPI; run it from a source
-  checkout. Fast check runs its tests, lock check and independent wheel install.
+  `packages/code-health/`. At introduction, it ran from a source checkout;
+  0.2.0 is now published on PyPI. Fast check runs its tests, lock check and independent wheel install.
 
 ## 2026-10-30 — Portable Thinking and standalone Product Bet Shaping
 
