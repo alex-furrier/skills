@@ -1,5 +1,13 @@
 # Changelog
 
+## Code Health Review CLI 0.2.0 — published install guidance
+
+- Pin the published `code-health-review-cli==0.2.0` install in the README,
+  installation guide, and Code Health Review skill; retain explicit consent,
+  the trusted source-checkout fallback, and the no-automatic-install rule.
+- Record the release and successful clean install, update architecture guidance,
+  and regenerate the Code Quality plugin from the canonical skill.
+
 ## Code Health Review publishing preparation
 
 - Add a release-triggered trusted-publishing workflow for `code-health-review-cli`

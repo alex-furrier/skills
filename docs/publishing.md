@@ -4,8 +4,9 @@ The independently versioned distributions are published:
 
 - [Writing Check CLI 1.0.1](https://pypi.org/project/writing-check-cli/1.0.1/): [release run](https://github.com/alex-furrier/skills/actions/runs/41083408841), [writing-check-v1.0.1](https://github.com/alex-furrier/skills/releases/tag/writing-check-v1.0.1), source commit `378c2355076a38ca16399a055ed87249e1c79dc9`.
 - [Context Engineering CLI 2.6.1](https://pypi.org/project/context-engineering-cli/2.6.1/): [release run](https://github.com/alex-furrier/skills/actions/runs/36173696116), [context-engineering-v2.6.1](https://github.com/alex-furrier/skills/releases/tag/context-engineering-v2.6.1), source commit `fda3af779a399f7b3b5f586e7dcf119d2be3638c`.
+- [Code Health Review CLI 0.2.0](https://pypi.org/project/code-health-review-cli/0.2.0/): [release run](https://github.com/alex-furrier/skills/actions/runs/43335468277), [code-health-v0.2.0](https://github.com/alex-furrier/skills/releases/tag/code-health-v0.2.0), source commit `41ac7f2dca2269aba11bb3375051e64cfb27ed93`.
 
-Fresh Python 3.11 registry installs passed. Writing Check 1.0.1 produced the expected real Vale warning and clean control results, with exact source identities. Context Engineering 2.6.1 passed synthetic sessions checks. See [installation](installation.md) for public installs.
+Fresh Python 3.11 registry installs passed. Writing Check 1.0.1 produced the expected real Vale warning and clean control results, with exact source identities. Context Engineering 2.6.1 passed synthetic sessions checks. Code Health Review 0.2.0 passed a clean `uv tool install code-health-review-cli==0.2.0`. See [installation](installation.md) for public installs.
 
 The first Writing Check 1.0.0 publication used [this release run](https://github.com/alex-furrier/skills/actions/runs/36072533222). The original Context 2.6.0 publication used a [recovery run](https://github.com/alex-furrier/skills/actions/runs/36072208510). The first-release tags and publisher configuration remain:
 
@@ -13,6 +14,7 @@ The first Writing Check 1.0.0 publication used [this release run](https://github
 | --- | --- | --- | --- | --- |
 | `context-engineering-cli` | `packages/context-engineering` | context-engineering-v2.6.0 | publish-context-engineering.yml | Leave blank |
 | `writing-check-cli` | `packages/writing-check` | writing-check-v1.0.0 | publish-writing-check.yml | Leave blank |
+| `code-health-review-cli` | `packages/code-health` | code-health-v0.2.0 | publish-code-health.yml | Leave blank |
 
 ## Writing Check 1.0.1 correction
 

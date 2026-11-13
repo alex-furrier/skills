@@ -90,14 +90,14 @@ Models will keep improving at code review, but today they are weak at judging ar
 
 Code Quality has five skills: `code-review`, `code-health-review`, `architecture-polish-review`, `avoiding-ai-antipatterns`, and `test-audit`. Only Code Health Review uses a companion CLI, `code-health`, for metric deltas from Ruff, Clippy, ESLint, and golangci-lint.
 
-The `code-health-review-cli` package is **not published to PyPI yet**. After its first release, install it with `uv tool install code-health-review-cli==<version>`. Until then, run it from a trusted source checkout (see [the fallback below](#trusted-source-checkout-fallback)). From the repository you want to review, point `uv run` at the checkout's package:
+With explicit consent, install the [published Code Health Review CLI 0.2.0](https://pypi.org/project/code-health-review-cli/0.2.0/):
 
 ```bash
-uv run --frozen --no-dev --project "$checkout/skills/packages/code-health" code-health --help
-uv run --frozen --no-dev --project "$checkout/skills/packages/code-health" code-health diff . --base main --format json
+uv tool install code-health-review-cli==0.2.0
+code-health --help
 ```
 
-The first run creates the package's `.venv` inside the checkout. The CLI needs Python 3.11 or newer and installs no analyzers. It reports a missing analyzer as an evidence gap for that language. Without the CLI, Code Health Review continues as a qualitative review and reports that metrics are unavailable.
+A [trusted source-checkout fallback](#trusted-source-checkout-fallback) is also available. The CLI needs Python 3.11 or newer and installs no analyzers. It reports a missing analyzer as an evidence gap for that language. Without the CLI, Code Health Review continues as a qualitative review and reports that metrics are unavailable.
 
 ## Trusted source checkout fallback
 

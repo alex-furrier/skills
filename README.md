@@ -47,8 +47,9 @@ namespace their commands, such as `/thinking:goalify`, `/writing:write`, and
 Thinking needs no companion CLI. Writing Check and Context Engineering workflows
 also need their [companion CLIs](docs/installation.md). Installing the skills does
 not install those packages. Style findings are advisory, not proof of factuality
-or readiness. Code Health Review can use the `code-health` CLI, which is not on
-PyPI yet and runs from a source checkout. Without it, the review stays
+or readiness. Code Health Review can use the `code-health` CLI. With explicit consent, install
+the [published Code Health Review CLI 0.2.0](https://pypi.org/project/code-health-review-cli/0.2.0/)
+with `uv tool install code-health-review-cli==0.2.0`, then run `code-health --help`. Without it, the review stays
 qualitative and reports the missing metrics.
 
 See [installation](docs/installation.md) for agent paths, CLI setup, and the
