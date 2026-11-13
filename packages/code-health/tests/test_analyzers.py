@@ -54,10 +54,7 @@ def test_ruff_batches_merge_findings_and_reject_failed_batch(
     monkeypatch.setattr(analyzers, "RUFF_ARGV_BYTES", budget, raising=False)
     findings, status = analyzers.run_ruff(tmp_path, tmp_path)
     assert len(calls) >= 2
-    assert all(
-        sum(len(os.fsencode(arg)) + 9 for arg in call) + 8 <= budget
-        for call in calls
-    )
+    assert all(sum(len(os.fsencode(arg)) + 9 for arg in call) + 8 <= budget for call in calls)
     if failure is None:
         assert len(calls) >= 3
         assert status.status == "ok"
@@ -298,6 +295,51 @@ def test_clippy_supports_nested_binary_crate_and_qualified_impl(
     assert "--locked" in clippy_call
 
 
+def test_clippy_copy_keeps_rust_input_directories(tmp_path: Path, monkeypatch) -> None:
+    (tmp_path / "Cargo.toml").write_text('[workspace]\nmembers = ["build"]\n')
+    inputs = {
+        "build/Cargo.toml": '[package]\nname = "demo"\nversion = "0.1.0"\n',
+        "build/src/lib.rs": "mod archive;\n",
+        "build/src/archive/mod.rs": "pub fn run() {}\n",
+        "vendor/crate/src/build/mod.rs": "pub fn dependency() {}\n",
+        "dist/input.rs": "// Rust input\n",
+        "_archive/input.rs": "// Rust input\n",
+    }
+    for relative, text in inputs.items():
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+    for parent in (tmp_path, tmp_path / "build/src", tmp_path / "vendor/crate"):
+        for name in ("node_modules", ".venv", "target"):
+            directory = parent / name
+            directory.mkdir()
+            (directory / "artifact").write_text("not Cargo input\n")
+    calls = []
+
+    def fake_run(command, **kwargs):
+        copied_root = kwargs["cwd"]
+        calls.append(command)
+        for relative, text in inputs.items():
+            assert (copied_root / relative).read_text() == text
+        assert not any(
+            path.name in {"node_modules", ".venv", "target"}
+            for path in copied_root.rglob("*")
+        )
+        metadata = {
+            "workspace_members": ["demo"],
+            "packages": [{"targets": [{"kind": ["lib"]}]}],
+        }
+        return ProcessResult(0, json.dumps(metadata if "metadata" in command else {}), "")
+
+    monkeypatch.setattr(rust.shutil, "which", lambda _: "/usr/bin/cargo")
+    monkeypatch.setattr(rust, "run", fake_run)
+
+    _, status = rust.run_clippy(tmp_path, tmp_path)
+
+    assert status.status == "ok"
+    assert any("clippy" in command for command in calls)
+
+
 def test_clippy_covers_workspace_and_isolates_build_output(
     tmp_path: Path,
     monkeypatch,
@@ -309,6 +351,22 @@ def test_clippy_covers_workspace_and_isolates_build_output(
     vendored = tmp_path / "vendor" / "crate" / "lib.rs"
     vendored.parent.mkdir(parents=True)
     vendored.write_text("pub fn dependency() {}\n")
+    ignored = {
+        ".git",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".tox",
+        ".venv",
+        "__pycache__",
+        "node_modules",
+        "target",
+    }
+    for name in ignored:
+        for parent in (tmp_path, source.parent):
+            directory = parent / name
+            directory.mkdir()
+            (directory / "large-artifact").write_text("not Cargo input\n")
     metadata = {
         "workspace_members": ["demo 0.1.0 (path+file:///member)", "other"],
         "packages": [{"targets": [{"kind": ["lib"]}]}],
@@ -319,6 +377,9 @@ def test_clippy_covers_workspace_and_isolates_build_output(
     def fake_run(command, **kwargs):
         nonlocal copied_vendor_seen
         calls.append((tuple(command), kwargs))
+        copied_root = kwargs["cwd"]
+        assert (copied_root / "member" / "src" / "lib.rs").is_file()
+        assert not any(path.name in ignored for path in copied_root.rglob("*"))
         copied_vendor_seen = (
             copied_vendor_seen or (kwargs["cwd"] / "vendor" / "crate" / "lib.rs").exists()
         )

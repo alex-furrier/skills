@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -203,7 +202,6 @@ class ESLintContext:
     parser: str
     version: str
     config: Path
-    source_root: Path
 
 
 def prepare_eslint(
@@ -244,7 +242,7 @@ def prepare_eslint(
         "export default [{files:['**/*.{ts,tsx,js,jsx,mts,cts}'],"
         f"languageOptions:{{parser}},rules:{{{rules}}}}}];\n"
     )
-    return ESLintContext(executable_text, str(parser), version, config, root.resolve()), ToolStatus(
+    return ESLintContext(executable_text, str(parser), version, config), ToolStatus(
         "eslint", "ok", f"ESLint {version} with fixed syntax-only config", command
     )
 
@@ -254,21 +252,15 @@ def run_eslint(
 ) -> tuple[list[Finding], ToolStatus]:
     if context is None:
         return [], ToolStatus("eslint", "unavailable", "ESLint preparation did not succeed")
-    config = context.config
-    # ESLint scopes an external flat config's globs to its source tree. The
-    # baseline is an already-disposable Git export, so place the same fixed
-    # config there rather than weakening the source-checkout read-only contract.
-    target_argument = str(target)
-    if root.resolve() != context.source_root:
-        config = root / ".code-health-eslint.config.mjs"
-        shutil.copyfile(context.config, config)
-        target_argument = target.resolve().relative_to(root.resolve()).as_posix() or "."
+    # With --config, ESLint resolves file globs from cwd, not the config directory.
+    # Keep both snapshots rooted identically without writing to either source tree.
+    target_argument = target.resolve().relative_to(root.resolve()).as_posix() or "."
     command = (
         context.executable,
         "--no-config-lookup",
         "--no-inline-config",
         "--config",
-        str(config),
+        str(context.config),
         "--format",
         "json",
         "--no-ignore",
@@ -298,11 +290,16 @@ def run_eslint(
             if item.get("fatal") is True:
                 detail = str(item.get("message", "fatal ESLint diagnostic")).strip()
                 fatal_diagnostics.append(detail or "fatal ESLint diagnostic")
+            elif item.get("ruleId") is None and "no matching configuration" in str(
+                item.get("message", "")
+            ):
+                fatal_diagnostics.append(str(item["message"]))
     if fatal_diagnostics:
         return [], ToolStatus(
             "eslint",
             "error",
-            "ESLint fatal/parser diagnostic prevents advisory evidence: " + fatal_diagnostics[0],
+            "ESLint fatal/parser diagnostic or unmatched configuration prevents advisory evidence: "
+            + fatal_diagnostics[0],
             command,
         )
     findings: list[Finding] = []

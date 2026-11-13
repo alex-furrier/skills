@@ -633,13 +633,14 @@ def test_eslint_fixed_diagnostic_forms_parse_and_higher_values_worsen(
     assert _deltas([current], [baseline])[0].status == "worsened"
 
 
+@pytest.mark.parametrize("unmatched_config", [False, True])
 def test_eslint_fatal_diagnostic_is_an_evidence_gap_and_suppresses_deltas(
-    tmp_path: Path, monkeypatch
+    tmp_path: Path, monkeypatch, unmatched_config: bool
 ) -> None:
     source = tmp_path / "app.ts"
     source.write_text("function run() {}\n")
     # The adapter only needs an executable/config context for a mocked invocation.
-    context = ESLintContext("eslint", "parser", "v9.0.0", tmp_path / "eslint.config.mjs", tmp_path)
+    context = ESLintContext("eslint", "parser", "v9.0.0", tmp_path / "eslint.config.mjs")
     context.config.write_text("")
 
     monkeypatch.setattr(
@@ -650,9 +651,17 @@ def test_eslint_fatal_diagnostic_is_an_evidence_gap_and_suppresses_deltas(
                 [
                     {
                         "filePath": str(source),
-                        "fatalErrorCount": 1,
+                        "fatalErrorCount": 0 if unmatched_config else 1,
                         "messages": [
-                            {"fatal": True, "message": "Parsing error: unexpected token"},
+                            {
+                                "ruleId": None,
+                                "fatal": not unmatched_config,
+                                "message": (
+                                    "File ignored because no matching configuration was supplied."
+                                    if unmatched_config
+                                    else "Parsing error: unexpected token"
+                                ),
+                            },
                             {"ruleId": "complexity", "message": "ignored"},
                         ],
                     }

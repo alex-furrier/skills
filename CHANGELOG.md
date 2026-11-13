@@ -1,5 +1,17 @@
 # Changelog
 
+## Code Health scan consistency and lightweight Cargo copies
+
+- Port a fix already merged in a downstream vendored copy of this plugin
+  (merge `99dfe87e`).
+- Run both ESLint snapshots with the same external configuration and relative
+  targets; treat unmatched configuration as missing evidence, not a clean scan.
+- Exclude caches, environments, `node_modules` and `target` from Cargo copies.
+  Keep vendored dependencies and Rust inputs in `build`, `dist`, `archive` and
+  `_archive` directories, with isolated build output. Add regression coverage.
+- Keep package 0.2.0 and marketplace plugin 0.1.0 unchanged: this is not a release,
+  and the canonical plugin does not bundle the CLI.
+
 ## Code Health Review CLI 0.2.0 — published install guidance
 
 - Pin the published `code-health-review-cli==0.2.0` install in the README,

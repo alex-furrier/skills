@@ -170,7 +170,9 @@ def test_diff_does_not_resolve_hotspots_when_python_has_syntax_errors(tmp_path: 
 
 def test_diff_conditional_python_definitions_report_identity_gap(tmp_path: Path) -> None:
     repo = make_repo(tmp_path)
-    branches = "\n".join(f"        if value == {index}:\n            value += 1" for index in range(15))
+    branches = "\n".join(
+        f"        if value == {index}:\n            value += 1" for index in range(15)
+    )
     definition = "    def route(value):\n" + branches + "\n        return value\n"
     (repo / "app.py").write_text("if enabled:\n" + definition + "else:\n" + definition)
     git(repo, "commit", "-am", "conditional definitions")
@@ -267,7 +269,10 @@ def test_diff_baseline_includes_export_ignored_source(tmp_path: Path) -> None:
     assert any(finding["path"] == "ignored.py" for finding in payload["findings"])
 
 
-def test_diff_runs_real_eslint_subprocess_with_baseline_delta(tmp_path: Path) -> None:
+@pytest.mark.parametrize("changed", [False, True])
+def test_diff_runs_real_eslint_subprocess_with_baseline_delta(
+    tmp_path: Path, changed: bool
+) -> None:
     repo = make_repo(tmp_path)
     (repo / "app.py").unlink()
     source = repo / "app.ts"
@@ -284,7 +289,12 @@ import sys
 if "--version" in sys.argv:
     print("v9.2.0")
     raise SystemExit(0)
+config = pathlib.Path(sys.argv[sys.argv.index("--config") + 1])
+assert not config.is_relative_to(pathlib.Path.cwd())
+assert "--no-config-lookup" in sys.argv
+assert "--no-inline-config" in sys.argv
 target = pathlib.Path(sys.argv[-1])
+assert not target.is_absolute()
 source = next(target.rglob("app.ts"))
 value = 12 if "candidate" in source.read_text() else 11
 message = f"Function 'run' has a complexity of {value}. Maximum allowed is 10"
@@ -296,22 +306,28 @@ raise SystemExit(1)
     parser = repo / "node_modules/@typescript-eslint/parser/dist/index.js"
     parser.parent.mkdir(parents=True)
     parser.write_text("export default {}\n")
-    source.write_text("// candidate\nexport const run = () => 1\n")
+    if changed:
+        source.write_text("// candidate\nexport const run = () => 1\n")
+    else:
+        (repo / "unrelated.txt").write_text("not a source change\n")
+        git(repo, "add", "unrelated.txt")
+        git(repo, "commit", "-m", "unrelated change")
 
     result = run_cli(repo, "diff", str(repo), "--base", "main", "--format", "json")
 
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
     assert payload["languages"] == ["typescript"]
-    assert payload["summary"]["worsened"] == 1
+    assert payload["summary"]["worsened"] == int(changed)
+    assert payload["summary"]["resolved"] == 0
     assert any(
         item["metric"] == "cyclomatic-complexity"
         and item["before"] == 11
-        and item["after"] == 12
-        and item["status"] == "worsened"
+        and item["after"] == (12 if changed else 11)
+        and item["status"] == ("worsened" if changed else "unchanged")
         for item in payload["deltas"]
     )
-    assert not list(repo.rglob("eslint.config.mjs"))
+    assert not list(repo.rglob("*eslint*.mjs"))
     assert not list(repo.rglob(".eslintcache"))
 
 
