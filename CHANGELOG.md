@@ -32,8 +32,8 @@
 - Let Code Review select one proportional review profile itself when invoked
   directly; a caller-selected profile is still consumed unchanged.
 - Add the `code-health` CLI (`code-health-review-cli` 0.2.0) under
-  `packages/code-health/`. At introduction, it ran from a source checkout;
-  0.2.0 is now published on PyPI. Fast check runs its tests, lock check and independent wheel install.
+  `packages/code-health/`. It is not published to PyPI; run it from a source
+  checkout. Fast check runs its tests, lock check and independent wheel install.
 
 ## 2026-10-30 — Portable Thinking and standalone Product Bet Shaping
 
