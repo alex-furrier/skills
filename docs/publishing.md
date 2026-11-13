@@ -50,3 +50,20 @@ For subsequent releases, retain these controls from the first-release preparatio
    The existing projects use the trusted-publisher identity shown above: GitHub owner `alex-furrier`, repository `skills`, exact workflow filename, and no environment. Verify that account-side configuration before changing publisher settings; do not add a PyPI API token or repository secret.
 3. Review the source at the release tag, its changelog and metadata, run `python scripts/fast_check.py`, and build each intended package in an empty output directory. Run `python scripts/check_publish.py <package-key> refs/tags/<tag> <tag> --dist <dist-directory>`; inspect the wheel/sdist, notices and provenance. For Writing Check, verify the pinned `vale` dependency's first-use executable download behavior and network/prerequisite expectations in a clean environment. CI cannot establish private-source rights or PyPI namespace ownership.
 4. Only after review and approval, create the corresponding tag and publish its GitHub Release. The release workflow must be present on the default branch. Observe the workflow, verify the uploaded project/version and clean installation before changing installation guidance.
+
+## Add a new package
+
+Code Health Review CLI 0.2.0 shipped with this sequence. It covers the per-package setup. The [release controls](#release-controls) above still apply.
+
+1. Confirm that the exact PyPI name is free (`https://pypi.org/pypi/<name>/json` returns 404) and choose the first version.
+2. Copy `.github/workflows/publish-code-health.yml` to `.github/workflows/publish-<package>.yml`. Change the workflow name, tag prefix, package-key arguments to `check_publish.py`, package paths, and artifact name; preserve the remaining release controls. Don't copy the Context Engineering workflow, whose recovery dispatch is specific to that package. Add the package to `PACKAGES` and the README checks in `scripts/check_publish.py`, and to the parametrized cases in `tests/test_publish.py`. Include a version-mismatch case whose ref and tag agree with each other but not with `pyproject.toml`; otherwise the ref/tag check fails first and masks the version check.
+3. Write the package README as release text. `check_publish.py` requires the PyPI long description to match it byte for byte, so leave out release status such as "not published yet". Link the repository explicitly, because `pyproject.toml` has no project URLs.
+4. Before the first release, the account owner adds a pending trusted publisher at <https://pypi.org/manage/account/publishing/> on the GitHub tab: the PyPI project name, owner `alex-furrier`, repository `skills`, the workflow filename, and a blank environment, since the publish job has none. A pending publisher creates nothing on PyPI by itself.
+5. Merge, then publish a GitHub Release tagged `<package>-v<version>` that targets the full merge commit SHA, not `main`. Pass `--latest=false` so a package release doesn't take "Latest" from the other packages:
+
+   ```bash
+   gh release create <package>-v<version> --target <full-merge-sha> --latest=false
+   ```
+
+6. Watch the publish run through the build job and the OIDC upload job. Then install the release in a clean, isolated environment with `uv tool install <name>==<version>` and run `<command> --version`.
+7. In a follow-up docs PR, pin the install in `docs/installation.md` and `README.md`, add the release record at the top of this file and a row to the publisher table, and add a `CHANGELOG.md` entry. Leave historical changelog entries unchanged.
