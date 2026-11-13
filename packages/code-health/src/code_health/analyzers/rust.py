@@ -18,14 +18,8 @@ CLIPPY_METRICS = {
     "clippy::too_many_arguments": "argument-count",
     "clippy::type_complexity": "type-complexity",
 }
-CARGO_COPY_IGNORED_PARTS = {
-    ".git",
-    ".mypy_cache",
-    ".pytest_cache",
-    ".ruff_cache",
-    "__pycache__",
-    "target",
-}
+# Cargo may need vendored dependencies even though they are excluded from findings.
+CARGO_COPY_IGNORED_PARTS = IGNORED_PARTS - {"vendor"}
 VALUE_PATTERN = re.compile(r"\((\d+)\s*(?:>|/)\s*(\d+)\)")
 RUST_FN_PATTERN = re.compile(r"\bfn\s+([A-Za-z_][A-Za-z0-9_]*)")
 RUST_IMPL_PATTERN = re.compile(

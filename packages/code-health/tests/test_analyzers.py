@@ -54,10 +54,7 @@ def test_ruff_batches_merge_findings_and_reject_failed_batch(
     monkeypatch.setattr(analyzers, "RUFF_ARGV_BYTES", budget, raising=False)
     findings, status = analyzers.run_ruff(tmp_path, tmp_path)
     assert len(calls) >= 2
-    assert all(
-        sum(len(os.fsencode(arg)) + 9 for arg in call) + 8 <= budget
-        for call in calls
-    )
+    assert all(sum(len(os.fsencode(arg)) + 9 for arg in call) + 8 <= budget for call in calls)
     if failure is None:
         assert len(calls) >= 3
         assert status.status == "ok"
@@ -309,6 +306,12 @@ def test_clippy_covers_workspace_and_isolates_build_output(
     vendored = tmp_path / "vendor" / "crate" / "lib.rs"
     vendored.parent.mkdir(parents=True)
     vendored.write_text("pub fn dependency() {}\n")
+    ignored = rust.IGNORED_PARTS - {"vendor"}
+    for name in ignored:
+        for parent in (tmp_path, source.parent):
+            directory = parent / name
+            directory.mkdir()
+            (directory / "large-artifact").write_text("not Cargo input\n")
     metadata = {
         "workspace_members": ["demo 0.1.0 (path+file:///member)", "other"],
         "packages": [{"targets": [{"kind": ["lib"]}]}],
@@ -319,6 +322,9 @@ def test_clippy_covers_workspace_and_isolates_build_output(
     def fake_run(command, **kwargs):
         nonlocal copied_vendor_seen
         calls.append((tuple(command), kwargs))
+        copied_root = kwargs["cwd"]
+        assert (copied_root / "member" / "src" / "lib.rs").is_file()
+        assert not any(path.name in ignored for path in copied_root.rglob("*"))
         copied_vendor_seen = (
             copied_vendor_seen or (kwargs["cwd"] / "vendor" / "crate" / "lib.rs").exists()
         )
