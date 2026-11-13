@@ -2,9 +2,11 @@
 name = "code-health-review-cli"
 version = "0.2.0"
 description = "Deterministic repository evidence for the code-health-review skill."
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
 license = {file = "LICENSE"}
+authors = [{name = "Safurrier"}]
 
 [project.scripts]
 code-health = "code_health.cli:main"

@@ -86,9 +86,11 @@ A Context skill reports its deterministic analysis as unavailable when this comm
 
 ## Code Quality suite
 
+Models will keep improving at code review, but today they are weak at judging architecture and maintainability, which is this suite's main focus. Treat its findings as input to a human reviewer's judgment, not as verdicts. The `code-health` metrics below add evidence, not a quality score.
+
 Code Quality has five skills: `code-review`, `code-health-review`, `architecture-polish-review`, `avoiding-ai-antipatterns`, and `test-audit`. Only Code Health Review uses a companion CLI, `code-health`, for metric deltas from Ruff, Clippy, ESLint, and golangci-lint.
 
-The `code-health-review-cli` package is **not published to PyPI yet**. Run it from a trusted source checkout instead (see [the fallback below](#trusted-source-checkout-fallback)). From the repository you want to review, point `uv run` at the checkout's package:
+The `code-health-review-cli` package is **not published to PyPI yet**. After its first release, install it with `uv tool install code-health-review-cli==<version>`. Until then, run it from a trusted source checkout (see [the fallback below](#trusted-source-checkout-fallback)). From the repository you want to review, point `uv run` at the checkout's package:
 
 ```bash
 uv run --frozen --no-dev --project "$checkout/skills/packages/code-health" code-health --help

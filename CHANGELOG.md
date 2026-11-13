@@ -1,5 +1,13 @@
 # Changelog
 
+## Code Health Review publishing preparation
+
+- Add a release-triggered trusted-publishing workflow for `code-health-review-cli`
+  0.2.0, with tag identity and archive validation before publishing.
+- Keep source-checkout installation documented until the first PyPI release.
+  Clarify that Code Quality findings support human judgment, not verdicts.
+- Include the review-plugin projection command in contributor instructions.
+
 ## Claude marketplace — Code Quality and Writing
 
 - Add generated `code-quality` and `writing` plugins at version 0.1.0 to the
