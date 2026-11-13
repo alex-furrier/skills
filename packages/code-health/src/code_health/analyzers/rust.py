@@ -18,8 +18,8 @@ CLIPPY_METRICS = {
     "clippy::too_many_arguments": "argument-count",
     "clippy::type_complexity": "type-complexity",
 }
-# Cargo may need vendored dependencies even though they are excluded from findings.
-CARGO_COPY_IGNORED_PARTS = IGNORED_PARTS - {"vendor"}
+# Keep vendored dependencies and directory names that may contain Rust inputs.
+CARGO_COPY_IGNORED_PARTS = IGNORED_PARTS - {"vendor", "build", "dist", "archive", "_archive"}
 VALUE_PATTERN = re.compile(r"\((\d+)\s*(?:>|/)\s*(\d+)\)")
 RUST_FN_PATTERN = re.compile(r"\bfn\s+([A-Za-z_][A-Za-z0-9_]*)")
 RUST_IMPL_PATTERN = re.compile(

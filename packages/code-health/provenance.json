@@ -162,7 +162,7 @@
         "tests/test_cli_e2e.py",
         "tests/test_typescript_go_adapters.py"
       ],
-      "origin": "Author-owned semantic port of a fix already merged in a downstream vendored copy of this plugin (merge 99dfe87e): consistent external ESLint configuration, unmatched-configuration evidence gaps, and lightweight Cargo copies retaining vendor dependencies."
+      "origin": "Author-owned semantic port of a fix already merged in a downstream vendored copy of this plugin (merge 99dfe87e): consistent external ESLint configuration, unmatched-configuration evidence gaps, and lightweight Cargo copies retaining vendor dependencies. The canonical copy deliberately keeps build, dist, archive and _archive directories that the downstream copy excludes."
     }
   ]
 }

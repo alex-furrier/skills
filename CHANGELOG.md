@@ -6,8 +6,9 @@
   (merge `99dfe87e`).
 - Run both ESLint snapshots with the same external configuration and relative
   targets; treat unmatched configuration as missing evidence, not a clean scan.
-- Exclude shared ignored directories from Cargo copies while retaining vendored
-  dependencies and isolated build output. Add regression coverage for both fixes.
+- Exclude caches, environments, `node_modules` and `target` from Cargo copies.
+  Keep vendored dependencies and Rust inputs in `build`, `dist`, `archive` and
+  `_archive` directories, with isolated build output. Add regression coverage.
 - Keep package 0.2.0 and marketplace plugin 0.1.0 unchanged: this is not a release,
   and the canonical plugin does not bundle the CLI.
 
