@@ -63,6 +63,14 @@ Use that trail to understand why an approach fit, what it cost, and where it fai
 A merge shows acceptance, not sustained success: distinguish tests, review claims,
 continued use and observed outcomes, and say when outcome evidence is unavailable.
 
+Also trace the attempts that did not land. Look for stalled or abandoned work
+(open drafts, closed proposals, parked docs, unfinished experiments) and note how
+old it is, how far it got, and why it stopped, when that's recorded. Look for
+recorded deliberate exclusions too: "intentionally not supported" comments,
+denylists, policy notes, or decisions to say no. A gap that exists by choice
+needs a different move than a gap nobody has filled. Its precedent may be
+someone who got the decision reversed, not someone who built the missing piece.
+
 Identify knowledgeable owners or reviewers from relevant contributions and
 recorded reasoning, not popularity or commit counts alone. Treat them as potential
 context sources; inspect their available work and do not initiate outreach without

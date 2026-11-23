@@ -1,5 +1,14 @@
 # Changelog
 
+## Blindspot: trace attempts that did not land
+
+- Ask Blindspot to trace stalled or abandoned attempts (age, progress, and why
+  they stopped) and recorded deliberate exclusions, since a gap left open by
+  choice calls for a different move than one nobody has filled. Ported from a
+  downstream vendored copy of the skill.
+- Bump the Thinking plugin to 0.1.2 so existing installs pick up the change, and
+  regenerate `plugins/thinking/` from the canonical skill.
+
 ## Code Health scan consistency and lightweight Cargo copies
 
 - Port a fix already merged in a downstream vendored copy of this plugin

@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ("blindspot", "research", "goalify")
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 README = """# Thinking
 
 Three independent skills: Blindspot researches missing expertise and applies it;
