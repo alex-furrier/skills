@@ -69,6 +69,13 @@ pass merely to collect more evidence.
 code-health scan . --format json
 ```
 
+When the installed or source CLI returns `shared_decisions`, use the paired line
+ranges to review policies that may have two owners. In a diff, inspect a
+one-sided edit first: should the unchanged sibling follow, or is it a separate
+contract? Compare callers or tests before proposing a change. Generated mirrors,
+framework idioms and intentionally parallel adapters can match. Never block on a
+match or require a shared abstraction. Published 0.2.0 does not have this field.
+
 Treat unavailable analyzers as explicit evidence gaps. In a diff report,
 `languages` describes the candidate scope. Findings from a language removed from
 the candidate remain available only as resolved baseline deltas. Avoid installing
