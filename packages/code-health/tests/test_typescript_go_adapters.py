@@ -1079,3 +1079,51 @@ def test_eslint_rejects_incompatible_version_and_reports_execution_error(
     )
     context, status = prepare_eslint(tmp_path, tmp_path / "state")
     assert context is None and status.status == "unavailable"
+
+
+def test_eslint_generator_overload_identity_and_duplicate_diagnostic(
+    tmp_path: Path, monkeypatch
+) -> None:
+    source = tmp_path / "history.ts"
+    source.write_text(
+        "class History {\n"
+        "  scan(key: string): Generator<string>;\n"
+        "  scan(key: number): Generator<number>;\n"
+        "  *scan(key: string | number) { yield key; }\n"
+        "}\n"
+    )
+    diagnostic = {
+        "ruleId": "complexity",
+        "line": 4,
+        "column": 4,
+        "message": "Generator method 'scan' has an unrecognized complexity measurement.",
+    }
+    messages = [diagnostic]
+    monkeypatch.setattr(
+        "code_health.analyzers.typescript.run",
+        lambda *args, **kwargs: ProcessResult(
+            1, json.dumps([{"filePath": str(source), "messages": messages}]), ""
+        ),
+    )
+    context = ESLintContext("eslint", "parser", "v9", tmp_path / "config")
+    findings, status = run_eslint(tmp_path, tmp_path, context)
+    assert status.status == "ok"
+    assert [(item.symbol, item.value) for item in findings] == [
+        ("History.scan@signature:*scan(key:string|number)", None)
+    ]
+
+    messages.append(diagnostic)
+    findings, status = run_eslint(tmp_path, tmp_path, context)
+    assert findings == [] and status.status == "unavailable"
+    assert "cannot distinguish duplicate TypeScript declarations" in status.detail
+
+
+def test_named_generator_function_resolves_only_its_declaration(tmp_path: Path) -> None:
+    source = tmp_path / "history.ts"
+    source.write_text("export function* scan(x: number) {\n  scan(x);\n}\n")
+    assert _typescript_symbol(source, 1, "scan", generator_kind="function") == (
+        "scan",
+        "function*scan(x:number)",
+    )
+    assert _typescript_symbol(source, 2, "scan", generator_kind="function")[0] is None
+    assert _typescript_symbol(source, 2, "scan", generator_kind="method")[0] is None

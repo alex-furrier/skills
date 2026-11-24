@@ -1,5 +1,18 @@
 # Changelog
 
+## Code Health design checklist
+
+- In the source CLI, show bounded cross-file branch excerpts in scan and diff for
+  all four language families. In a diff, also show when a guard/action changes
+  on one side while the old text remains in another file. These are review
+  prompts, not blocking rules. The published 0.2.0 wheel is unchanged.
+
+- Add an evidence-first checklist to the existing qualitative review. Reuse
+  repository checks and keep repair and verification with the owning workflow.
+- Encourage cheap counterexamples before treating inferred behavior as observed.
+- Resolve ESLint diagnostics for TypeScript generator declarations and methods
+  without inventing a match for ambiguous source locations.
+
 ## Blindspot: trace attempts that did not land
 
 - Ask Blindspot to trace stalled or abandoned attempts (age, progress, and why

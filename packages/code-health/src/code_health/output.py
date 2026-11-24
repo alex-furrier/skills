@@ -61,6 +61,36 @@ def render_markdown(report: Report) -> str:
             f"{finding.tool}:{finding.rule} {finding.metric} {value}; "
             f"churn={finding.churn}; {marker}"
         )
+    shared = report.shared_decisions
+    if shared is not None:
+        lines += [
+            "",
+            "## Shared decision excerpts",
+            "",
+            f"{shared.scope}; {shared.reviewed_files} tracked source files inspected ({shared.status}).",
+        ]
+        for match in shared.matches:
+            a, b = match.left, match.right
+            lines.append(
+                f"- `{a.path}:{a.start}-{a.end}` and `{b.path}:{b.start}-{b.end}`"
+            )
+        if not shared.matches:
+            lines.append(
+                "No reported matching excerpts. This does not establish absence of duplication."
+            )
+        else:
+            lines.append(
+                "Same source text, not necessarily the same policy. Should these locations change together?"
+            )
+        for split in shared.one_sided_edits:
+            old, edit, peer = split.before, split.changed_hunk, split.remaining
+            lines.append(
+                f"- One-sided edit: `{edit.path}:{edit.start}-{edit.end}` changed; "
+                f"its base excerpt (lines {old.start}-{old.end}) still appears at "
+                f"`{peer.path}:{peer.start}-{peer.end}`. Intentional divergence?"
+            )
+        for reason, count in shared.skipped.items():
+            lines.append(f"- {reason}: {count}")
     changed_deltas = [delta for delta in report.deltas if delta.status != "unchanged"]
     if changed_deltas:
         lines.extend(["", "## Representative deltas", ""])

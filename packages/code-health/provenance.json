@@ -151,6 +151,16 @@
       "path": ".gitignore",
       "origin": "independently authored package build exclusions",
       "license": "MIT"
+    },
+    {
+      "path": "src/code_health/shared_decisions.py",
+      "origin": "independently authored cross-language advisory excerpt comparison and regression coverage",
+      "license": "MIT"
+    },
+    {
+      "path": "tests/test_shared_decisions.py",
+      "origin": "independently authored cross-language advisory excerpt comparison and regression coverage",
+      "license": "MIT"
     }
   ],
   "local_modifications": [
@@ -163,6 +173,17 @@
         "tests/test_typescript_go_adapters.py"
       ],
       "origin": "Author-owned semantic port of a fix already merged in a downstream vendored copy of this plugin (merge 99dfe87e): consistent external ESLint configuration, unmatched-configuration evidence gaps, and lightweight Cargo copies retaining vendor dependencies. The canonical copy deliberately keeps build, dist, archive and _archive directories that the downstream copy excludes."
+    },
+    {
+      "paths": [
+        "README.md",
+        "src/code_health/core.py",
+        "src/code_health/models.py",
+        "src/code_health/output.py",
+        "src/code_health/shared_decisions.py",
+        "tests/test_shared_decisions.py"
+      ],
+      "origin": "Catalog-authored, bounded, dependency-free literal excerpt comparison and Git hunk evidence for human-reviewed paired locations; no third-party clone detector or copied implementation."
     }
   ]
 }

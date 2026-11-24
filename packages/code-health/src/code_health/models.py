@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+from code_health.shared_decisions import SharedEvidence
+
 
 @dataclass(frozen=True)
 class ToolStatus:
@@ -77,6 +79,8 @@ class Report:
     deltas: list[MetricDelta]
     tools: list[ToolStatus]
     unavailable_metrics: list[dict[str, str]] = field(default_factory=list)
+
+    shared_decisions: SharedEvidence | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-serializable representation."""

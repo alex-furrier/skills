@@ -21,6 +21,7 @@ from code_health.repository import (
     size_metrics,
     working_tree_paths,
 )
+from code_health.shared_decisions import collect as collect_shared_decisions
 
 # Most metrics are counts or complexity scores where higher values are worse.
 # Maintainability index is the sole current inverse metric.
@@ -29,7 +30,7 @@ LOWER_IS_WORSE_METRICS = frozenset({"maintainability-index"})
 UNAVAILABLE_METRICS = [
     {
         "metric": "duplication",
-        "reason": "No clone detector is implemented in version 1.",
+        "reason": "Shared excerpts are literal file-pair evidence only, not a global duplication rate.",
     },
     {
         "metric": "dependency-graph",
@@ -290,6 +291,7 @@ def analyze(
         baseline_languages: list[str] = []
         if mode == "diff" and baseline_revision is not None:
             with exported_revision(root, baseline_revision) as exported:
+                shared = collect_shared_decisions(root, scope_path, changed, baseline_revision, exported)
                 baseline_target = exported / scope_path
                 if baseline_target.exists():
                     baseline_languages = detect_languages(baseline_target)
@@ -305,6 +307,7 @@ def analyze(
                     else ([], [])
                 )
         else:
+            shared = collect_shared_decisions(root, scope_path, None)
             languages = candidate_languages
             contexts, preparation_tools = _prepare_adapters(
                 root, target, languages, Path(temporary)
@@ -353,7 +356,7 @@ def analyze(
         baseline_revision=baseline_revision,
         churn_days=churn_days,
         working_tree_paths=sorted(working_paths),
-        status=_status(tools),
+        status="partial" if shared.status == "partial" else _status(tools),
         languages=candidate_languages,
         size=size_metrics(target),
         summary=summary,
@@ -361,4 +364,5 @@ def analyze(
         deltas=deltas,
         tools=tools,
         unavailable_metrics=list(UNAVAILABLE_METRICS),
+        shared_decisions=shared,
     )
