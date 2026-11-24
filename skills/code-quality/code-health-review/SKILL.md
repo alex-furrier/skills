@@ -91,6 +91,12 @@ Read [qualitative-rubric.md](references/qualitative-rubric.md). Judge:
 3. proportionality and earned complexity;
 4. evolutionary consequence.
 
+Use the rubric’s [design checklist](references/qualitative-rubric.md#design-checklist)
+to pick the questions the change actually raises. Use existing check results; do
+not run a new scanner, repeat a specialist pass, or expand the scope just to fill
+out the checklist. This review is read-only; the owning workflow decides whether
+to make a fix and rerun the affected checks.
+
 Use `strong`, `mixed`, or `concerning` for the four holistic dimensions. Keep
 the labels advisory and attach file-grounded evidence.
 

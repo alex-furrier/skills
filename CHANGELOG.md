@@ -1,5 +1,13 @@
 # Changelog
 
+## Code Health design checklist
+
+- Add an evidence-first checklist to the existing qualitative review. Reuse
+  repository checks and keep repair and verification with the owning workflow.
+- Encourage cheap counterexamples before treating inferred behavior as observed.
+- Resolve ESLint diagnostics for TypeScript generator declarations and methods
+  without inventing a match for ambiguous source locations.
+
 ## Blindspot: trace attempts that did not land
 
 - Ask Blindspot to trace stalled or abandoned attempts (age, progress, and why

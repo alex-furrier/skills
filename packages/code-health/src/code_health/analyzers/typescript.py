@@ -82,7 +82,7 @@ def _typescript_scopes(masked: str) -> list[tuple[int, int, str]]:
             for pattern, kind in (
                 (r"\bclass\s+([A-Za-z_$][\w$]*)[^{}]*$", "class"),
                 (r"\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)[^{}=]*=\s*$", "object"),
-                (r"\bfunction\s+([A-Za-z_$][\w$]*)[^{}]*$", "function"),
+                (r"\bfunction(?:\s*\*\s*|\s+)([A-Za-z_$][\w$]*)[^{}]*$", "function"),
                 (r"\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)[^{}=]*=.*=>\s*$", "function"),
             ):
                 match = re.search(pattern, prefix, re.S)
@@ -98,7 +98,12 @@ def _typescript_scopes(masked: str) -> list[tuple[int, int, str]]:
 
 
 def _typescript_symbol(
-    path: Path, line: int, name: str | None, column: int | None = None
+    path: Path,
+    line: int,
+    name: str | None,
+    column: int | None = None,
+    *,
+    generator_kind: str | None = None,
 ) -> tuple[str | None, str | None]:
     """Resolve an ESLint diagnostic to a source-structural identity.
 
@@ -135,6 +140,15 @@ def _typescript_symbol(
             rf"^\s*(?:public\s+|private\s+|protected\s+|static\s+|async\s+|readonly\s+)*({escaped})\s*(?:<[^(){{}}]*>)?\(",
             rf"\b({escaped})\s*:\s*(?:async\s*)?(?:<[^(){{}}]*>\s*)?\(",
         )
+        # ESLint identifies generators explicitly. Do not let a same-named call
+        # or an ordinary method stand in for the generator declaration.
+        if generator_kind == "function":
+            patterns = (rf"\bfunction\s*\*\s*({escaped})\b[^(){{}}]*\(",)
+        elif generator_kind == "method":
+            patterns = (
+                rf"^\s*(?:public\s+|private\s+|protected\s+|static\s+|async\s+)*"
+                rf"\*\s*({escaped})\s*(?:<[^(){{}}]*>)?\(",
+            )
     declarations: list[tuple[int, int, str, str]] = []
     if name is None:
         single_parameter = re.compile(
@@ -328,7 +342,13 @@ def run_eslint(
             name = FUNCTION_NAME.search(message)
             symbol = signature = None
             if name:
-                symbol, signature = _typescript_symbol(path, line, name.group(1))
+                generator = re.search(r"\bgenerator (function|method) ", message, re.I)
+                symbol, signature = _typescript_symbol(
+                    path,
+                    line,
+                    name.group(1),
+                    generator_kind=generator.group(1).lower() if generator else None,
+                )
                 if symbol is None:
                     return [], ToolStatus(
                         "eslint",

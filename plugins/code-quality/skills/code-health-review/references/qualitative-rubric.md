@@ -2,11 +2,36 @@
 
 ## Contents
 
+- Design checklist
 - Cognitive overhead
 - Locality and cold-reader onboarding
 - Proportionality and earned complexity
 - Evolutionary consequence
 - Severity and heuristic authority
+
+## Design checklist
+
+Pick the questions raised by the change. The tools gather evidence; the reviewer
+decides whether there is a problem worth fixing.
+
+| Question | Evidence to reuse or inspect | Judgment |
+| --- | --- | --- |
+| Is an implementation detail leaking? | Declared import-boundary findings or a real caller crossing the seam. | Does the boundary protect a useful contract, or is the dependency intentional? |
+| Does the same decision have multiple owners? | Compare repeated decisions and concrete examples of changes that touched them together. | Is it the same policy that must change together, or independent behavior that happens to look alike? |
+| Does the interface make callers do too much? | Compare two or three real callers and what they must know, unpack, or do in order. | Could the existing owner absorb real work without a new layer? Preserve an interface that already hides useful complexity. |
+| Are failures handled by the right owner? | Trace recovery and cleanup; inspect ignored results only against a known API contract. | What can the module handle once, and what needs the caller's context? |
+| Are tests costly or brittle? | Use comparable timings when available; inspect the behaviors the tests protect. | Distinguish duplicate proof from different contracts. Keep the cheapest test that still catches the failure. |
+| Is intent easy to recover? | Trace from a task or public entry point to the owner and its tests. | What must a maintainer infer, and what likely next change would actually become easier? |
+
+An explicit invariant can be enforced by the repository's own checks. Churn,
+timing, size, and similarity are leads, not gates. Don't infer slow tests from
+their count or from one incomparable run. Don't add a generic detector or run
+every check to populate a row. When a finding depends on behavior, try the
+cheapest case that could prove it wrong, if practical. Distinguish what happened
+from what the source suggests, and narrow or drop a claim when the check
+contradicts it. Report only findings that name the problem, consequence,
+smallest useful change, and how to verify it. A review can correctly find
+nothing worth changing.
 
 ## Cognitive overhead
 
